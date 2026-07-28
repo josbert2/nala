@@ -1,0 +1,45 @@
+{
+  "name": "nala",
+  "productName": "Nala",
+  "version": "0.1.0",
+  "description": "Nala, viviendo en el escritorio",
+  "main": "src/main/index.js",
+  "private": true,
+  "scripts": {
+    "start": "electron . --no-sandbox",
+    "sprites": "python3 tools/make_sprites.py",
+    "palette": "python3 tools/photo_palette.py",
+    "dist:linux": "electron-builder --linux AppImage",
+    "dist:win": "electron-builder --win nsis portable",
+    "start:sandboxed": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "optionalDependencies": {
+    "node-window-manager": "^2.2.4"
+  },
+  "build": {
+    "appId": "dev.josbert.nala",
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "config/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "assets/icon.png"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Utility",
+      "icon": "assets/icon.png"
+    }
+  }
+}

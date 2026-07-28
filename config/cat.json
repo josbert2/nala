@@ -1,0 +1,36 @@
+{
+  "_comment": "Poné su nombre en 'name'. Los horarios son 24h. Las notas aparecen de a ratos.",
+  "name": "Nala",
+  "scale": 2,
+  "greeting": "",
+  "bowlAt": 0.12,
+  "meals": [
+    "08:30",
+    "13:30",
+    "20:00"
+  ],
+  "playtimes": [
+    "11:30",
+    "18:30",
+    "22:00"
+  ],
+  "moments": [
+    {
+      "at": "07:45",
+      "state": "stretch",
+      "note": ""
+    },
+    {
+      "at": "15:00",
+      "state": "sleep",
+      "note": ""
+    },
+    {
+      "at": "23:40",
+      "state": "groom",
+      "note": ""
+    }
+  ],
+  "noteEveryMinutes": 40,
+  "notes": []
+}

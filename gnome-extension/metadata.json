@@ -1,0 +1,13 @@
+{
+  "uuid": "deskcat@josbert.dev",
+  "name": "DeskCat Window Geometry",
+  "description": "Expone la geometria de las ventanas por D-Bus para que Nala pueda caminar por sus bordes bajo Wayland.",
+  "shell-version": [
+    "45",
+    "46",
+    "47",
+    "48"
+  ],
+  "version": 1,
+  "url": "https://github.com/josbert2/nala"
+}

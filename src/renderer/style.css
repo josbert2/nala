@@ -1,0 +1,75 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#stage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Tooltip chiquito con lo que esta haciendo ahora mismo. */
+.tip {
+  position: absolute;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(28, 24, 20, 0.82);
+  color: #f6f0e6;
+  font: 500 11px/1 system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.tip[data-show="1"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Globito de texto. Aparece cerca de ella, nunca tapa el cursor. */
+.bubble {
+  position: absolute;
+  max-width: 260px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(28, 24, 20, 0.92);
+  color: #f3ece2;
+  font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: 0.1px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 320ms ease, transform 320ms ease;
+}
+
+.bubble[data-show="1"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.bubble::after {
+  content: "";
+  position: absolute;
+  left: 22px;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
+  background: inherit;
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
