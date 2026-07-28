@@ -44,8 +44,11 @@ siempre está instalada. Por eso hay dos caminos que siempre funcionan:
 | Zarandear el mouse cerca | Sale a cazar el cursor. Pide un zarandeo deliberado, no cualquier movimiento. |
 | Click derecho sobre ella | Menú rápido. |
 
-Cuando está jugando o ronroneando aparece un tooltip chiquito arriba de ella
-diciendo qué está haciendo.
+Cuando está jugando, comiendo o ronroneando aparece un tooltip chiquito arriba
+de ella diciendo qué está haciendo.
+
+Mientras duerme no hay tooltip: le salen **prrr** flotando, que se van haciendo
+más largos o más cortos al azar. También cuando la acariciás, más seguido.
 
 ---
 
@@ -207,7 +210,7 @@ src/renderer/
     sprites.js       spritesheet y animación
     world.js         el piso y los bordes de ventana como superficies
     cat.js           física, estados y personalidad
-    props.js         el plato y la pelota
+    props.js         el plato, la pelota y el premio
     moments.js       horarios y notas
 tools/
   make_sprites.py    genera los sprites desde la paleta

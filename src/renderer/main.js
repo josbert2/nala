@@ -24,8 +24,8 @@ const ACTION_LABELS = {
   pounce: 'jugando',
   purr: 'ronroneando',
   eat: 'comiendo',
-  sleep: 'durmiendo',
   groom: 'lamiendose'
+  // 'sleep' no lleva tooltip: mientras duerme hablan los prrr
 }
 
 let sheet = null
@@ -42,6 +42,8 @@ let notes = null
 let origin = { x: 0, y: 0 }        // esquina de la pantalla que cubre la ventana
 let lastHotKey = ''
 let hearts = []
+let purrs = []
+let nextPurr = 0
 
 const pointer = {
   x: -1, y: -1, active: false, movingMs: 9999, lastMove: 0,
@@ -99,9 +101,9 @@ window.nala.onBoot(async ({ config, display, debug }) => {
     // Autotest: saca la pelota y captura el canvas para poder mirarlo.
     setTimeout(() => { cat.playtime(); console.log('[nala] playtime() llamado') }, 2500)
     setTimeout(() => {
-      console.log(`[nala] ball.active=${ball.active} x=${ball.x.toFixed(0)} y=${ball.y.toFixed(0)} estado=${cat.state}`)
-      window.nala.debugShot(canvas.toDataURL('image/png'))
-    }, 5000)
+      console.log(`[nala] ball.active=${ball.active} estado=${cat.state} menu=${menuOpen}`)
+    }, 5500)
+    setTimeout(() => { cat.napNow(); console.log('[nala] napNow(): deberian salir prrr') }, 6500)
   }
 })
 
@@ -168,6 +170,11 @@ window.nala.onPointer((p) => {
 
 window.addEventListener('mousedown', (e) => {
   if (!cat) return
+
+  // Si el click es sobre el propio menu, no lo cerramos aca: dejamos que el
+  // boton haga lo suyo. Cerrarlo en mousedown mataba el handler del boton.
+  if (menuOpen && menuEl.contains(e.target)) return
+
   hideMenu()
 
   if (e.button === 2) {                       // click derecho sobre ella: menu
@@ -182,7 +189,8 @@ window.addEventListener('mousedown', (e) => {
   touched()
 })
 
-window.addEventListener('mouseup', () => {
+window.addEventListener('mouseup', (e) => {
+  if (menuOpen && menuEl.contains(e.target)) return
   if (!grip) return
   const held = performance.now() - grip.downAt
 
@@ -285,7 +293,12 @@ function showMenu (x, y) {
   for (const [label, action] of MENU_ITEMS) {
     const b = document.createElement('button')
     b.textContent = label
-    b.addEventListener('click', () => { action(); touched(); hideMenu() })
+    b.addEventListener('mouseup', (ev) => {
+      ev.stopPropagation()
+      action()
+      touched()
+      hideMenu()
+    })
     menuEl.appendChild(b)
   }
   menuEl.hidden = false
@@ -315,6 +328,43 @@ function popHearts (x, y) {
       vx: (Math.random() - 0.5) * 22,
       life: 1
     })
+  }
+}
+
+/** Mientras duerme (o mientras la acaricias) le salen prrr flotando. */
+function maybePurr (now) {
+  if (!cat) return
+  const purring = cat.state === 'sleep' || cat.state === 'purr'
+  if (!purring) { nextPurr = now + 900; return }
+  if (now < nextPurr) return
+
+  const slow = cat.state === 'sleep'
+  nextPurr = now + (slow ? 2000 + Math.random() * 2400 : 900 + Math.random() * 900)
+
+  const b = cat.bounds
+  purrs.push({
+    text: 'p' + 'r'.repeat(3 + Math.floor(Math.random() * 4)),
+    x: b.x + b.w * (0.62 + Math.random() * 0.22),
+    y: b.y + b.h * (0.34 + Math.random() * 0.1),
+    vx: 6 + Math.random() * 10,
+    vy: -13 - Math.random() * 9,
+    life: 1,
+    size: 13 + Math.floor(Math.random() * 4)
+  })
+}
+
+function drawPurrs (dt) {
+  purrs = purrs.filter((p) => p.life > 0)
+  for (const p of purrs) {
+    p.life -= dt * 0.3
+    p.x += p.vx * dt
+    p.y += p.vy * dt
+    ctx.save()
+    ctx.globalAlpha = Math.max(0, Math.min(1, p.life * 1.4)) * 0.8
+    ctx.fillStyle = '#d8d1c6'
+    ctx.font = `italic ${p.size}px system-ui, sans-serif`
+    ctx.fillText(p.text, p.x, p.y)
+    ctx.restore()
   }
 }
 
@@ -419,6 +469,8 @@ function loop (now) {
     propSheet.draw(ctx, 'ball', ball.spin * 1000, ball.x, ball.y, cat.scale, false)
   }
   if (cat) cat.draw(ctx)
+  maybePurr(now)
+  drawPurrs(dt)
   drawHearts(dt)
   drawTip()
   drawBubble()

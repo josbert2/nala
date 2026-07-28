@@ -187,6 +187,35 @@ const SHORTCUTS = [
   ['Control+Alt+L', 'que venga', { type: 'come' }]
 ]
 
+/**
+ * Autotest de depuracion: le inyecta un click derecho encima y saca una foto
+ * de la ventana entera (el menu es DOM, asi que no sale en el canvas).
+ */
+function debugSelfTest () {
+  const out = process.env.NALA_SHOT || path.join(ROOT, 'debug-shot.png')
+
+  setTimeout(() => {
+    const r = hotRects[0]
+    if (!r) { console.warn('[nala] sin zona: no puedo probar el click derecho'); return }
+    const b = win.getBounds()
+    const x = Math.round(r.x + r.w / 2 - b.x)
+    const y = Math.round(r.y + r.h / 2 - b.y)
+    for (const type of ['mouseDown', 'mouseUp']) {
+      win.webContents.sendInputEvent({ type, x, y, button: 'right', clickCount: 1 })
+    }
+    console.log(`[nala] click derecho inyectado en ${x},${y}`)
+  }, 4000)
+
+  const shoot = async (file, why) => {
+    const img = await win.capturePage()
+    fs.writeFileSync(file, img.toPNG())
+    console.log(`[nala] captura (${why}) ->`, file)
+  }
+
+  setTimeout(() => shoot(out, 'menu abierto'), 5600)
+  setTimeout(() => shoot(out.replace(/\.png$/, '-durmiendo.png'), 'durmiendo'), 11000)
+}
+
 function registerShortcuts () {
   const ok = []
   for (const [accel, what, cmd] of SHORTCUTS) {
@@ -212,12 +241,6 @@ ipcMain.on('hot-rects', (_e, payload) => {
   }
 })
 
-ipcMain.on('debug-shot', (_e, dataUrl) => {
-  const out = process.env.NALA_SHOT || path.join(ROOT, 'debug-shot.png')
-  fs.writeFileSync(out, Buffer.from(dataUrl.split(',')[1], 'base64'))
-  console.log('[nala] captura del canvas ->', out)
-})
-
 ipcMain.handle('get-config', () => loadConfig())
 
 // ------------------------------------------------------------------------ ciclo
@@ -234,6 +257,7 @@ if (!singleInstance) {
     startGeometryPolling()
     startPointerPolling()
     registerShortcuts()
+    if (DEBUG) debugSelfTest()
 
     screen.on('display-metrics-changed', () => win && win.reload())
   })

@@ -8,6 +8,5 @@ contextBridge.exposeInMainWorld('nala', {
   onCommand: (cb) => ipcRenderer.on('command', (_e, cmd) => cb(cmd)),
   onPointer: (cb) => ipcRenderer.on('pointer', (_e, p) => cb(p)),
   setHotRects: (rects, force) => ipcRenderer.send('hot-rects', { rects, force }),
-  getConfig: () => ipcRenderer.invoke('get-config'),
-  debugShot: (dataUrl) => ipcRenderer.send('debug-shot', dataUrl)
+  getConfig: () => ipcRenderer.invoke('get-config')
 })
