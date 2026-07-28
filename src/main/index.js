@@ -115,6 +115,7 @@ function buildTray () {
     { type: 'separator' },
     { label: 'Servirle la comida', click: send('command', { type: 'feed' }) },
     { label: 'Sacar la pelota', click: send('command', { type: 'play' }) },
+    { label: 'Darle un premio', click: send('command', { type: 'treat' }) },
     { type: 'separator' },
     { label: 'Que venga', click: send('command', { type: 'come' }) },
     { label: 'Que duerma', click: send('command', { type: 'sleep' }) },

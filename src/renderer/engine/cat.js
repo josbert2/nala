@@ -3,6 +3,7 @@
 const GRAVITY = 1500        // px/s^2
 const WALK_SPEED = 42       // px/s
 const RUN_SPEED = 130
+const SLIDE_SPEED = 320     // el envion del derrape
 const MAX_FALL = 900
 
 // Estados que son "estar quieta en algun lado" y pueden elegirse al azar.
@@ -55,7 +56,12 @@ export class Cat {
     switch (state) {
       case 'walkTo': return 'walk'
       case 'chase':
-      case 'chaseBall': return 'run'
+      case 'chaseBall':
+      case 'chaseCursor': return 'run'
+      case 'slide': return 'slide'
+      case 'seek': return 'walk'
+      case 'eatTreat': return 'eat'
+      case 'meow': return 'alert'
       case 'jump':
       case 'fall': return 'fall'
       case 'purr': return 'idle'
@@ -79,6 +85,11 @@ export class Cat {
       case 'crouch': return r(900, 1900)
       case 'play': return r(2500, 6000)
       case 'chaseBall': return 9000
+      case 'chaseCursor': return 7000
+      case 'slide': return 2600
+      case 'eatTreat': return 20000
+      case 'seek': return 14000
+      case 'meow': return 2200
       default: return 4000
     }
   }
@@ -140,6 +151,13 @@ export class Cat {
     const cy = b.y + b.h / 2
     const dist = Math.hypot(p.x - cx, p.y - cy)
 
+    // Le sacudis el cursor cerca y sale a cazarlo, como con un puntero laser.
+    if (p.speed > 850 && dist < 340 && this.energy > 0.28 &&
+        (RESTING.includes(this.state) || this.state === 'watch')) {
+      this.setState('chaseCursor')
+      return
+    }
+
     // Cursor muy cerca y moviendose: se despierta y mira.
     if (dist < 160 && p.movingMs < 400) {
       if (this.state === 'sleep') {
@@ -180,13 +198,72 @@ export class Cat {
         const ball = this.props && this.props.ball
         if (!ball || !ball.active) { this.setState('idle', 1200); break }
         const dx = ball.x - this.x
-        if (Math.abs(dx) < 34 && Math.abs(ball.y - this.y) < 60) {
+        const adx = Math.abs(dx)
+        if (adx < 34 && Math.abs(ball.y - this.y) < 60) {
           this.vx = 0
+          this.pounceTarget = ball.x
           this.setState('crouch')
           break
         }
         this.facing = Math.sign(dx) || 1
+        // Viene de lejos y a veces se tira de panza a derrapar hasta la pelota.
+        if (adx > 60 && adx < 220 && this.energy > 0.35 && Math.random() < dt * 2.6) {
+          this._startSlide(ball.x)
+          break
+        }
         this.vx = this.facing * RUN_SPEED
+        break
+      }
+      case 'slide': {
+        // Derrape: viene a fondo y va frenando. Si toca la pelota, la empuja.
+        this.vx *= Math.pow(0.14, dt)
+        const ball = this.props && this.props.ball
+        if (ball && ball.active && Math.abs(ball.x - this.x) < 32 &&
+            Math.abs(ball.y - this.y) < 50) {
+          // El envion del derrape se la lleva puesta, con suerte variable.
+          ball.vx = this.vx * (1.1 + Math.random() * 2.2)
+          ball.vy = Math.min(ball.vy, -(90 + Math.random() * 260))
+          ball.idleFor = 0
+        }
+        if (Math.abs(this.vx) < 28) {
+          this.vx = 0
+          this.setState('play')
+        }
+        break
+      }
+      case 'chaseCursor': {
+        const p = ctx.pointer
+        if (!p.active) { this.setState('idle', 1000); break }
+        const dx = p.x - this.x
+        this.facing = Math.sign(dx) || 1
+        if (Math.abs(dx) < 40) {
+          this.vx = 0
+          this.pounceTarget = p.x
+          this.setState('crouch', 600)
+          break
+        }
+        this.vx = this.facing * RUN_SPEED
+        break
+      }
+      case 'eatTreat': {
+        this.vx = 0
+        const treat = this.props && this.props.treat
+        if (!treat || !treat.active) { this.setState('groom', 4000); break }
+        this.facing = treat.x > this.x ? 1 : -1
+        if (treat.nibble(dt)) {
+          this.energy = Math.min(1, this.energy + 0.2)
+          this.setState('groom', 5000)
+        }
+        break
+      }
+      case 'seek': {
+        // Te extraña: camina hacia donde esta tu cursor.
+        const p = ctx.pointer
+        if (!p.active) { this.setState('idle', 1200); break }
+        const dx = p.x - this.x
+        if (Math.abs(dx) < 70) { this.vx = 0; this.setState('watch', 4000); break }
+        this.facing = Math.sign(dx)
+        this.vx = this.facing * WALK_SPEED
         break
       }
       case 'crouch': {
@@ -288,7 +365,14 @@ export class Cat {
   _decide (ctx) {
     const roll = Math.random()
 
-    // El plato servido gana sobre cualquier otra cosa.
+    // El premio gana sobre todo lo demas. Es un premio.
+    const treat = this.props && this.props.treat
+    if (treat && treat.active && this.state !== 'eatTreat') {
+      this.goTo(treat.x, 'eatTreat')
+      return
+    }
+
+    // Despues el plato servido.
     const bowl = this.props && this.props.bowl
     if (bowl && bowl.food > 0 && this.state !== 'eat') {
       this.goTo(bowl.x, 'eat')
@@ -329,9 +413,19 @@ export class Cat {
     this.setState(pool[Math.floor(Math.random() * pool.length)])
   }
 
+  /** Arranca el derrape hacia tx. */
+  _startSlide (tx) {
+    this.facing = tx >= this.x ? 1 : -1
+    this.vx = this.facing * SLIDE_SPEED
+    this.setState('slide', 2600)
+  }
+
   _pounceAtBall () {
     const ball = this.props && this.props.ball
-    const tx = ball && ball.active ? ball.x : this.x + this.facing * 70
+    const tx = this.pounceTarget != null
+      ? this.pounceTarget
+      : (ball && ball.active ? ball.x : this.x + this.facing * 70)
+    this.pounceTarget = null
     this.facing = tx >= this.x ? 1 : -1
     this.vy = -330
     const timeUp = -this.vy / GRAVITY
@@ -372,6 +466,27 @@ export class Cat {
     bowl.serve()
     this.energy = Math.max(this.energy, 0.55)
     this.goTo(bowl.x, 'eat')
+  }
+
+  /** Le tiras un premio. Va corriendo. */
+  giveTreat (x) {
+    const treat = this.props && this.props.treat
+    if (!treat) return
+    treat.drop(x != null ? x : this.x + (Math.random() < 0.5 ? -1 : 1) * 160)
+    this.energy = Math.max(this.energy, 0.5)
+    this.goTo(treat.x, 'eatTreat')
+  }
+
+  /** Maulla. */
+  meow () {
+    this.setState('meow')
+  }
+
+  /** Hace rato que no la tocas: te viene a buscar. */
+  missYou () {
+    if (this.airborne || this.state === 'eat' || this.state === 'eatTreat') return
+    this.energy = Math.max(this.energy, 0.45)
+    this.setState('seek')
   }
 
   /** Hora de jugar: aparece la pelota cerca de ella. */

@@ -3,7 +3,7 @@
 import { SpriteSheet } from './engine/sprites.js'
 import { World } from './engine/world.js'
 import { Cat } from './engine/cat.js'
-import { Bowl, Ball } from './engine/props.js'
+import { Bowl, Ball, Treat } from './engine/props.js'
 import { Moments, Notes, Schedule } from './engine/moments.js'
 
 const canvas = document.getElementById('stage')
@@ -14,6 +14,11 @@ const tipEl = document.getElementById('tip')
 // Lo que se muestra en el tooltip segun lo que este haciendo.
 const ACTION_LABELS = {
   play: 'jugando',
+  slide: 'derrapando',
+  chaseCursor: 'cazando el cursor',
+  seek: 'buscandote',
+  meow: 'miau',
+  eatTreat: 'comiendo',
   chaseBall: 'jugando',
   crouch: 'jugando',
   pounce: 'jugando',
@@ -29,6 +34,7 @@ let world = null
 let cat = null
 let bowl = null
 let ball = null
+let treat = null
 let meals = null
 let playtimes = null
 let moments = null
@@ -37,7 +43,17 @@ let origin = { x: 0, y: 0 }        // esquina de la pantalla que cubre la ventan
 let interactive = false
 let hearts = []
 
-const pointer = { x: -1, y: -1, active: false, movingMs: 9999, lastMove: 0 }
+const pointer = { x: -1, y: -1, active: false, movingMs: 9999, lastMove: 0, speed: 0 }
+
+let lastTouch = performance.now()   // ultima vez que interactuaste con ella
+let missCooldown = 0
+let missAfterMs = 12 * 60 * 1000    // cuanto aguanta antes de venir a buscarte
+
+/** Marca que la tocaste. Corta el "te extraña". */
+function touched () {
+  lastTouch = performance.now()
+  missCooldown = lastTouch
+}
 
 // --------------------------------------------------------------------- setup
 
@@ -62,12 +78,14 @@ window.nala.onBoot(async ({ config, display }) => {
   cat = new Cat(world, sheet, config.scale || 2)
   bowl = new Bowl(world, config.bowlAt != null ? config.bowlAt : 0.12)
   ball = new Ball(world)
-  cat.props = { bowl, ball }
+  treat = new Treat(world)
+  cat.props = { bowl, ball, treat }
 
   meals = new Schedule(config.meals)
   playtimes = new Schedule(config.playtimes)
   moments = new Moments(config.moments)
   notes = new Notes(config.notes, (config.noteEveryMinutes || 25) * 60 * 1000)
+  missAfterMs = (config.missYouAfterMinutes || 12) * 60 * 1000
 
   resize()
   if (config.greeting) cat.say(config.greeting, 7000)
@@ -86,6 +104,7 @@ window.nala.onCommand((cmd) => {
   if (cmd.type === 'sleep') cat.napNow()
   if (cmd.type === 'feed') cat.mealtime()
   if (cmd.type === 'play') cat.playtime()
+  if (cmd.type === 'treat') cat.giveTreat()
   if (cmd.type === 'free') { cat.target = null; cat.after = null; cat.setState('idle', 500) }
 })
 
@@ -93,49 +112,87 @@ window.addEventListener('resize', resize)
 
 // ------------------------------------------------------------------- puntero
 
+const DRAG_THRESHOLD = 7        // px que hay que mover para que sea arrastre y no caricia
+const HOVER_PAD = 10            // margen extra alrededor de ella para el hit test
+
+// Que esta agarrando el mouse ahora mismo.
+let grip = null   // {kind:'cat'|'ball', downX, downY, downAt, moved}
+
 window.addEventListener('mousemove', (e) => {
+  const now = performance.now()
+  const dtMove = Math.max(1, now - pointer.lastMove)
+  pointer.speed = Math.hypot(e.clientX - pointer.x, e.clientY - pointer.y) / (dtMove / 1000)
   pointer.x = e.clientX
   pointer.y = e.clientY
   pointer.active = true
-  pointer.lastMove = performance.now()
-  if (cat && cat.pinned) { cat.x = e.clientX; cat.y = e.clientY + 20 }
+  pointer.lastMove = now
+
+  if (!grip) return
+
+  if (!grip.moved &&
+      Math.hypot(e.clientX - grip.downX, e.clientY - grip.downY) > DRAG_THRESHOLD) {
+    grip.moved = true
+    if (grip.kind === 'cat') cat.grab(e.clientX, e.clientY + 20)
+  }
+
+  if (!grip.moved) return
+  if (grip.kind === 'cat') { cat.x = e.clientX; cat.y = e.clientY + 20 }
+  if (grip.kind === 'ball') ball.hold(e.clientX, e.clientY)
 })
 
 window.addEventListener('mousedown', (e) => {
-  if (!cat || e.button !== 0) return
+  if (!cat) return
+  hideMenu()
 
-  // Manotazo a la pelota: la pateás vos.
-  if (hitBall(e.clientX, e.clientY)) {
-    ball.kick(e.clientX > ball.x ? -1 : 1, 1.1)
+  if (e.button === 2) {                       // click derecho sobre ella: menu
+    if (hit(e.clientX, e.clientY)) { showMenu(e.clientX, e.clientY); e.preventDefault() }
     return
   }
+  if (e.button !== 0) return
 
-  if (hit(e.clientX, e.clientY)) {
-    cat.grab(e.clientX, e.clientY + 20)
-    cat._dragStart = performance.now()
-  }
+  const kind = hitBall(e.clientX, e.clientY) ? 'ball' : hit(e.clientX, e.clientY) ? 'cat' : null
+  if (!kind) return
+  grip = { kind, downX: e.clientX, downY: e.clientY, downAt: performance.now(), moved: false }
+  touched()
 })
 
-window.addEventListener('mouseup', (e) => {
-  if (!cat || !cat.pinned) return
-  const quick = performance.now() - (cat._dragStart || 0) < 220
-  cat.release()
-  if (quick) { cat.pet(); popHearts(cat.x, cat.y - 40) }   // fue un click, no un arrastre
+window.addEventListener('mouseup', () => {
+  if (!grip) return
+  const held = performance.now() - grip.downAt
+
+  if (grip.kind === 'ball') {
+    if (grip.moved) ball.drop()
+    else ball.kick(pointer.x > ball.x ? -1 : 1, 1.1)   // fue un manotazo
+  } else if (grip.moved) {
+    cat.release()                                       // la levantaste y la soltas
+  } else {
+    // No la moviste: fue una caricia. Cuanto mas la sostuviste, mas ronronea.
+    cat.pet()
+    const bursts = held > 700 ? 3 : 1
+    for (let i = 0; i < bursts; i++) popHearts(cat.x + (i - 1) * 12, cat.y - 40 - i * 8)
+    if (held > 700) cat.setState('purr', 7000)
+  }
+
+  grip = null
+  touched()
 })
 
 window.addEventListener('dblclick', (e) => {
-  if (cat && hit(e.clientX, e.clientY)) cat.pet()
+  if (cat && hit(e.clientX, e.clientY)) { cat.meow(); touched() }
 })
+
+window.addEventListener('contextmenu', (e) => e.preventDefault())
 
 function hit (x, y) {
   if (!cat) return false
   const b = cat.bounds
-  return x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h
+  return x >= b.x - HOVER_PAD && x <= b.x + b.w + HOVER_PAD &&
+         y >= b.y - HOVER_PAD && y <= b.y + b.h + HOVER_PAD
 }
 
 function hitBall (x, y) {
   if (!ball || !ball.active) return false
-  const r = 9 * cat.scale
+  const r = 9 * cat.scale + HOVER_PAD
   return Math.hypot(x - ball.x, y - (ball.y - 7 * cat.scale)) <= r
 }
 
@@ -145,12 +202,50 @@ function hitBall (x, y) {
  */
 function updateInteractive () {
   const want = cat
-    ? (cat.pinned || hit(pointer.x, pointer.y) || hitBall(pointer.x, pointer.y))
+    ? (menuOpen || !!grip || cat.pinned ||
+       hit(pointer.x, pointer.y) || hitBall(pointer.x, pointer.y))
     : false
   if (want !== interactive) {
     interactive = want
     window.nala.setInteractive(want)
   }
+}
+
+// ----------------------------------------------------------------- menu rapido
+
+const menuEl = document.getElementById('menu')
+let menuOpen = false
+
+const MENU_ITEMS = [
+  ['Acariciarla', () => { cat.pet(); popHearts(cat.x, cat.y - 40) }],
+  ['Darle un premio', () => cat.giveTreat(cat.x + (Math.random() < 0.5 ? -1 : 1) * 170)],
+  ['Sacar la pelota', () => cat.playtime()],
+  ['Servirle la comida', () => cat.mealtime()],
+  ['Que duerma', () => cat.napNow()]
+]
+
+function showMenu (x, y) {
+  menuEl.innerHTML = ''
+  for (const [label, action] of MENU_ITEMS) {
+    const b = document.createElement('button')
+    b.textContent = label
+    b.addEventListener('click', () => { action(); touched(); hideMenu() })
+    menuEl.appendChild(b)
+  }
+  menuEl.hidden = false
+  menuOpen = true
+  const w = menuEl.offsetWidth
+  const h = menuEl.offsetHeight
+  menuEl.style.left = `${Math.min(x, window.innerWidth - w - 8)}px`
+  menuEl.style.top = `${Math.min(y, window.innerHeight - h - 8)}px`
+  menuEl.dataset.show = '1'
+}
+
+function hideMenu () {
+  if (!menuOpen) return
+  menuOpen = false
+  menuEl.dataset.show = '0'
+  menuEl.hidden = true
 }
 
 // ------------------------------------------------------------------ corazones
@@ -247,6 +342,12 @@ function loop (now) {
 
     bowl.update(dt)
     ball.update(dt)
+
+    // Hace rato que no la tocas: te viene a buscar.
+    if (now - lastTouch > missAfterMs && now - missCooldown > missAfterMs) {
+      missCooldown = now
+      cat.missYou()
+    }
     cat.update(dt, { pointer })
     updateInteractive()
   }
@@ -254,6 +355,9 @@ function loop (now) {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   if (bowl && bowl.visible) {
     propSheet.draw(ctx, bowl.anim, now, bowl.x, bowl.y, cat.scale, false)
+  }
+  if (treat && treat.active) {
+    propSheet.draw(ctx, 'treat', now, treat.x, treat.y, cat.scale, false)
   }
   if (ball && ball.active) {
     propSheet.draw(ctx, 'ball', ball.spin * 1000, ball.x, ball.y, cat.scale, false)

@@ -4,6 +4,8 @@ const GRAVITY = 1500
 const BOUNCE = 0.52
 const FRICTION = 0.86
 
+const clamp = (v, max) => Math.max(-max, Math.min(max, v))
+
 /** El plato. Vive en un punto fijo del piso y se llena a las horas de comer. */
 export class Bowl {
   constructor (world, xFraction = 0.12) {
@@ -39,6 +41,33 @@ export class Bowl {
   }
 }
 
+/** Un premio en el piso. Ella corre a comerlo. */
+export class Treat {
+  constructor (world) {
+    this.world = world
+    this.active = false
+    this.x = 0
+    this.amount = 0
+  }
+
+  get y () { return this.world.floor.y }
+
+  drop (x) {
+    this.active = true
+    this.x = Math.max(30, Math.min(this.world.width - 30, x))
+    this.amount = 1
+  }
+
+  nibble (dt, seconds = 4) {
+    this.amount -= dt / seconds
+    if (this.amount <= 0) {
+      this.active = false
+      return true
+    }
+    return false
+  }
+}
+
 /** La pelotita. Rueda, rebota y se queda quieta hasta que alguien la toca. */
 export class Ball {
   constructor (world) {
@@ -50,6 +79,24 @@ export class Ball {
     this.vy = 0
     this.spin = 0
     this.idleFor = 0
+    this.held = false        // el usuario la esta arrastrando
+  }
+
+  /** La agarras con el mouse: queda suspendida donde la lleves. */
+  hold (x, y) {
+    this.held = true
+    this.vx = (x - this.x) * 8
+    this.vy = (y - this.y) * 8
+    this.x = x
+    this.y = y
+    this.idleFor = 0
+  }
+
+  drop () {
+    this.held = false
+    // Se va con la velocidad que traia la mano.
+    this.vx = Math.max(-600, Math.min(600, this.vx))
+    this.vy = Math.max(-600, Math.min(600, this.vy))
   }
 
   spawn (x, y) {
@@ -61,9 +108,16 @@ export class Ball {
     this.idleFor = 0
   }
 
+  /**
+   * Un manotazo. La distancia sale distinta cada vez, y cada tanto le pega
+   * justo y la pelota sale disparada de punta a punta de la pantalla.
+   */
   kick (dir, power = 1) {
-    this.vx = dir * (120 + Math.random() * 180) * power
-    this.vy = -(120 + Math.random() * 160) * power
+    const blast = Math.random() < 0.22 ? 2.0 + Math.random() * 1.4 : 0.7 + Math.random() * 0.8
+    const p = power * blast
+    this.vx = clamp(dir * (110 + Math.random() * 210) * p, 1500)
+    this.vy = clamp(-(100 + Math.random() * 180) * p, 1100)
+    this.blast = blast > 1.8
     this.idleFor = 0
   }
 
@@ -72,7 +126,7 @@ export class Ball {
   }
 
   update (dt) {
-    if (!this.active) return
+    if (!this.active || this.held) return
 
     this.vy += GRAVITY * dt
     this.x += this.vx * dt

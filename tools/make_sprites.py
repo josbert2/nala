@@ -350,6 +350,25 @@ def pose_play(d, t, P):
     head(d, 27, GROUND - 22, P, eyes="open", tilt=0.3)
 
 
+def pose_slide(d, t, P):
+    """Derrapando de panza: cuerpo bajo y estirado, patas atras, polvito."""
+    tail(d, (6, GROUND - 13), (0, GROUND - 22), (9, GROUND - 27), P["dark"])
+    # patas traseras arrastrando
+    leg(d, 10, GROUND - 8, GROUND - 2, P["dark"])
+    leg(d, 15, GROUND - 8, GROUND - 1, P["dark"])
+    stripes_body(d, 23, GROUND - 12, 11, 4, P)
+    ell(d, 23, GROUND - 10, 13, 5, P["base"])
+    ell(d, 25, GROUND - 7.5, 10, 3, P["light"])
+    # patas delanteras estiradas hacia adelante
+    d.rectangle([32, GROUND - 10, 42, GROUND - 7], fill=P["base"])
+    d.rectangle([32, GROUND - 6, 40, GROUND - 3], fill=P["base"])
+    head(d, 33, GROUND - 17, P, eyes="half", tilt=-0.5)
+    # polvito del derrape, se va corriendo con el frame
+    for i in range(3):
+        x = 8 + i * 5 - t * 5
+        ell(d, x, GROUND - 2 - i * 0.8, 1.1 + i * 0.4, 0.9, P["light"])
+
+
 def pose_sit_alert(d, t, P):
     """Sentada, atenta, mirando al cursor. Orejas paradas, cola inquieta."""
     swish = math.sin(t * math.tau * 2) * 5
@@ -378,6 +397,7 @@ ANIMATIONS = [
     ("crouch",       pose_crouch,     6,     10,   True),
     ("pounce",       pose_pounce,     4,     12,   False),
     ("play",         pose_play,       6,     9,    True),
+    ("slide",        pose_slide,      4,     12,   True),
 ]
 
 # ------------------------------------------------------------------- objetos
@@ -405,10 +425,23 @@ def prop_ball(d, t, P):
     ell(d, hx, hy, 1.8, 1.8, (240, 168, 170, 255))
 
 
+def prop_treat(d, t, P):
+    """Un pescadito. El premio."""
+    bob = math.sin(t * math.tau) * 0.6
+    y = 15 + bob
+    body = (226, 150, 118, 255)
+    ell(d, 11, y, 6, 3.4, body)
+    d.polygon([(16.5, y), (21, y - 3.4), (21, y + 3.4)], fill=body)   # cola
+    d.polygon([(10, y - 3), (13, y - 5.5), (14, y - 2.6)], fill=(206, 126, 96, 255))
+    ell(d, 7.5, y - 0.8, 0.9, 0.9, (74, 62, 56, 255))                # ojo
+    d.line([(9, y + 1.4), (14, y + 1.4)], fill=(206, 126, 96, 255))
+
+
 PROPS = [
     ("bowl_empty", lambda d, t, P: prop_bowl(d, t, P, False), 1, 1, False),
     ("bowl_full",  lambda d, t, P: prop_bowl(d, t, P, True),  1, 1, False),
     ("ball",       prop_ball,                                  6, 10, True),
+    ("treat",      prop_treat,                                 4, 5,  True),
 ]
 
 

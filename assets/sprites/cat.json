@@ -96,6 +96,12 @@
       "frames": 6,
       "fps": 9,
       "loop": true
+    },
+    "slide": {
+      "row": 14,
+      "frames": 4,
+      "fps": 12,
+      "loop": true
     }
   }
 }

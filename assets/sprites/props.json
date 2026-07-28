@@ -22,6 +22,12 @@
       "frames": 6,
       "fps": 10,
       "loop": true
+    },
+    "treat": {
+      "row": 3,
+      "frames": 4,
+      "fps": 5,
+      "loop": true
     }
   }
 }
