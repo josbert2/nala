@@ -19,6 +19,20 @@ npm start
 Queda un ícono en el tray. Desde ahí: servirle la comida, sacarle la pelota,
 llamarla, hacerla dormir, esconderla o salir.
 
+En GNOME el ícono de bandeja depende de la extensión **AppIndicator**, que no
+siempre está instalada. Por eso hay dos caminos que siempre funcionan:
+
+**Atajos globales**
+
+| Atajo | |
+|---|---|
+| `Ctrl+Alt+P` | sacar la pelota |
+| `Ctrl+Alt+O` | darle un premio |
+| `Ctrl+Alt+C` | servirle la comida |
+| `Ctrl+Alt+L` | que venga |
+
+**Click derecho sobre ella** abre el mismo menú ahí mismo.
+
 ### Interacción
 
 | Acción | Qué hace |
@@ -26,7 +40,9 @@ llamarla, hacerla dormir, esconderla o salir.
 | Click sobre ella | La acariciás. Ronronea y salen corazones. |
 | Arrastrarla | La levantás y la soltás donde quieras. Cae con gravedad. |
 | Click en la pelota | Se la pateás. Ella la persigue. |
-| Doble click | Ronronea. |
+| Doble click | Maúlla. |
+| Zarandear el mouse cerca | Sale a cazar el cursor. Pide un zarandeo deliberado, no cualquier movimiento. |
+| Click derecho sobre ella | Menú rápido. |
 
 Cuando está jugando o ronroneando aparece un tooltip chiquito arriba de ella
 diciendo qué está haciendo.
@@ -158,6 +174,14 @@ Sin esto la app arranca igual: Nala se queda viviendo en el piso.
   ```
 - **HiDPI**: si tenés escalado distinto de 100%, las coordenadas de las ventanas
   pueden quedar corridas respecto de las repisas.
+- **Puntero en Linux**: `setIgnoreMouseEvents(ignore, {forward:true})` solo
+  reenvía eventos de mouse en Windows y macOS. En Linux el proceso principal
+  consulta `screen.getCursorScreenPoint()` a 60 Hz y le pasa la posición al
+  renderer. Sin eso la ventana nunca se volvía sólida y los clicks se iban a
+  las ventanas de atrás.
+- **Depurar**: `NALA_DEBUG=1 npm start` loguea cuándo la ventana pasa a sólida,
+  dónde está su zona sensible, y guarda una captura del canvas en
+  `debug-shot.png` para poder ver qué está dibujando de verdad.
 - **Multi-monitor**: por ahora vive en el monitor primario.
 
 ---

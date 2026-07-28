@@ -43,7 +43,10 @@ let origin = { x: 0, y: 0 }        // esquina de la pantalla que cubre la ventan
 let lastHotKey = ''
 let hearts = []
 
-const pointer = { x: -1, y: -1, active: false, movingMs: 9999, lastMove: 0, speed: 0 }
+const pointer = {
+  x: -1, y: -1, active: false, movingMs: 9999, lastMove: 0,
+  speed: 0, wiggle: 0, lastDir: 0, reversals: []
+}
 
 let lastTouch = performance.now()   // ultima vez que interactuaste con ella
 let missCooldown = 0
@@ -66,7 +69,7 @@ function resize () {
   if (world) world.resize(window.innerWidth, window.innerHeight)
 }
 
-window.nala.onBoot(async ({ config, display }) => {
+window.nala.onBoot(async ({ config, display, debug }) => {
   origin = { x: display.x, y: display.y }
 
   ;[sheet, propSheet] = await Promise.all([
@@ -80,6 +83,7 @@ window.nala.onBoot(async ({ config, display }) => {
   ball = new Ball(world)
   treat = new Treat(world)
   cat.props = { bowl, ball, treat }
+  world.setFloorMargin((sheet.ch - sheet.ground) * cat.scale + 2)
 
   meals = new Schedule(config.meals)
   playtimes = new Schedule(config.playtimes)
@@ -90,6 +94,15 @@ window.nala.onBoot(async ({ config, display }) => {
   resize()
   if (config.greeting) cat.say(config.greeting, 7000)
   requestAnimationFrame(loop)
+
+  if (debug) {
+    // Autotest: saca la pelota y captura el canvas para poder mirarlo.
+    setTimeout(() => { cat.playtime(); console.log('[nala] playtime() llamado') }, 2500)
+    setTimeout(() => {
+      console.log(`[nala] ball.active=${ball.active} x=${ball.x.toFixed(0)} y=${ball.y.toFixed(0)} estado=${cat.state}`)
+      window.nala.debugShot(canvas.toDataURL('image/png'))
+    }, 5000)
+  }
 })
 
 window.nala.onWindows((rects) => {
@@ -128,6 +141,15 @@ window.nala.onPointer((p) => {
   const now = performance.now()
   const dtMove = Math.max(8, now - pointer.lastMove)
   pointer.speed = Math.hypot(x - pointer.x, y - pointer.y) / (dtMove / 1000)
+  // Zarandeo: cuantas veces cambiaste de direccion en el ultimo medio segundo.
+  const dir = Math.sign(x - pointer.x)
+  if (dir !== 0 && dir !== pointer.lastDir) {
+    pointer.lastDir = dir
+    pointer.reversals.push(now)
+  }
+  pointer.reversals = pointer.reversals.filter((t) => now - t < 600)
+  pointer.wiggle = pointer.reversals.length
+
   pointer.x = x
   pointer.y = y
   pointer.active = true

@@ -1,6 +1,8 @@
 'use strict'
 
-const { app, BrowserWindow, screen, ipcMain, Tray, Menu, nativeImage, shell } = require('electron')
+const {
+  app, BrowserWindow, screen, ipcMain, Tray, Menu, nativeImage, shell, globalShortcut
+} = require('electron')
 const path = require('path')
 const fs = require('fs')
 
@@ -72,7 +74,8 @@ function createWindow () {
     win.webContents.send('boot', {
       config: loadConfig(),
       display: { x, y, width, height, scaleFactor: display.scaleFactor },
-      platform: process.platform
+      platform: process.platform,
+      debug: DEBUG
     })
   })
 
@@ -142,6 +145,11 @@ function buildTray () {
     ? nativeImage.createFromPath(iconPath)
     : nativeImage.createEmpty()
 
+  if (icon.isEmpty()) {
+    console.warn('[nala] falta assets/tray.png: el icono de bandeja va a quedar vacio.')
+    console.warn('[nala] regeneralo con: python3 tools/make_sprites.py')
+  }
+
   tray = new Tray(icon)
   const cfg = loadConfig()
   tray.setToolTip(cfg.name || 'Nala')
@@ -167,6 +175,30 @@ function buildTray () {
   ]))
 }
 
+// ---------------------------------------------------------------------- atajos
+//
+// En GNOME el icono de bandeja depende de la extension AppIndicator, que no
+// siempre esta. Los atajos son el camino que siempre funciona.
+
+const SHORTCUTS = [
+  ['Control+Alt+P', 'la pelota', { type: 'play' }],
+  ['Control+Alt+O', 'un premio', { type: 'treat' }],
+  ['Control+Alt+C', 'la comida', { type: 'feed' }],
+  ['Control+Alt+L', 'que venga', { type: 'come' }]
+]
+
+function registerShortcuts () {
+  const ok = []
+  for (const [accel, what, cmd] of SHORTCUTS) {
+    const done = globalShortcut.register(accel, () => {
+      if (win && !win.isDestroyed()) win.webContents.send('command', cmd)
+    })
+    if (done) ok.push(`${accel} = ${what}`)
+  }
+  if (ok.length) console.log('[nala] atajos:', ok.join('  |  '))
+  else console.warn('[nala] no pude registrar ningun atajo global')
+}
+
 // ------------------------------------------------------------------------- ipc
 
 // El renderer nos dice donde estan sus zonas sensibles (ella y la pelota),
@@ -178,6 +210,12 @@ ipcMain.on('hot-rects', (_e, payload) => {
     const r = hotRects[0]
     console.log(`[nala] zona de Nala: ${r.x},${r.y} ${r.w}x${r.h} force=${forceInteractive}`)
   }
+})
+
+ipcMain.on('debug-shot', (_e, dataUrl) => {
+  const out = process.env.NALA_SHOT || path.join(ROOT, 'debug-shot.png')
+  fs.writeFileSync(out, Buffer.from(dataUrl.split(',')[1], 'base64'))
+  console.log('[nala] captura del canvas ->', out)
 })
 
 ipcMain.handle('get-config', () => loadConfig())
@@ -195,6 +233,7 @@ if (!singleInstance) {
     buildTray()
     startGeometryPolling()
     startPointerPolling()
+    registerShortcuts()
 
     screen.on('display-metrics-changed', () => win && win.reload())
   })
@@ -203,5 +242,6 @@ if (!singleInstance) {
   app.on('before-quit', () => {
     clearInterval(geometryTimer)
     clearInterval(pointerTimer)
+    globalShortcut.unregisterAll()
   })
 }

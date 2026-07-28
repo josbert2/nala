@@ -5,6 +5,7 @@ const WALK_SPEED = 42       // px/s
 const RUN_SPEED = 130
 const SLIDE_SPEED = 320     // el envion del derrape
 const MAX_FALL = 900
+const HUNT_COOLDOWN = 20000  // cuanto espera antes de volver a cazar el cursor
 
 // Estados que son "estar quieta en algun lado" y pueden elegirse al azar.
 const RESTING = ['idle', 'sit', 'sleep', 'groom', 'stretch']
@@ -33,6 +34,7 @@ export class Cat {
     this.props = null          // {bowl, ball}
     this.pinned = false        // el usuario la agarro con el mouse
     this.bubble = null         // {text, until}
+    this.huntCooldownUntil = 0 // no vuelve a cazar el cursor hasta aca
   }
 
   get bounds () {
@@ -152,8 +154,13 @@ export class Cat {
     const dist = Math.hypot(p.x - cx, p.y - cy)
 
     // Le sacudis el cursor cerca y sale a cazarlo, como con un puntero laser.
-    if (p.speed > 850 && dist < 340 && this.energy > 0.28 &&
+    // Pide un zarandeo deliberado (varios cambios de direccion), no cualquier
+    // movimiento, y despues se toma un rato largo antes de volver a picar.
+    // Sin esto se la pasaba saltando mientras vos trabajabas.
+    if (p.speed > 1500 && p.wiggle >= 4 && dist < 260 && this.energy > 0.28 &&
+        performance.now() > this.huntCooldownUntil &&
         (RESTING.includes(this.state) || this.state === 'watch')) {
+      this.huntCooldownUntil = performance.now() + HUNT_COOLDOWN
       this.setState('chaseCursor')
       return
     }

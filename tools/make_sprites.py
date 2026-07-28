@@ -506,6 +506,31 @@ def build(palette_path, out_png, out_json):
 
     d = os.path.dirname(out_png)
     build_props(P, os.path.join(d, "props.png"), os.path.join(d, "props.json"))
+    build_icons(sheet, os.path.dirname(d))
+
+
+def build_icons(sheet, assets_dir):
+    """
+    Icono de bandeja y de la app, sacados de su pose sentada.
+    Sin tray.png Electron crea un icono vacio y el menu queda inalcanzable.
+    """
+    cell = sheet.crop((0, 0, CELL, CELL))          # idle, frame 0
+    bbox = cell.getbbox()
+    if bbox:
+        cell = cell.crop(bbox)
+
+    # Centrar en un cuadrado con un poco de aire.
+    side = max(cell.width, cell.height) + 4
+    square = Image.new("RGBA", (side, side), (0, 0, 0, 0))
+    square.paste(cell, ((side - cell.width) // 2, (side - cell.height) // 2), cell)
+
+    tray = square.resize((44, 44), Image.NEAREST)
+    tray.save(os.path.join(assets_dir, "tray.png"))
+
+    icon = square.resize((side * 12, side * 12), Image.NEAREST).resize((512, 512), Image.NEAREST)
+    icon.save(os.path.join(assets_dir, "icon.png"))
+
+    print(f"iconos -> {assets_dir}/tray.png (44x44), {assets_dir}/icon.png (512x512)")
 
 
 if __name__ == "__main__":

@@ -9,14 +9,23 @@ export class World {
   constructor (width, height) {
     this.width = width
     this.height = height
-    this.floor = { x1: 0, x2: width, y: height - 2, id: 'floor', title: 'piso' }
+    this.floorMargin = 2      // cuanto sobra del sprite por debajo de sus patas
     this.ledges = []
+    this.resize(width, height)
   }
 
   resize (width, height) {
     this.width = width
     this.height = height
-    this.floor = { x1: 0, x2: width, y: height - 2, id: 'floor', title: 'piso' }
+    this.floor = {
+      x1: 0, x2: width, y: height - this.floorMargin, id: 'floor', title: 'piso'
+    }
+  }
+
+  /** El sprite tiene pixeles por debajo de la linea de patas: no los cortemos. */
+  setFloorMargin (m) {
+    this.floorMargin = Math.max(2, m)
+    this.resize(this.width, this.height)
   }
 
   /**
