@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('nala', {
   onBoot: (cb) => ipcRenderer.on('boot', (_e, data) => cb(data)),
   onWindows: (cb) => ipcRenderer.on('windows', (_e, rects) => cb(rects)),
   onCommand: (cb) => ipcRenderer.on('command', (_e, cmd) => cb(cmd)),
-  setInteractive: (v) => ipcRenderer.send('set-interactive', v),
+  onPointer: (cb) => ipcRenderer.on('pointer', (_e, p) => cb(p)),
+  setHotRects: (rects, force) => ipcRenderer.send('hot-rects', { rects, force }),
   getConfig: () => ipcRenderer.invoke('get-config')
 })

@@ -79,6 +79,44 @@ function createWindow () {
   win.on('closed', () => { win = null })
 }
 
+// ------------------------------------------------------------------- puntero
+//
+// En Linux, setIgnoreMouseEvents(true, {forward:true}) NO reenvia los eventos
+// de mouse al renderer: `forward` solo anda en Windows y macOS. Sin eso la
+// ventana no puede saber si el cursor esta encima de ella, y queda siempre
+// atravesable. Asi que la posicion del cursor la consultamos desde aca y la
+// mandamos nosotros.
+
+const POINTER_MS = 16          // ~60 Hz
+const DEBUG = !!process.env.NALA_DEBUG
+
+let hotRects = []              // zonas que agarran el mouse, en coords de pantalla
+let forceInteractive = false   // el renderer manda: arrastrando o menu abierto
+let interactive = false
+let pointerTimer = null
+
+function startPointerPolling () {
+  pointerTimer = setInterval(() => {
+    if (!win || win.isDestroyed() || !win.isVisible()) return
+
+    const p = screen.getCursorScreenPoint()
+    win.webContents.send('pointer', p)
+
+    const inside = forceInteractive || hotRects.some(
+      (r) => p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h
+    )
+    if (inside !== interactive) {
+      interactive = inside
+      // Solida sobre ella: los clicks no pasan a lo que haya atras.
+      win.setIgnoreMouseEvents(!inside, { forward: true })
+      if (DEBUG) {
+        console.log(`[nala] ventana ${inside ? 'SOLIDA' : 'atravesable'} ` +
+                    `(cursor ${p.x},${p.y} / ${hotRects.length} zonas)`)
+      }
+    }
+  }, POINTER_MS)
+}
+
 // ---------------------------------------------------------- geometria de ventanas
 
 function startGeometryPolling () {
@@ -131,9 +169,15 @@ function buildTray () {
 
 // ------------------------------------------------------------------------- ipc
 
-ipcMain.on('set-interactive', (_e, interactive) => {
-  if (!win || win.isDestroyed()) return
-  win.setIgnoreMouseEvents(!interactive, { forward: true })
+// El renderer nos dice donde estan sus zonas sensibles (ella y la pelota),
+// en coordenadas de pantalla, y si hay que forzar la ventana solida.
+ipcMain.on('hot-rects', (_e, payload) => {
+  hotRects = Array.isArray(payload.rects) ? payload.rects : []
+  forceInteractive = !!payload.force
+  if (DEBUG && hotRects[0]) {
+    const r = hotRects[0]
+    console.log(`[nala] zona de Nala: ${r.x},${r.y} ${r.w}x${r.h} force=${forceInteractive}`)
+  }
 })
 
 ipcMain.handle('get-config', () => loadConfig())
@@ -150,10 +194,14 @@ if (!singleInstance) {
     createWindow()
     buildTray()
     startGeometryPolling()
+    startPointerPolling()
 
     screen.on('display-metrics-changed', () => win && win.reload())
   })
 
   app.on('window-all-closed', (e) => e.preventDefault())  // vive en el tray
-  app.on('before-quit', () => clearInterval(geometryTimer))
+  app.on('before-quit', () => {
+    clearInterval(geometryTimer)
+    clearInterval(pointerTimer)
+  })
 }

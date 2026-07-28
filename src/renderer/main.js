@@ -40,7 +40,7 @@ let playtimes = null
 let moments = null
 let notes = null
 let origin = { x: 0, y: 0 }        // esquina de la pantalla que cubre la ventana
-let interactive = false
+let lastHotKey = ''
 let hearts = []
 
 const pointer = { x: -1, y: -1, active: false, movingMs: 9999, lastMove: 0, speed: 0 }
@@ -118,26 +118,30 @@ const HOVER_PAD = 10            // margen extra alrededor de ella para el hit te
 // Que esta agarrando el mouse ahora mismo.
 let grip = null   // {kind:'cat'|'ball', downX, downY, downAt, moved}
 
-window.addEventListener('mousemove', (e) => {
+// La posicion del cursor la manda el proceso principal, no el DOM: cuando la
+// ventana esta en modo atravesable, en Linux no llega ningun evento de mouse.
+window.nala.onPointer((p) => {
+  const x = p.x - origin.x
+  const y = p.y - origin.y
+  if (x === pointer.x && y === pointer.y) return
+
   const now = performance.now()
-  const dtMove = Math.max(1, now - pointer.lastMove)
-  pointer.speed = Math.hypot(e.clientX - pointer.x, e.clientY - pointer.y) / (dtMove / 1000)
-  pointer.x = e.clientX
-  pointer.y = e.clientY
+  const dtMove = Math.max(8, now - pointer.lastMove)
+  pointer.speed = Math.hypot(x - pointer.x, y - pointer.y) / (dtMove / 1000)
+  pointer.x = x
+  pointer.y = y
   pointer.active = true
   pointer.lastMove = now
 
   if (!grip) return
 
-  if (!grip.moved &&
-      Math.hypot(e.clientX - grip.downX, e.clientY - grip.downY) > DRAG_THRESHOLD) {
+  if (!grip.moved && Math.hypot(x - grip.downX, y - grip.downY) > DRAG_THRESHOLD) {
     grip.moved = true
-    if (grip.kind === 'cat') cat.grab(e.clientX, e.clientY + 20)
+    if (grip.kind === 'cat') cat.grab(x, y + 20)
   }
-
   if (!grip.moved) return
-  if (grip.kind === 'cat') { cat.x = e.clientX; cat.y = e.clientY + 20 }
-  if (grip.kind === 'ball') ball.hold(e.clientX, e.clientY)
+  if (grip.kind === 'cat') { cat.x = x; cat.y = y + 20 }
+  if (grip.kind === 'ball') ball.hold(x, y)
 })
 
 window.addEventListener('mousedown', (e) => {
@@ -197,18 +201,48 @@ function hitBall (x, y) {
 }
 
 /**
- * La ventana cubre toda la pantalla, asi que por defecto el mouse la atraviesa.
- * Solo se vuelve solida cuando el cursor esta encima de la gata.
+ * La ventana cubre toda la pantalla y por defecto el mouse la atraviesa.
+ * Le pasamos al proceso principal las zonas donde SI tiene que agarrar el
+ * mouse: ella y la pelota. Ahi adentro la ventana se vuelve solida y nada
+ * llega a lo que haya atras.
  */
-function updateInteractive () {
-  const want = cat
-    ? (menuOpen || !!grip || cat.pinned ||
-       hit(pointer.x, pointer.y) || hitBall(pointer.x, pointer.y))
-    : false
-  if (want !== interactive) {
-    interactive = want
-    window.nala.setInteractive(want)
+function sendHotRects () {
+  if (!cat) return
+  const rects = []
+
+  const b = cat.bounds
+  rects.push({
+    x: Math.round(b.x - HOVER_PAD + origin.x),
+    y: Math.round(b.y - HOVER_PAD + origin.y),
+    w: Math.round(b.w + HOVER_PAD * 2),
+    h: Math.round(b.h + HOVER_PAD * 2)
+  })
+
+  if (ball && ball.active) {
+    const r = 9 * cat.scale + HOVER_PAD
+    rects.push({
+      x: Math.round(ball.x - r + origin.x),
+      y: Math.round(ball.y - 7 * cat.scale - r + origin.y),
+      w: Math.round(r * 2),
+      h: Math.round(r * 2)
+    })
   }
+
+  if (menuOpen) {
+    rects.push({
+      x: Math.round(menuEl.offsetLeft + origin.x),
+      y: Math.round(menuEl.offsetTop + origin.y),
+      w: menuEl.offsetWidth,
+      h: menuEl.offsetHeight
+    })
+  }
+
+  // Mientras arrastras o con el menu abierto no hay que soltarla nunca.
+  const force = menuOpen || !!grip || cat.pinned
+  const key = force + '|' + rects.map((r) => `${r.x},${r.y},${r.w},${r.h}`).join(';')
+  if (key === lastHotKey) return
+  lastHotKey = key
+  window.nala.setHotRects(rects, force)
 }
 
 // ----------------------------------------------------------------- menu rapido
@@ -349,7 +383,7 @@ function loop (now) {
       cat.missYou()
     }
     cat.update(dt, { pointer })
-    updateInteractive()
+    sendHotRects()
   }
 
   ctx.clearRect(0, 0, canvas.width, canvas.height)
