@@ -5,7 +5,61 @@ tener que volver a buscar.
 
 ---
 
-## 1. Que salga a jugar con el mouse sola, cada tanto
+## 1. Su ronroneo y su maullido de verdad
+
+**Qué se quiere:** que suene ella. Hoy la app es muda: los `prrr` flotando son
+un dibujo de un sonido, no el sonido.
+
+**Qué hace falta:** un video o audio donde ronronee o maúlle. De ahí se saca el
+audio (`ffmpeg -i video.mp4 -vn -acodec pcm_s16le audio.wav`), se recorta un
+ronroneo limpio de 2–3 s que loopee sin costura, y un maullido corto.
+
+**Dónde va:**
+
+- Archivos en `assets/audio/` (`ronroneo.ogg`, `miau.ogg`). Ojo con la CSP de
+  `src/renderer/index.html`: hay que agregarle `media-src 'self'`.
+- Un módulo nuevo `src/renderer/engine/sound.js` con Web Audio: un loop con
+  ganancia que sube y baja, no un `<audio>` suelto.
+- Enganches: `maybePurr()` en `src/renderer/main.js` ya sabe exactamente cuándo
+  ronronea (dormida o mientras la acarician) — ahí va el loop. El maullido va en
+  `cat.meow()` y cuando `cat.asking` pasa a `'comida'` / `'agua'`.
+- Volumen y un mute en el menú de bandeja, y guardarlo. Que arranque bajo:
+  esto tiene que poder quedar abierto todo el día sin molestar.
+
+**Por qué primero:** es lo de mayor retorno emocional y de los más baratos de
+hacer. Todo lo demás es dibujo; esto es ella.
+
+---
+
+## 2. Sus fotos de verdad
+
+**Qué se quiere:** que cada tanto aparezca una foto real suya, en un marquito,
+unos segundos, y se vaya. Y poder pedirla desde el menú → "Verla".
+
+**Qué hay hoy:** las herramientas están escritas y nunca se usaron —
+`tools/photo_to_sprite.py` y `tools/photo_palette.py`. El sprite actual es una
+interpretación de cuatro fotos, no las fotos.
+
+**Dónde va:**
+
+- Las fotos en `assets/fotos/`. Que el arranque las liste (o un `fotos.json`
+  con un pie de foto opcional por cada una: dónde fue, cuándo).
+- Un `<div>` nuevo en `src/renderer/index.html`, al lado de `#bubble` y
+  `#stats`. El CSS del marco en `src/renderer/style.css`.
+- El disparo puede colgarse de `Messages`: un grupo `foto` que en vez de texto
+  devuelva una imagen. O su propio timer, más raleado que los mensajes.
+- **Ojo con `sendHotRects()`**: si la foto es clickeable (para cerrarla o pasar
+  a la siguiente), su rectángulo tiene que entrar ahí o el click se va a la
+  ventana de atrás. Mismo problema que tuvo el menú.
+- Que se pueda pausar. Una foto que aparece sin avisar un día malo puede ser
+  demasiado — mejor que se pueda apagar desde el menú.
+
+**Nota:** el pixel art es para que viva en el escritorio. Las fotos son para
+verla. No compiten.
+
+---
+
+## 3. Que salga a jugar con el mouse sola, cada tanto
 
 **Qué se quiere:** que de vez en cuando se ponga a seguir el cursor un rato,
 como si estuvieras jugando con ella — sin que haya que provocarla.
@@ -39,7 +93,7 @@ vuelve el problema que el filtro venía a resolver. Conviene un camino aparte:
 
 ---
 
-## 2. Un menú de click derecho más trabajado
+## 4. Un menú de click derecho más trabajado
 
 **Qué se quiere:** que el menú sea más lindo y esté mejor terminado.
 

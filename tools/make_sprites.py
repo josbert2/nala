@@ -94,6 +94,24 @@ TRAY_SH = (94, 104, 118, 255)
 # se lo reenvien a head().
 MARKS = {}
 
+# Donde quedaron los ojos del frame que se esta dibujando. El motor los usa
+# para pintar el iris y la pupila el mismo, y asi poder moverle la mirada sin
+# tener que pre-renderizar una version por direccion.
+EYE_MARKS = []
+
+# Con que medidas pinta el motor cada ojo, en pixeles del sprite. `ring` solo
+# existe en los looks que lo tienen prendido.
+# Medidas sobre los pixeles que realmente salen del sprite, no sobre los radios
+# que se le pasan a Pillow: Pillow rasteriza una elipse inscrita en una caja de
+# lados fraccionarios y termina mas gorda que 2*r. La pupila real ocupa 3x4 px,
+# asi que el motor tiene que apuntar a eso o le cambia la mirada.
+EYE_GEOM = {
+    True:  {"ring": [2.6, 3.0], "iris": [2.2, 2.6], "pupil": [1.3, 2.05],
+            "hi": 0.65, "hiOffset": [-0.9, -1.3], "maxGaze": 1.15},
+    False: {"ring": None,       "iris": [2.1, 2.4], "pupil": [1.15, 1.95],
+            "hi": 0.55, "hiOffset": [-0.8, -1.3], "maxGaze": 1.05},
+}
+
 
 def mk(name):
     """Si el look que se esta dibujando tiene ese rasgo prendido."""
@@ -229,6 +247,7 @@ def head(d, cx, cy, P, eyes="open", tilt=0.0):
     # ojos
     if eyes == "open":
         for ex in (cx - 3.6, cx + 3.6):
+            EYE_MARKS.append([round(ex, 2), round(cy - 0.4, 2)])
             if mk("eyeRing"):
                 # Como los tiene de verdad: delineado marron finito, iris oliva
                 # y pupila oscura. En las fotos la pupila le tapa casi todo el
@@ -271,7 +290,7 @@ def pose_sit(d, t, P):
     stripes_body(d, 20, GROUND - 11 + bob, 8, 7, P)
     leg(d, 24, GROUND - 9 + bob, GROUND - 1, P["base"])      # patas delanteras
     leg(d, 28, GROUND - 9 + bob, GROUND - 1, P["base"])
-    head(d, 27, GROUND - 22 + bob, P)
+    head(d, 27, GROUND - 22, P)
 
 
 def pose_idle(d, t, P):
@@ -285,7 +304,7 @@ def pose_idle(d, t, P):
     stripes_body(d, 20, GROUND - 11 + bob, 8, 7, P)
     leg(d, 24, GROUND - 9 + bob, GROUND - 1, P["base"])
     leg(d, 28, GROUND - 9 + bob, GROUND - 1, P["base"])
-    head(d, 27, GROUND - 22 + bob, P, eyes="closed" if frame == 3 else "open")
+    head(d, 27, GROUND - 22, P, eyes="closed" if frame == 3 else "open")
 
 
 def pose_walk(d, t, P):
@@ -306,7 +325,7 @@ def pose_walk(d, t, P):
     # patas delanteras
     leg(d, 15 + swing_f, GROUND - 10 + bob, GROUND - 1, P["base"])
     leg(d, 29 + swing_f, GROUND - 10 + bob, GROUND - 1, P["base"])
-    head(d, 31, GROUND - 20 + bob, P)
+    head(d, 31, GROUND - 20, P)
 
 
 def pose_run(d, t, P):
@@ -321,7 +340,7 @@ def pose_run(d, t, P):
     ell(d, 22, GROUND - 12 + bob, 9, 3, P["light"])
     leg(d, 18 + stretch, GROUND - 11 + bob, GROUND - 3, P["base"])
     leg(d, 31 + stretch, GROUND - 11 + bob, GROUND - 2, P["base"])
-    head(d, 33, GROUND - 20 + bob, P, eyes="half")
+    head(d, 33, GROUND - 20, P, eyes="half")
 
 
 def pose_sleep(d, t, P):
@@ -503,7 +522,7 @@ def pose_dig(d, t, P):
     # las patitas que escarban
     d.rectangle([29 + paw, GROUND - 11 + bob, 32.5 + paw, GROUND - 2], fill=P["base"])
     ell(d, 30.7 + paw, GROUND - 2, 2.2, 1.4, P["light"])
-    head(d, 32, GROUND - 20 + bob, P, eyes="half", tilt=0.3)
+    head(d, 32, GROUND - 20, P, eyes="half", tilt=0.3)
     # arenita saltando
     for i in range(3):
         ell(d, 36 + i * 3.2 + paw * 0.6,
@@ -935,18 +954,23 @@ def build_look(look, palette_path, out_dir):
         "label": look["label"],
         "marks": MARKS,
         "palette": pal,
+        "eye": EYE_GEOM[bool(MARKS.get("eyeRing"))],
         "animations": {},
     }
 
     for row, (name, fn, nframes, fps, loop) in enumerate(ANIMATIONS):
+        eyes_per_frame = []
         for i in range(nframes):
             cell = Image.new("RGBA", (CELL, CELL), (0, 0, 0, 0))
             d = ImageDraw.Draw(cell)
+            EYE_MARKS.clear()
             fn(d, i / nframes, P)
+            eyes_per_frame.append(list(EYE_MARKS))
             cell = add_outline(cell, P["outline"])
             sheet.paste(cell, (i * CELL, row * CELL), cell)
         meta["animations"][name] = {
-            "row": row, "frames": nframes, "fps": fps, "loop": loop
+            "row": row, "frames": nframes, "fps": fps, "loop": loop,
+            "eyes": eyes_per_frame
         }
 
     os.makedirs(out_dir, exist_ok=True)

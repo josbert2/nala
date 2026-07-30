@@ -44,6 +44,7 @@ export class Cat {
     this.needs = null          // sus necesidades, si estan puestas
     this.asking = null         // 'comida' | 'agua' cuando te esta pidiendo
     this.autoServe = true      // se sirve sola: es independiente
+    this.gaze = { x: 0, y: 0 } // donde tiene clavada la mirada, -1..1
     this.tripCooldownUntil = 0 // ni a irse a otro monitor hasta aca
     this.furnitureCooldownUntil = 0  // ni a usar sus muebles hasta aca
   }
@@ -831,6 +832,7 @@ export class Cat {
   }
 
   draw (ctx) {
-    this.sheet.draw(ctx, this.anim, this.elapsed, this.x, this.y, this.scale, this.facing < 0)
+    this.sheet.draw(ctx, this.anim, this.elapsed, this.x, this.y, this.scale,
+                    this.facing < 0, this.gaze)
   }
 }

@@ -372,6 +372,51 @@ function sendHotRects () {
   window.nala.setHotRects(rects, force)
 }
 
+// ---------------------------------------------------------------- la mirada
+
+const GAZE_RANGE = 420    // hasta donde le sigue algo con los ojos
+const GAZE_EASE = 9       // que tan rapido cambia de foco
+
+/**
+ * A donde esta mirando.
+ *
+ * Un gato no mueve la cabeza con el cuerpo: la clava en lo que le interesa y
+ * mueve el cuerpo debajo. La cabeza del sprite va quieta a proposito, asi que
+ * lo unico que hay que resolver aca es hacia donde apunta la pupila.
+ */
+function updateGaze (dt) {
+  if (!cat) return
+  const b = cat.bounds
+  const hx = b.x + b.w / 2
+  const hy = b.y + b.h * 0.26        // la altura de sus ojos, mas o menos
+
+  let tx = null
+  let ty = null
+
+  // Lo que la tenga ocupada manda sobre el cursor.
+  if (ball && ball.active && cat.state.startsWith('chase')) {
+    tx = ball.x; ty = ball.y - 10
+  } else if (treat && treat.active && cat.state === 'eatTreat') {
+    tx = treat.x; ty = treat.y
+  } else if (pointer.active && Math.hypot(pointer.x - hx, pointer.y - hy) < GAZE_RANGE) {
+    tx = pointer.x; ty = pointer.y
+  }
+
+  let gx, gy
+  if (tx == null) {
+    // Sin nada que mirar, mira hacia donde va.
+    gx = cat.facing * 0.35
+    gy = 0
+  } else {
+    gx = Math.max(-1, Math.min(1, (tx - hx) / 190))
+    gy = Math.max(-1, Math.min(1, (ty - hy) / 150))
+  }
+
+  const k = Math.min(1, dt * GAZE_EASE)
+  cat.gaze.x += (gx - cat.gaze.x) * k
+  cat.gaze.y += (gy - cat.gaze.y) * k
+}
+
 // -------------------------------------------------------------- como esta ella
 
 const statsEl = document.getElementById('stats')
@@ -633,6 +678,7 @@ function loop (now) {
       sayNow('missYou')
     }
     cat.update(dt, { pointer })
+    updateGaze(dt)
     sendHotRects()
   }
 

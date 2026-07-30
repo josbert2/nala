@@ -288,6 +288,30 @@ como corresponde. Escarba, tapa, y sale a lamerse.
 
 ---
 
+## Cómo mira
+
+Dos cosas que hacen que se lea como un gato y no como un muñeco:
+
+**La cabeza va clavada en el aire.** Los gatos estabilizan la cabeza: fijan la
+mirada en algo y la cabeza queda quieta mientras el cuerpo se mueve debajo. En
+las poses de caminar, correr, comer y escarbar el `bob` del cuerpo NO se le
+aplica a la cabeza — el cuerpo rebota y la cabeza no. Es un cambio de una línea
+por pose en `tools/make_sprites.py` y es lo que más la cambió.
+
+**Los ojos siguen las cosas.** La pupila no está pintada en el sprite: el
+generador anota dónde quedó cada ojo en cada frame (`animations.<pose>.eyes`) y
+con qué radios pintarlo (`eye` en el json), y el motor repinta el ojo encima con
+la pupila corrida. Así mira el cursor, la pelota o el premio sin necesidad de
+pre-renderizar una versión del sprite por cada dirección.
+
+El ojo se rasteriza en la grilla del sprite (`SpriteSheet._blob`), no con
+`ctx.ellipse`: una elipse suavizada al lado del pixel art canta muchísimo. Los
+radios de `EYE_GEOM` están medidos sobre los píxeles que realmente salen del
+sprite, no sobre los que se le pasan a Pillow — Pillow rasteriza más gordo que
+`2*r` y si no se compensa, la mirada le queda distinta.
+
+---
+
 ## Sus colores
 
 El sprite se genera por código desde una paleta, así que cambiarle el pelaje es
