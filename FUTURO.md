@@ -59,7 +59,31 @@ verla. No compiten.
 
 ---
 
-## 3. Que salga a jugar con el mouse sola, cada tanto
+## 3. Que los hábitats hagan más cosas
+
+Los cuatro hábitats están, pero las piezas que necesitan lógica de movimiento
+propia quedaron como decorado. Lo que falta:
+
+- **La mariposa del jardín.** Una entidad que vuela sola y ella la persigue. El
+  patrón ya existe: `Ball` en `src/renderer/engine/props.js` con su física, y
+  `chaseBall` en `cat.js`. Sería una `Butterfly` con movimiento de vuelo en vez
+  de gravedad, y un `chaseButterfly` que la sigue sin poder atraparla nunca —
+  que es lo que pasa de verdad.
+- **Deslizarse por el tobogán.** Hoy sube a la plataforma (la tabla está
+  declarada en `furniture.json`) y baja de un salto. Falta un estado `sliding`
+  que la lleve por la rampa: la rampa va de (40,46) a (74,g-8) en la celda, o
+  sea una recta que se recorre interpolando. La animación `slide` ya existe.
+- **La mancha de sol de la ventana.** Una zona en el piso que se corre con la
+  hora real y donde ella prefiere echarse. `Routine.activity()` ya sabe la hora;
+  sería una pieza con `x` calculada en vez de fija, y un empujón en `_decide`
+  para que vaya ahí a dormir. Ojo: el sprite tendría que ir sin contorno, y
+  `build_furniture()` se lo pone a todo — hay que agregarle una excepción.
+- **Meterse en el pelotero.** Hoy es una cama (se duerme al lado). Podría ser
+  como la caja: dos partes, y las pelotas moviéndose cuando entra.
+
+---
+
+## 4. Que salga a jugar con el mouse sola, cada tanto
 
 **Qué se quiere:** que de vez en cuando se ponga a seguir el cursor un rato,
 como si estuvieras jugando con ella — sin que haya que provocarla.
@@ -93,7 +117,7 @@ vuelve el problema que el filtro venía a resolver. Conviene un camino aparte:
 
 ---
 
-## 4. Un menú de click derecho más trabajado
+## 5. Un menú de click derecho más trabajado
 
 **Qué se quiere:** que el menú sea más lindo y esté mejor terminado.
 

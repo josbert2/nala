@@ -81,6 +81,8 @@ export class Cat {
       case 'goingWater':
       case 'goingEat': return 'walk'
       case 'pedir': return 'alert'
+      case 'inBox': return 'alert'
+      case 'goingBox': return 'walk'
       case 'zoom': return 'run'
       case 'meow': return 'alert'
       case 'jump':
@@ -108,6 +110,9 @@ export class Cat {
       case 'goingWater':
       case 'goingEat': return 0
       case 'pedir': return r(5000, 8000)
+      // En la caja se queda un rato largo, que es lo que hacen.
+      case 'inBox': return r(40000, 120000)
+      case 'goingBox': return 0
       case 'zoom': return 400
       case 'climbTree': return 3000
       case 'trot': return 45000
@@ -173,6 +178,7 @@ export class Cat {
     if (this.state === 'zoom') { this._zoomNext(); return }
     if (this.state === 'goingWater') { this.goToWater(); return }
     if (this.state === 'goingEat') { this.goToEat(); return }
+    if (this.state === 'goingBox') { this.goToBox(); return }
     if (this.state === 'play') {
       const ball = this.props && this.props.ball
       if (ball && ball.active && Math.abs(ball.x - this.x) > 40) {
@@ -381,6 +387,12 @@ export class Cat {
         this.vx = this.facing * RUN_SPEED
         break
       }
+      case 'inBox': {
+        this.vx = 0
+        const p = ctx.pointer
+        if (p.active) this.facing = p.x > this.x ? 1 : -1
+        break
+      }
       case 'watch': {
         this.vx = 0
         const p = ctx.pointer
@@ -521,6 +533,8 @@ export class Cat {
       if (p.toys && p.toys.length) options.push(() => this.goToToy())
       if (p.cave && this.energy < 0.45) options.push(() => this.goToCave())
       if (p.litter) options.push(() => this.goToLitter())
+      // La caja tira mas que el resto: es una caja.
+      if (p.box) { options.push(() => this.goToBox()); options.push(() => this.goToBox()) }
       if (options.length) {
         this.furnitureCooldownUntil = performance.now() + 30000
         options[Math.floor(Math.random() * options.length)]()
@@ -720,6 +734,22 @@ export class Cat {
     const mid = (s.x1 + s.x2) / 2
     const tx = this.x < mid ? s.x2 - 30 : s.x1 + 30
     this.goTo(tx, 'zoom', 9000, 'trot')
+  }
+
+  /**
+   * A su caja. Se mete adentro y se queda ahi mirando, que es lo que hace
+   * cualquier gato con cualquier caja. No duerme: mira.
+   */
+  goToBox () {
+    const box = this.props && this.props.box
+    if (!box) return
+    if (box.holds(this.x) && this.surface && this.surface.isFloor) {
+      this.x = box.x
+      this.vx = 0
+      this.setState('inBox')
+      return
+    }
+    this.goTo(box.x, 'goingBox', 40000, 'trot')
   }
 
   /** A tomar agua. Si el bebedero esta vacio, se sienta al lado y te lo pide. */

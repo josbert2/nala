@@ -3,8 +3,8 @@
 import { SpriteSheet } from './engine/sprites.js'
 import { World } from './engine/world.js'
 import { Cat } from './engine/cat.js'
-import { Bowl, Ball, Treat, Bed, Water } from './engine/props.js'
-import { ScratchPost, CatTree, Cave, Toy, Litter } from './engine/furniture.js'
+import { Bowl, Ball, Treat, Water } from './engine/props.js'
+import { Litter, Piece } from './engine/furniture.js'
 import { Moments, Schedule } from './engine/moments.js'
 import { Routine } from './engine/routine.js'
 import { Messages } from './engine/messages.js'
@@ -36,6 +36,7 @@ const ACTION_LABELS = {
   seek: 'buscandote',
   meow: 'miau',
   eatTreat: 'comiendo',
+  inBox: 'en su caja',
   chaseBall: 'jugando',
   crouch: 'jugando',
   pounce: 'jugando',
@@ -73,6 +74,46 @@ let lastState = null
 let origin = { x: 0, y: 0 }        // esquina del escritorio que cubre la ventana
 let displays = null                // cada monitor, en coordenadas de la ventana
 let lookCount = 1                  // cuantas versiones de su pinta hay
+let habitatCount = 1               // cuantos habitats hay
+let pieces = []                    // las piezas del habitat puesto
+let box = null                     // su caja, si el habitat trae una
+let floorTile = null               // la pieza que se repite a lo ancho del piso
+
+/**
+ * Que papel cumple cada pieza para ella. Lo que no esta aca es decorado: se
+ * dibuja y nada mas.
+ */
+const PIECE_ROLE = {
+  post: 'post',
+  tree: 'tree', garden_tree: 'tree', slide: 'tree', sill: 'tree',
+  box: 'box',
+  cave: 'cave', tunnel: 'cave',
+  bed: 'bed', ballpit: 'bed',
+  mouse: 'toy', pelotita: 'toy', pelotita2: 'toy', wand: 'toy', rope: 'toy'
+}
+
+/** Arma las piezas del habitat. Cada una elige sola de que hoja sale. */
+function buildHabitat (habitat) {
+  const h = habitat || { pieces: [] }
+  const sheetFor = (kind) => {
+    const has = (sh) => sh && (sh.meta.animations[kind] || sh.meta.animations[`${kind}_back`])
+    return has(furnSheet) ? furnSheet : has(propSheet) ? propSheet : null
+  }
+  floorTile = h.floor && sheetFor(h.floor)
+    ? { anim: h.floor, sheet: sheetFor(h.floor) }
+    : null
+
+  return (h.pieces || []).map((p) => {
+    const sh = sheetFor(p.kind)
+    if (!sh) {
+      console.warn(`[nala] la pieza "${p.kind}" no existe en ninguna hoja`)
+      return null
+    }
+    return new Piece(world, sh, cat.scale, p.kind, p.at,
+                     p.display != null ? p.display : null)
+  }).filter(Boolean)
+}
+
 let lastHotKey = ''
 let hearts = []
 let purrs = []
@@ -111,7 +152,7 @@ function resize () {
   if (world) world.resize(window.innerWidth, window.innerHeight, displays)
 }
 
-window.nala.onBoot(async ({ config, display, look, looks, debug }) => {
+window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, debug }) => {
   origin = { x: display.x, y: display.y }
   displays = display.displays
 
@@ -132,28 +173,37 @@ window.nala.onBoot(async ({ config, display, look, looks, debug }) => {
                   config.bowlDisplay != null ? config.bowlDisplay : null)
   ball = new Ball(world)
   treat = new Treat(world)
-  bed = new Bed(world, config.bedAt != null ? config.bedAt : 0.86,
-                config.bedDisplay != null ? config.bedDisplay : null)
 
-  // Su casa. El arbol y el rascadero traen tablas: se las damos al mundo para
-  // que sean superficies de verdad y ella pueda subirse.
+  // Su habitat. Las piezas salen del json: cada una se dibuja sola desde el
+  // sprite, y si el sprite le declaro tablas, el motor las usa de superficies.
   const at = (key, fallback) => (config[key] != null ? config[key] : fallback)
   const on = (key) => (config[key] != null ? config[key] : null)
   const s = cat.scale
-  post = new ScratchPost(world, furnSheet, s, at('postAt', 0.28), on('postDisplay'))
-  tree = new CatTree(world, furnSheet, s, at('treeAt', 0.55), on('treeDisplay'))
-  cave = new Cave(world, furnSheet, s, at('caveAt', 0.72), on('caveDisplay'))
+
+  // Estas van siempre, en cualquier habitat: las necesita.
   litter = new Litter(world, furnSheet, s, at('litterAt', 0.42), on('litterDisplay'))
   water = new Water(world, at('waterAt', 0.05), on('waterDisplay'))
-  toys = (config.toys || DEFAULT_TOYS).map(
-    (t) => new Toy(world, furnSheet, s, t.kind, t.at, t.display != null ? t.display : null))
 
-  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys, litter, water }
+  habitatCount = Array.isArray(habitats) ? habitats.length : 1
+  pieces = buildHabitat(habitat)
+
+  // Cada pieza cumple un papel para ella: en el jardin el arbol de verdad es
+  // "su arbol", en el parque el tunel es "su cueva". Asi las conductas que ya
+  // existen sirven en todos los habitats sin escribirlas de nuevo.
+  const byRole = (role) => pieces.find((p) => PIECE_ROLE[p.kind] === role) || null
+  post = byRole('post')
+  tree = byRole('tree')
+  cave = byRole('cave')
+  bed = byRole('bed')
+  box = byRole('box')
+  toys = pieces.filter((p) => PIECE_ROLE[p.kind] === 'toy')
+
+  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys, litter, water, box }
 
   needs = new Needs(config)
   cat.needs = needs
   cat.autoServe = config.autoServe !== false
-  world.setFurniture([post, tree])
+  world.setFurniture(pieces.filter((p) => p.surfaces().length))
   world.setFloorMargin((sheet.ch - sheet.ground) * cat.scale + 2)
 
   meals = new Schedule(config.meals)
@@ -200,6 +250,7 @@ window.nala.onCommand((cmd) => {
   if (cmd.type === 'tree') cat.goUpTree()
   if (cmd.type === 'cave') cat.goToCave()
   if (cmd.type === 'litter') cat.goToLitter()
+  if (cmd.type === 'box') cat.goToBox()
   if (cmd.type === 'water') {
     water.fill()
     if (cat.asking === 'agua') { cat.asking = null; sayNow('gracias', 6000) }
@@ -476,11 +527,13 @@ const MENU_ITEMS = [
   ['Arriba del arbol', () => cat.goUpTree()],
   ['A su cueva', () => cat.goToCave()],
   ['A su arenero', () => cat.goToLitter()],
+  ['A su caja', () => cat.goToBox(), () => !!box],
   ['A jugar con un juguete', () => cat.goToToy()],
   ['A su cama', () => cat.goToBed()],
   ['Que duerma', () => cat.napNow()],
   // El tercer campo dice cuando mostrar la opcion. Sin mas de una version de su
   // pinta, cambiarla no hace nada.
+  ['Cambiarle el hábitat', () => window.nala.cycleHabitat(), () => habitatCount > 1],
   ['Cambiarle la pinta', () => window.nala.cycleLook(), () => lookCount > 1]
 ]
 
@@ -684,35 +737,38 @@ function loop (now) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-  // Sus muebles van detras de ella. El arbol y el rascadero son mas altos que
-  // ella a proposito: se la ve trepando por delante de las tablas.
+  // El piso del habitat, si trae: se repite a lo ancho de cada pantalla.
+  if (floorTile) {
+    const sh = floorTile.sheet
+    const w = sh.cw * cat.scale
+    for (const dsp of world.displays) {
+      const y = world.floorAt(dsp.x + 1).y
+      for (let x = dsp.x; x < dsp.x + dsp.width; x += w) {
+        sh.draw(ctx, floorTile.anim, 0, x + w / 2, y, cat.scale, false)
+      }
+    }
+  }
+
+  // Las piezas del habitat van detras de ella. Las que son de dos partes (la
+  // cueva, el tunel, la cama) dejan su frente para despues: solo se dibuja por
+  // encima cuando ella esta metida adentro, si no la taparia al pasar.
+  const dentro = (p) => p.twoPart && cat && p.holds(cat.x) &&
+                        cat.surface && cat.surface.isFloor && !cat.airborne
+  for (const p of pieces) {
+    p.sheet.draw(ctx, p.backAnim, now, p.x, p.y, cat.scale, false)
+    if (p.twoPart && !dentro(p)) p.sheet.draw(ctx, p.frontAnim, now, p.x, p.y, cat.scale, false)
+  }
+
+  // El arenero: la bandeja detras, el borde por delante.
+  const inLitter = litter && cat && litter.holds(cat.x) &&
+                   cat.surface && cat.surface.isFloor && !cat.airborne
   const drawFurn = (f, anim) => {
     if (f && furnSheet) furnSheet.draw(ctx, anim || f.anim, 0, f.x, f.y, cat.scale, false)
   }
-  drawFurn(tree)
-  drawFurn(post)
-  for (const t of toys) drawFurn(t)
-
-  // La cueva es el unico mueble que puede ir por delante, y solo cuando ella
-  // esta metida adentro: es mas alta que ella, asi que si fuera siempre por
-  // delante la taparia entera cada vez que pasa caminando.
-  const inCave = cave && cat && cave.holds(cat.x) &&
-                 cat.surface && cat.surface.isFloor && !cat.airborne
-  drawFurn(cave, 'cave_back')
-  if (!inCave) drawFurn(cave, 'cave_front')
-
-  // El arenero igual que la cueva: la bandeja detras, el borde por delante.
-  const inLitter = litter && cat && litter.holds(cat.x) &&
-                   cat.surface && cat.surface.isFloor && !cat.airborne
   drawFurn(litter, 'litter_back')
   if (!inLitter) drawFurn(litter, 'litter_front')
 
-  // Su cama va partida en dos: el fondo detras de ella y el borde de adelante
-  // por encima, para que se la vea metida adentro y no parada sobre la cama.
-  if (bed) propSheet.draw(ctx, 'bed_back', 0, bed.x, bed.y, cat.scale, false)
-  if (water) {
-    propSheet.draw(ctx, water.anim, now, water.x, water.y, cat.scale, false)
-  }
+  if (water) propSheet.draw(ctx, water.anim, now, water.x, water.y, cat.scale, false)
   if (bowl && bowl.visible) {
     propSheet.draw(ctx, bowl.anim, now, bowl.x, bowl.y, cat.scale, false)
   }
@@ -723,9 +779,11 @@ function loop (now) {
     propSheet.draw(ctx, 'ball', ball.spin * 1000, ball.x, ball.y, cat.scale, false)
   }
   if (cat) cat.draw(ctx)
-  if (inCave) drawFurn(cave, 'cave_front')
+
+  for (const p of pieces) {
+    if (dentro(p)) p.sheet.draw(ctx, p.frontAnim, now, p.x, p.y, cat.scale, false)
+  }
   if (inLitter) drawFurn(litter, 'litter_front')
-  if (bed) propSheet.draw(ctx, 'bed_front', 0, bed.x, bed.y, cat.scale, false)
   maybePurr(now)
   drawPurrs(dt)
   drawStats(now)

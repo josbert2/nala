@@ -72,6 +72,52 @@ function loadLooks () {
 
 const LOOKS = loadLooks()
 
+// ---------------------------------------------------------------- habitats
+//
+// Su decorado. La lista la escribe a mano config/habitats.json: aca no se
+// inventa nada, solo se elige cual esta puesto y se guarda la eleccion.
+
+const HABITATS_PATH = path.join(ROOT, 'config', 'habitats.json')
+const FALLBACK_HABITATS = { default: 'casa', habitats: [{ id: 'casa', label: 'Su casa', pieces: [] }] }
+
+function loadHabitats () {
+  try {
+    const idx = JSON.parse(fs.readFileSync(HABITATS_PATH, 'utf8'))
+    if (Array.isArray(idx.habitats) && idx.habitats.length) return idx
+    throw new Error('habitats.json no trae ninguno')
+  } catch (err) {
+    console.warn('[nala] no pude leer habitats.json:', err.message)
+    return FALLBACK_HABITATS
+  }
+}
+
+const HABITATS = loadHabitats()
+
+function currentHabitatId () {
+  const ids = HABITATS.habitats.map((h) => h.id)
+  if (settings.habitat && ids.includes(settings.habitat)) return settings.habitat
+  return ids.includes(HABITATS.default) ? HABITATS.default : ids[0]
+}
+
+function currentHabitat () {
+  const id = currentHabitatId()
+  return HABITATS.habitats.find((h) => h.id === id)
+}
+
+function setHabitat (id) {
+  if (!HABITATS.habitats.some((h) => h.id === id)) return
+  if (id === currentHabitatId()) return
+  settings.habitat = id
+  saveSettings()
+  rebuildTray()
+  if (win && !win.isDestroyed()) win.reload()
+}
+
+function cycleHabitat () {
+  const ids = HABITATS.habitats.map((h) => h.id)
+  setHabitat(ids[(ids.indexOf(currentHabitatId()) + 1) % ids.length])
+}
+
 /** La version elegida. Si nunca eligio ninguna, la que viene por defecto. */
 function currentLook () {
   const ids = LOOKS.looks.map((l) => l.id)
@@ -83,7 +129,8 @@ function currentLook () {
 
 const DEFAULT_SETTINGS = {
   displayMode: 'all',   // 'all' | 'primary'
-  look: null            // null = la que venga por defecto en looks.json
+  look: null,           // null = la que venga por defecto en looks.json
+  habitat: null         // null = el que venga por defecto en habitats.json
 }
 
 function loadSettings () {
@@ -220,6 +267,8 @@ function createWindow () {
       display: stage,
       look: currentLook(),
       looks: LOOKS.looks,
+      habitat: currentHabitat(),
+      habitats: HABITATS.habitats.map((h) => ({ id: h.id, label: h.label })),
       platform: process.platform,
       debug: DEBUG
     })
@@ -357,6 +406,7 @@ function refreshTrayMenu () {
     { label: 'Arriba del arbol', click: send('command', { type: 'tree' }) },
     { label: 'A su cueva', click: send('command', { type: 'cave' }) },
     { label: 'A su arenero', click: send('command', { type: 'litter' }) },
+    { label: 'A su caja', click: send('command', { type: 'box' }) },
     { label: 'A jugar con un juguete', click: send('command', { type: 'toy' }) },
     { type: 'separator' },
     { label: 'Que venga', click: send('command', { type: 'come' }) },
@@ -384,6 +434,16 @@ function refreshTrayMenu () {
       ]
     },
     { type: 'separator', visible: multi },
+    {
+      label: 'Su hábitat',
+      visible: HABITATS.habitats.length > 1,
+      submenu: HABITATS.habitats.map((h) => ({
+        label: h.label,
+        type: 'radio',
+        checked: currentHabitatId() === h.id,
+        click: () => setHabitat(h.id)
+      }))
+    },
     {
       label: 'Su pinta',
       // Con una sola version no hay nada que elegir.
@@ -417,7 +477,8 @@ const SHORTCUTS = [
   ['Control+Alt+K', 'a su cama', { type: 'bed' }],
   ['Control+Alt+R', 'a rascar', { type: 'scratch' }],
   ['Control+Alt+T', 'al arbol', { type: 'tree' }],
-  ['Control+Alt+A', 'al arenero', { type: 'litter' }]
+  ['Control+Alt+A', 'al arenero', { type: 'litter' }],
+  ['Control+Alt+B', 'a su caja', { type: 'box' }]
 ]
 
 /**
@@ -478,6 +539,8 @@ ipcMain.handle('get-config', () => loadConfig())
 
 // El menu de click derecho sobre ella tambien puede cambiarle la pinta.
 ipcMain.on('cycle-look', () => cycleLook())
+ipcMain.on('cycle-habitat', () => cycleHabitat())
+ipcMain.on('set-habitat', (_e, id) => setHabitat(id))
 
 // ------------------------------------------------------------------------ ciclo
 

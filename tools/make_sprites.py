@@ -802,6 +802,30 @@ FURN_GROUND = 108   # la linea del piso dentro de la celda
 WOOD = (146, 108, 74, 255)
 WOOD_HI = (176, 134, 96, 255)
 WOOD_SH = (112, 82, 56, 255)
+
+# ---- los colores de los otros habitats ----
+GRASS    = (108, 148, 84, 255)
+GRASS_HI = (138, 178, 106, 255)
+GRASS_SH = (82, 116, 64, 255)
+LEAF     = (94, 140, 82, 255)
+LEAF_HI  = (124, 172, 104, 255)
+LEAF_SH  = (70, 108, 62, 255)
+PETAL    = (232, 168, 186, 255)
+PETAL2   = (240, 210, 128, 255)
+PLAS_B   = (92, 140, 190, 255)
+PLAS_B_HI = (128, 174, 220, 255)
+PLAS_B_SH = (64, 104, 150, 255)
+PLAS_R   = (206, 96, 92, 255)
+PLAS_Y   = (232, 190, 96, 255)
+PLAS_G   = (110, 176, 128, 255)
+CARTON   = (188, 152, 104, 255)
+CARTON_HI = (214, 178, 128, 255)
+CARTON_SH = (150, 118, 78, 255)
+CIELO    = (150, 190, 216, 255)
+NUBE     = (206, 228, 240, 255)
+TELA     = (216, 196, 176, 255)
+TELA_SH  = (188, 166, 146, 255)
+
 CARPET = (168, 172, 182, 255)      # el gris peludo de los rascadores
 CARPET_HI = (196, 200, 208, 255)
 CARPET_SH = (132, 137, 148, 255)
@@ -954,6 +978,194 @@ def furn_litter(d, t, P, front=False):
         d.rectangle([x1, FURN_GROUND - 3, x2, FURN_GROUND - 1], fill=TRAY_SH)
 
 
+
+
+# ------------------------------------------------------- el jardin
+
+
+def furn_grass(d, t, P):
+    """Piso de pasto. Se repite a lo ancho de toda la pantalla."""
+    g = FURN_GROUND
+    d.rectangle([0, g - 3, FURN_W, g], fill=GRASS_SH)
+    for i in range(10):
+        x = 2 + i * 8
+        h = 6 + ((i * 37) % 9)
+        d.polygon([(x - 2, g), (x + 0.5, g - h), (x + 2.5, g)], fill=GRASS)
+        d.polygon([(x - 0.4, g), (x + 0.8, g - h + 2.5), (x + 1.6, g)], fill=GRASS_HI)
+
+
+def furn_garden_tree(d, t, P):
+    """Un arbol de verdad. La rama baja le sirve de tabla."""
+    plank(d, 34, 40, 46, FURN_GROUND - 2)
+    d.polygon([(22, 58), (40, 50), (40, 58)], fill=WOOD_SH)      # la rama
+    d.polygon([(24, 56), (40, 51), (40, 55)], fill=WOOD)
+    for cx, cy, r in ((40, 32, 21), (24, 44, 13), (56, 44, 13), (40, 17, 14)):
+        ell(d, cx, cy, r, r * 0.82, LEAF)
+    for cx, cy, r in ((33, 24, 9), (49, 28, 8), (40, 11, 7)):
+        ell(d, cx, cy, r, r * 0.75, LEAF_HI)
+    ell(d, 28, 50, 7, 5, LEAF_SH)
+    ell(d, 53, 50, 7, 5, LEAF_SH)
+
+
+def furn_bush(d, t, P):
+    g = FURN_GROUND
+    for cx, cy, rx, ry in ((28, g - 12, 16, 12), (52, g - 10, 14, 10), (40, g - 21, 13, 10)):
+        ell(d, cx, cy, rx, ry, LEAF)
+    for cx, cy, r in ((23, g - 17, 6), (46, g - 24, 5), (58, g - 14, 5)):
+        ell(d, cx, cy, r, r * 0.8, LEAF_HI)
+    ell(d, 34, g - 5, 12, 4, LEAF_SH)
+
+
+def furn_flowers(d, t, P):
+    """Tres flores que se mecen."""
+    g = FURN_GROUND
+    sway = math.sin(t * math.tau) * 1.3
+    for i, (x, col) in enumerate(((24, PETAL), (40, PETAL2), (56, PETAL))):
+        top = g - 24 - (i % 2) * 6
+        d.line([(x, g), (x + sway, top)], fill=GRASS_SH, width=2)
+        ell(d, x + sway * 0.6, (g + top) / 2, 3, 2, LEAF)
+        for a in range(5):
+            ang = a / 5 * math.tau
+            ell(d, x + sway + math.cos(ang) * 3.2, top + math.sin(ang) * 3.2, 2.3, 2.3, col)
+        ell(d, x + sway, top, 1.9, 1.9, (250, 228, 152, 255))
+
+
+def furn_watering_can(d, t, P):
+    """La regadera."""
+    g = FURN_GROUND
+    body, hi, sh = (128, 160, 176, 255), (162, 192, 206, 255), (96, 124, 140, 255)
+    d.rectangle([22, g - 24, 48, g - 2], fill=body)
+    d.rectangle([22, g - 24, 48, g - 21], fill=hi)
+    d.rectangle([22, g - 5, 48, g - 2], fill=sh)
+    d.polygon([(48, g - 21), (66, g - 28), (69, g - 23), (50, g - 13)], fill=body)
+    ell(d, 67, g - 25, 4, 3.2, hi)
+    d.arc([24, g - 36, 44, g - 20], 180, 360, fill=sh, width=2)
+
+
+# --------------------------------------------------- el parque de juegos
+
+
+def furn_tunnel(d, t, P, front=False):
+    """Tunel de tela. Como la cueva: el fondo detras y la boca por delante."""
+    g = FURN_GROUND
+    if not front:
+        d.rectangle([6, g - 36, 74, g - 2], fill=PLAS_B_SH)
+        for i in range(5):                                   # los aros de la tela
+            x = 10 + i * 15
+            d.rectangle([x, g - 36, x + 4, g - 2], fill=PLAS_B)
+        ell(d, 40, g - 19, 19, 16, (38, 52, 68, 255))        # el hueco
+    else:
+        # El aro de adelante, y solo la mitad de abajo: asi se la ve metida
+        # adentro y no tapada por el tunel entero.
+        ell(d, 40, g - 19, 22, 19, PLAS_B_HI)
+        ell(d, 40, g - 19, 17, 14, (0, 0, 0, 0))
+        d.rectangle([0, 0, FURN_W, g - 19], fill=(0, 0, 0, 0))
+
+
+def furn_slide(d, t, P):
+    """El tobogan: escalerita, plataforma arriba y la rampa."""
+    g = FURN_GROUND
+    d.rectangle([8, 48, 12, g - 2], fill=PLAS_B_SH)
+    d.rectangle([34, 48, 38, g - 2], fill=PLAS_B_SH)
+    for y in (62, 76, 90):
+        plank(d, 10, y, 36, y + 4, PLAS_Y, (246, 216, 140, 255), (196, 154, 68, 255))
+    plank(d, 6, 44, 42, 50, PLAS_B, PLAS_B_HI, PLAS_B_SH)     # la plataforma
+    d.polygon([(40, 46), (74, g - 8), (74, g - 2), (40, 52)], fill=PLAS_R)
+    d.polygon([(40, 46), (74, g - 8), (71, g - 8), (40, 49)], fill=(236, 140, 132, 255))
+
+
+def furn_ballpit(d, t, P):
+    """El pelotero."""
+    g = FURN_GROUND
+    d.rectangle([8, g - 18, 72, g - 2], fill=PLAS_G)
+    d.rectangle([8, g - 18, 72, g - 15], fill=(150, 206, 166, 255))
+    d.rectangle([8, g - 5, 72, g - 2], fill=(78, 138, 96, 255))
+    cols = (PLAS_R, PLAS_Y, PLAS_B, (196, 140, 200, 255))
+    for i in range(10):
+        x = 14 + (i % 5) * 13 + (i // 5) * 6
+        y = g - 21 - (i // 5) * 8
+        ell(d, x, y, 5, 5, cols[i % 4])
+        ell(d, x - 1.6, y - 1.6, 1.6, 1.6, (255, 255, 255, 90))
+
+
+def furn_rope(d, t, P):
+    """Una cuerda colgando, con su nudo."""
+    sway = math.sin(t * math.tau) * 2.2
+    pts = bezier((40, 2), (40 + sway, 40), (40 + sway * 2, 72))
+    for i, (x, y) in enumerate(pts):
+        ell(d, x, y, 2.3, 2.3, (198, 168, 120, 255) if i % 2 else (170, 142, 98, 255))
+    ex, ey = pts[-1]
+    ell(d, ex, ey + 3, 4.6, 4.4, (186, 156, 108, 255))
+    ell(d, ex - 1.4, ey + 2, 1.6, 1.6, (214, 186, 140, 255))
+
+
+def furn_box(d, t, P, front=False):
+    """
+    La caja de carton. Va en dos partes y la de adelante es BAJA a proposito:
+    se mete adentro y le tiene que asomar la cabeza, que es la gracia.
+    """
+    g = FURN_GROUND
+    if not front:
+        # la solapa de atras, abierta hacia afuera
+        d.polygon([(10, g - 36), (20, g - 48), (62, g - 48), (72, g - 36)], fill=CARTON_HI)
+        d.polygon([(14, g - 37), (24, g - 46), (58, g - 46), (68, g - 37)], fill=CARTON)
+        # el cuerpo y el interior en sombra
+        d.rectangle([10, g - 36, 72, g - 2], fill=CARTON_SH)
+        d.rectangle([14, g - 33, 68, g - 6], fill=(118, 90, 58, 255))
+        d.rectangle([14, g - 33, 68, g - 30], fill=(96, 72, 46, 255))
+    else:
+        # la pared de adelante, baja
+        d.rectangle([10, g - 19, 72, g + 6], fill=CARTON)
+        d.rectangle([10, g - 19, 72, g - 16], fill=CARTON_HI)
+        d.rectangle([10, g + 3, 72, g + 6], fill=CARTON_SH)
+        d.line([(41, g - 16), (41, g + 3)], fill=CARTON_SH)
+        # las solapas de adelante, caidas hacia los costados
+        d.polygon([(10, g - 19), (1, g - 32), (9, g - 33), (19, g - 19)], fill=CARTON_HI)
+        d.polygon([(72, g - 19), (81, g - 32), (73, g - 33), (63, g - 19)], fill=CARTON_HI)
+
+
+# ----------------------------------------------------- la ventana al sol
+
+
+def furn_window(d, t, P):
+    """La ventana con el cielo. Va detras de todo."""
+    d.rectangle([6, 8, 74, 76], fill=CIELO)
+    ell(d, 24, 26, 10, 6, NUBE)
+    ell(d, 34, 23, 8, 5, NUBE)
+    ell(d, 56, 40, 7, 4, NUBE)
+    for x in (6, 38, 70):
+        d.rectangle([x, 4, x + 4, 78], fill=WOOD)
+    for y in (4, 38, 74):
+        d.rectangle([6, y, 74, y + 4], fill=WOOD)
+    d.rectangle([6, 4, 74, 6], fill=WOOD_HI)
+
+
+def furn_sill(d, t, P):
+    """La repisa de la ventana. Se sube y se echa al sol."""
+    plank(d, 2, 58, 78, 68)
+    plank(d, 14, 68, 66, FURN_GROUND - 2, WOOD_SH, WOOD, (92, 66, 44, 255))
+
+
+def furn_potted_plant(d, t, P):
+    g = FURN_GROUND
+    pot, pot_hi = (176, 112, 84, 255), (200, 136, 104, 255)
+    d.polygon([(28, g - 18), (52, g - 18), (48, g - 2), (32, g - 2)], fill=pot)
+    d.rectangle([26, g - 22, 54, g - 17], fill=pot_hi)
+    for cx, cy, r in ((31, g - 29, 8), (49, g - 27, 7), (40, g - 36, 8)):
+        ell(d, cx, cy, r, r * 0.85, LEAF)
+    ell(d, 36, g - 36, 4, 3.2, LEAF_HI)
+    ell(d, 47, g - 30, 3.4, 2.6, LEAF_HI)
+
+
+def furn_curtain(d, t, P):
+    """La cortina, que se mueve apenas."""
+    sway = math.sin(t * math.tau) * 1.6
+    for i in range(5):
+        x = 4 + i * 7
+        d.polygon([(x, 2), (x + 6, 2), (x + 6 + sway, 92), (x + sway, 92)],
+                  fill=TELA if i % 2 else TELA_SH)
+
+
 FURNITURE = [
     ("litter_back",  lambda d, t, P: furn_litter(d, t, P, False), 1, 1, False, []),
     ("litter_front", lambda d, t, P: furn_litter(d, t, P, True),  1, 1, False, []),
@@ -967,6 +1179,28 @@ FURNITURE = [
     ("pelotita2",  lambda d, t, P: furn_pelotita(
         d, t, P, (128, 180, 194, 255), (176, 216, 226, 255)),     1, 1, False, []),
     ("wand",       furn_wand,                                    1, 1, False, []),
+
+    # --- el jardin ---
+    ("grass",        furn_grass,                                1, 1,  False, []),
+    ("garden_tree",  furn_garden_tree,                          1, 1,  False, [[22, 40, 56]]),
+    ("bush",         furn_bush,                                 1, 1,  False, []),
+    ("flowers",      furn_flowers,                              6, 3,  True,  []),
+    ("watering_can", furn_watering_can,                         1, 1,  False, []),
+
+    # --- el parque de juegos ---
+    ("tunnel_back",  lambda d, t, P: furn_tunnel(d, t, P, False), 1, 1, False, []),
+    ("tunnel_front", lambda d, t, P: furn_tunnel(d, t, P, True),  1, 1, False, []),
+    ("slide",        furn_slide,                                1, 1,  False, [[6, 42, 44]]),
+    ("ballpit",      furn_ballpit,                              1, 1,  False, []),
+    ("rope",         furn_rope,                                 6, 4,  True,  []),
+    ("box_back",     lambda d, t, P: furn_box(d, t, P, False),  1, 1,  False, []),
+    ("box_front",    lambda d, t, P: furn_box(d, t, P, True),   1, 1,  False, []),
+
+    # --- la ventana al sol ---
+    ("window",       furn_window,                               1, 1,  False, []),
+    ("sill",         furn_sill,                                 1, 1,  False, [[2, 78, 58]]),
+    ("potted_plant", furn_potted_plant,                         1, 1,  False, []),
+    ("curtain",      furn_curtain,                              6, 3,  True,  []),
 ]
 
 

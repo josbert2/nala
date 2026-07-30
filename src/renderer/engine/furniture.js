@@ -111,3 +111,28 @@ export class Litter extends Furniture {
     return Math.abs(x - this.x) < 28
   }
 }
+
+/**
+ * Una pieza cualquiera del habitat.
+ *
+ * No sabe nada de que es: saca todo del sprite. Si en la hoja existen
+ * `<kind>_back` y `<kind>_front` se dibuja en dos partes y ella puede meterse
+ * adentro; si el json le declara tablas, el motor las usa de superficies. Asi
+ * agregar una pieza al habitat es dibujarla y nombrarla, sin tocar codigo.
+ */
+export class Piece extends Furniture {
+  constructor (world, sheet, scale, kind, xFraction, displayIndex = null) {
+    const anims = (sheet && sheet.meta.animations) || {}
+    const twoPart = anims[`${kind}_back`] != null
+    super(world, sheet, scale, twoPart ? `${kind}_back` : kind, xFraction, displayIndex)
+    this.kind = kind
+    this.twoPart = twoPart
+    this.backAnim = twoPart ? `${kind}_back` : kind
+    this.frontAnim = twoPart ? `${kind}_front` : null
+  }
+
+  /** Solo las piezas de dos partes se la tragan adentro. */
+  holds (x) {
+    return this.twoPart && Math.abs(x - this.x) < 30
+  }
+}

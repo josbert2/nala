@@ -3,6 +3,7 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('nala', {
+  cycleHabitat: () => ipcRenderer.send('cycle-habitat'),
   onBoot: (cb) => ipcRenderer.on('boot', (_e, data) => cb(data)),
   onWindows: (cb) => ipcRenderer.on('windows', (_e, rects) => cb(rects)),
   onCommand: (cb) => ipcRenderer.on('command', (_e, cmd) => cb(cmd)),

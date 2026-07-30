@@ -154,6 +154,51 @@ juguetes) para mandarla a otro monitor por índice.
 
 ---
 
+## Sus hábitats
+
+Hay cuatro decorados y se cambia desde el menú → **Su hábitat**. Se definen en
+`config/habitats.json`, sin tocar código.
+
+| | Qué tiene |
+|---|---|
+| `casa` | rascadero, caja, casa árbol, cueva, cama, juguetes |
+| `jardin` | piso de pasto, arbustos, flores, árbol de verdad, regadera, caja |
+| `parque` | caja, tobogán, túnel, cuerda, pelotero |
+| `ventana` | ventana con cielo, cortinas, repisa, macetas, cama, caja |
+
+Su plato, su bebedero y su arenero **no** están en el hábitat: van siempre,
+porque los necesita. Esos se posicionan desde `config/cat.json`.
+
+### Cómo se agrega una pieza
+
+Una pieza es sólo un sprite con nombre. El motor saca todo de la hoja:
+
+- Si existen `<kind>_back` y `<kind>_front`, se dibuja en dos partes y ella se
+  puede meter adentro — el frente se dibuja por encima de ella **sólo** cuando
+  está adentro; si fuera siempre la taparía al pasar caminando. Así funcionan la
+  cueva, el túnel, el arenero, la cama y la caja.
+- Si el sprite declara `ledges` en su json, esas tablas se vuelven superficies
+  de verdad y ella se sube.
+- `floor` en el hábitat repite una pieza a lo ancho de toda la pantalla. Así
+  está hecho el pasto del jardín.
+
+Entonces: la dibujás en `tools/make_sprites.py`, la nombrás en `FURNITURE` y la
+ponés en un hábitat. El motor no se toca.
+
+### Qué papel cumple cada pieza
+
+`PIECE_ROLE` en `src/renderer/main.js` mapea cada pieza a una conducta suya. En
+el jardín el árbol de verdad es "su árbol", en el parque el túnel es "su cueva",
+en la ventana la repisa es algo a lo que subirse. Así las conductas que ya
+existen sirven en todos los hábitats sin escribirlas de nuevo.
+
+**La caja tiene la suya propia**: no se sube arriba, se mete adentro y se queda
+ahí mirando, con la cabeza asomando por encima del cartón. No duerme — mira. Por
+eso su pared de adelante es baja a propósito, y por eso pesa doble en la ruleta
+de `_decide`: es una caja.
+
+---
+
 ## Sus versiones
 
 Hay más de una versión de su pinta. Se elige desde el tray, en **Su pinta**, o
@@ -285,6 +330,51 @@ cuesta mucho más ponerse a jugar que a las ocho de la noche. Se puede pisar con
 
 Además tiene **arenero**. Va sola cada tanto, y casi siempre después de comer —
 como corresponde. Escarba, tapa, y sale a lamerse.
+
+---
+
+## Sus hábitats
+
+Hay cuatro decorados y se cambia desde el menú → **Su hábitat**. Se definen en
+`config/habitats.json`, sin tocar código.
+
+| | Qué tiene |
+|---|---|
+| `casa` | rascadero, caja, casa árbol, cueva, cama, juguetes |
+| `jardin` | piso de pasto, arbustos, flores, árbol de verdad, regadera, caja |
+| `parque` | caja, tobogán, túnel, cuerda, pelotero |
+| `ventana` | ventana con cielo, cortinas, repisa, macetas, cama, caja |
+
+Su plato, su bebedero y su arenero **no** están en el hábitat: van siempre,
+porque los necesita. Esos se posicionan desde `config/cat.json`.
+
+### Cómo se agrega una pieza
+
+Una pieza es sólo un sprite con nombre. El motor saca todo de la hoja:
+
+- Si existen `<kind>_back` y `<kind>_front`, se dibuja en dos partes y ella se
+  puede meter adentro — el frente se dibuja por encima de ella **sólo** cuando
+  está adentro; si fuera siempre la taparía al pasar caminando. Así funcionan la
+  cueva, el túnel, el arenero, la cama y la caja.
+- Si el sprite declara `ledges` en su json, esas tablas se vuelven superficies
+  de verdad y ella se sube.
+- `floor` en el hábitat repite una pieza a lo ancho de toda la pantalla. Así
+  está hecho el pasto del jardín.
+
+Entonces: la dibujás en `tools/make_sprites.py`, la nombrás en `FURNITURE` y la
+ponés en un hábitat. El motor no se toca.
+
+### Qué papel cumple cada pieza
+
+`PIECE_ROLE` en `src/renderer/main.js` mapea cada pieza a una conducta suya. En
+el jardín el árbol de verdad es "su árbol", en el parque el túnel es "su cueva",
+en la ventana la repisa es algo a lo que subirse. Así las conductas que ya
+existen sirven en todos los hábitats sin escribirlas de nuevo.
+
+**La caja tiene la suya propia**: no se sube arriba, se mete adentro y se queda
+ahí mirando, con la cabeza asomando por encima del cartón. No duerme — mira. Por
+eso su pared de adelante es baja a propósito, y por eso pesa doble en la ruleta
+de `_decide`: es una caja.
 
 ---
 

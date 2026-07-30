@@ -1,0 +1,151 @@
+{
+  "_comment": "Sus habitats. Se cambia desde el menu. El plato, el bebedero y el arenero no estan aca: esos van siempre, en config/cat.json.",
+  "default": "casa",
+  "habitats": [
+    {
+      "id": "casa",
+      "label": "Su casa",
+      "pieces": [
+        {
+          "kind": "mouse",
+          "at": 0.2
+        },
+        {
+          "kind": "post",
+          "at": 0.28
+        },
+        {
+          "kind": "box",
+          "at": 0.38
+        },
+        {
+          "kind": "pelotita",
+          "at": 0.56
+        },
+        {
+          "kind": "tree",
+          "at": 0.64
+        },
+        {
+          "kind": "wand",
+          "at": 0.71
+        },
+        {
+          "kind": "cave",
+          "at": 0.79
+        },
+        {
+          "kind": "pelotita2",
+          "at": 0.86
+        },
+        {
+          "kind": "bed",
+          "at": 0.93
+        }
+      ]
+    },
+    {
+      "id": "jardin",
+      "label": "El jardín",
+      "floor": "grass",
+      "pieces": [
+        {
+          "kind": "bush",
+          "at": 0.2
+        },
+        {
+          "kind": "flowers",
+          "at": 0.3
+        },
+        {
+          "kind": "box",
+          "at": 0.38
+        },
+        {
+          "kind": "pelotita",
+          "at": 0.57
+        },
+        {
+          "kind": "garden_tree",
+          "at": 0.65
+        },
+        {
+          "kind": "watering_can",
+          "at": 0.8
+        },
+        {
+          "kind": "bush",
+          "at": 0.9
+        }
+      ]
+    },
+    {
+      "id": "parque",
+      "label": "El parque de juegos",
+      "pieces": [
+        {
+          "kind": "box",
+          "at": 0.2
+        },
+        {
+          "kind": "slide",
+          "at": 0.34
+        },
+        {
+          "kind": "tunnel",
+          "at": 0.62
+        },
+        {
+          "kind": "rope",
+          "at": 0.72
+        },
+        {
+          "kind": "ballpit",
+          "at": 0.82
+        },
+        {
+          "kind": "pelotita2",
+          "at": 0.92
+        }
+      ]
+    },
+    {
+      "id": "ventana",
+      "label": "La ventana al sol",
+      "pieces": [
+        {
+          "kind": "potted_plant",
+          "at": 0.2
+        },
+        {
+          "kind": "box",
+          "at": 0.31
+        },
+        {
+          "kind": "curtain",
+          "at": 0.4
+        },
+        {
+          "kind": "window",
+          "at": 0.55
+        },
+        {
+          "kind": "sill",
+          "at": 0.55
+        },
+        {
+          "kind": "curtain",
+          "at": 0.7
+        },
+        {
+          "kind": "potted_plant",
+          "at": 0.84
+        },
+        {
+          "kind": "bed",
+          "at": 0.93
+        }
+      ]
+    }
+  ]
+}
