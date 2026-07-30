@@ -103,69 +103,6 @@ function guardar () {
   })
 }
 let floorTile = null               // la pieza que se repite a lo ancho del piso
-let cuarto = null                  // el cuarto: pared y piso tileados
-
-/**
- * Carga el cuarto del habitat, si el habitat trae uno y esta importado.
- * Las imagenes llegan como data: URI desde el proceso principal.
- */
-async function cargarCuarto (room) {
-  if (!room) return null
-  const img = (src) => new Promise((res, rej) => {
-    const i = new Image()
-    i.onload = () => res(i)
-    i.onerror = () => rej(new Error('no cargo'))
-    i.src = src
-  })
-  try {
-    const [pared, piso] = await Promise.all([img(room.pared.src), img(room.piso.src)])
-    return { pared, piso, alto: room.alto, suelo: room.suelo, escala: room.escala }
-  } catch (err) {
-    console.warn('[nala] no pude cargar el cuarto:', err.message)
-    return null
-  }
-}
-
-/**
- * Dibuja el cuarto: la pared arriba de la linea del piso y el piso abajo, los
- * dos tileados a lo ancho de cada pantalla. La pared trae su zocalo abajo, asi
- * que apoyarla justo en la linea del piso le da el encuentro correcto.
- */
-function dibujarCuarto (ctx) {
-  if (!cuarto) return
-  const e = cuarto.escala
-  const pw = cuarto.pared.width * e
-  const ph = cuarto.pared.height * e
-  const fw = cuarto.piso.width * e
-  const fh = cuarto.piso.height * e
-
-  for (const d of world.displays) {
-    const suelo = world.floorAt(d.x + 1).y
-    const x1 = d.x
-    const x2 = d.x + d.width
-
-    // La pared: de la linea del piso para arriba. La ultima repeticion se
-    // recorta sola contra el borde de arriba del cuarto.
-    const techo = suelo - cuarto.alto
-    for (let y = suelo - ph; y + ph > techo; y -= ph) {
-      const recorte = Math.max(0, techo - y)
-      for (let x = x1; x < x2; x += pw) {
-        ctx.drawImage(cuarto.pared,
-          0, recorte / e, cuarto.pared.width, cuarto.pared.height - recorte / e,
-          Math.round(x), Math.round(y + recorte),
-          Math.min(pw, x2 - x), ph - recorte)
-      }
-    }
-
-    // El piso: de la linea del piso para abajo, hasta el borde de la pantalla.
-    for (let y = suelo; y < d.y + d.height; y += fh) {
-      for (let x = x1; x < x2; x += fw) {
-        ctx.drawImage(cuarto.piso, Math.round(x), Math.round(y),
-                      Math.min(fw, x2 - x), fh)
-      }
-    }
-  }
-}
 
 /**
  * Que papel cumple cada pieza para ella. Lo que no esta aca es decorado: se
@@ -248,7 +185,7 @@ function resize () {
   if (world) world.resize(window.innerWidth, window.innerHeight, displays)
 }
 
-window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, room, estado, debug }) => {
+window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, estado, debug }) => {
   origin = { x: display.x, y: display.y }
   displays = display.displays
 
@@ -283,7 +220,6 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, roo
 
   habitatCount = Array.isArray(habitats) ? habitats.length : 1
   habitatId = (habitat && habitat.id) || 'casa'
-  cuarto = await cargarCuarto(room)
   pieces = buildHabitat(habitat)
 
   // Cada pieza cumple un papel para ella: en el jardin el arbol de verdad es
@@ -303,8 +239,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, roo
   cat.needs = needs
   cat.autoServe = config.autoServe !== false
   world.setFurniture(pieces.filter((p) => p.surfaces().length))
-  const alSuelo = (sheet.ch - sheet.ground) * cat.scale + 2
-  world.setFloorMargin(cuarto ? alSuelo + cuarto.suelo : alSuelo)
+  world.setFloorMargin((sheet.ch - sheet.ground) * cat.scale + 2)
 
   meals = new Schedule(config.meals)
   playtimes = new Schedule(config.playtimes)
@@ -862,8 +797,6 @@ function loop (now) {
   }
 
   ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-  dibujarCuarto(ctx)
 
   // El piso del habitat, si trae: se repite a lo ancho de cada pantalla.
   if (floorTile) {

@@ -193,35 +193,6 @@ Hay cuatro decorados y se cambia desde el menú → **Su hábitat**. Se definen 
 Su plato, su bebedero y su arenero **no** están en el hábitat: van siempre,
 porque los necesita. Esos se posicionan desde `config/cat.json`.
 
-### Cuartos con pared y piso
-
-Un hábitat puede traer un **cuarto**: pared tileada arriba de la línea del piso
-y piso tileado abajo. Queda como un diorama apoyado en el borde de la pantalla,
-y el resto del escritorio sigue libre.
-
-Los tiles salen de packs de terceros, así que hay un paso manual:
-
-```bash
-python3 tools/import_room.py ~/Descargas/Modern_Interiors_Free_v2.2.zip --preview
-```
-
-Recorta paredes y pisos y los deja en `~/.config/Nala/rooms/moderno/`, con un
-`preview.png` para elegir. Después, en el hábitat:
-
-```json
-"room": { "set": "moderno", "pared": "salmon", "piso": "espiga",
-          "alto": 250, "suelo": 96 }
-```
-
-**Los tiles no están en el repo y no van a estar.** El pack
-([Modern Interiors de LimeZu](https://limezu.itch.io/moderninteriors)) es de uso
-no comercial y no se puede redistribuir. Viven en tu carpeta de usuario. Si no
-los importaste la app anda igual: el hábitat queda sin cuarto y ella vive sobre
-el escritorio pelado, como antes.
-
-Al renderer llegan como `data:` URI desde el proceso principal, porque la CSP no
-lo deja leer archivos de afuera de la app — y total pesan cuatro kilobytes.
-
 ### Cómo se agrega una pieza
 
 Una pieza es sólo un sprite con nombre. El motor saca todo de la hoja:
@@ -424,35 +395,6 @@ Hay cuatro decorados y se cambia desde el menú → **Su hábitat**. Se definen 
 
 Su plato, su bebedero y su arenero **no** están en el hábitat: van siempre,
 porque los necesita. Esos se posicionan desde `config/cat.json`.
-
-### Cuartos con pared y piso
-
-Un hábitat puede traer un **cuarto**: pared tileada arriba de la línea del piso
-y piso tileado abajo. Queda como un diorama apoyado en el borde de la pantalla,
-y el resto del escritorio sigue libre.
-
-Los tiles salen de packs de terceros, así que hay un paso manual:
-
-```bash
-python3 tools/import_room.py ~/Descargas/Modern_Interiors_Free_v2.2.zip --preview
-```
-
-Recorta paredes y pisos y los deja en `~/.config/Nala/rooms/moderno/`, con un
-`preview.png` para elegir. Después, en el hábitat:
-
-```json
-"room": { "set": "moderno", "pared": "salmon", "piso": "espiga",
-          "alto": 250, "suelo": 96 }
-```
-
-**Los tiles no están en el repo y no van a estar.** El pack
-([Modern Interiors de LimeZu](https://limezu.itch.io/moderninteriors)) es de uso
-no comercial y no se puede redistribuir. Viven en tu carpeta de usuario. Si no
-los importaste la app anda igual: el hábitat queda sin cuarto y ella vive sobre
-el escritorio pelado, como antes.
-
-Al renderer llegan como `data:` URI desde el proceso principal, porque la CSP no
-lo deja leer archivos de afuera de la app — y total pesan cuatro kilobytes.
 
 ### Cómo se agrega una pieza
 
