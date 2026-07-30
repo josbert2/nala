@@ -265,6 +265,7 @@ export class Cat {
     const bird = this.props && this.props.bird
     if (bird && bird.active && this.energy > 0.2 &&
         performance.now() > this.birdCooldownUntil &&
+        this.after !== 'goingBird' &&          // ya va para alla
         !NO_CORTAR.includes(this.state)) {
       this.watchBird()
       return
@@ -576,6 +577,11 @@ export class Cat {
 
   _turn () {
     this.facing *= -1
+    // Si venia yendo hacia un pajaro y se topo con el borde, se le pasa un
+    // rato. Sin esto lo vuelve a intentar al frame siguiente, para siempre.
+    if (this.after === 'goingBird' || this.state === 'stalkBird') {
+      this.birdCooldownUntil = performance.now() + 20000
+    }
     if (this.target) this.target = null
     // Cortar TODOS los estados que caminan, no solo dos. Con la lista corta,
     // los modos nuevos se quedaban empujando contra la pared sin fin.
