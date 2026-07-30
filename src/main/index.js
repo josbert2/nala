@@ -356,6 +356,7 @@ function refreshTrayMenu () {
     { label: 'A rascar el poste', click: send('command', { type: 'scratch' }) },
     { label: 'Arriba del arbol', click: send('command', { type: 'tree' }) },
     { label: 'A su cueva', click: send('command', { type: 'cave' }) },
+    { label: 'A su arenero', click: send('command', { type: 'litter' }) },
     { label: 'A jugar con un juguete', click: send('command', { type: 'toy' }) },
     { type: 'separator' },
     { label: 'Que venga', click: send('command', { type: 'come' }) },
@@ -415,7 +416,8 @@ const SHORTCUTS = [
   ['Control+Alt+L', 'que venga', { type: 'come' }],
   ['Control+Alt+K', 'a su cama', { type: 'bed' }],
   ['Control+Alt+R', 'a rascar', { type: 'scratch' }],
-  ['Control+Alt+T', 'al arbol', { type: 'tree' }]
+  ['Control+Alt+T', 'al arbol', { type: 'tree' }],
+  ['Control+Alt+A', 'al arenero', { type: 'litter' }]
 ]
 
 /**

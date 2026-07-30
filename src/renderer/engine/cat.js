@@ -39,6 +39,8 @@ export class Cat {
     this.pinned = false        // el usuario la agarro con el mouse
     this.bubble = null         // {text, until}
     this.huntCooldownUntil = 0 // no vuelve a cazar el cursor hasta aca
+    this.activity = 0.5        // 0 = hora de dormir, 1 = la hora loca
+    this.zoomLeft = 0          // vueltas de locura que le quedan
     this.tripCooldownUntil = 0 // ni a irse a otro monitor hasta aca
     this.furnitureCooldownUntil = 0  // ni a usar sus muebles hasta aca
   }
@@ -70,6 +72,8 @@ export class Cat {
       case 'slide': return 'slide'
       case 'seek': return 'walk'
       case 'eatTreat': return 'eat'
+      case 'litter': return 'dig'
+      case 'zoom': return 'run'
       case 'meow': return 'alert'
       case 'jump':
       case 'fall': return 'fall'
@@ -91,6 +95,8 @@ export class Cat {
       case 'groom': return r(4000, 9000)
       case 'stretch': return 1400
       case 'scratch': return r(3500, 7500)
+      case 'litter': return r(4000, 7000)
+      case 'zoom': return 400
       case 'climbTree': return 3000
       case 'trot': return 45000
       case 'watch': return r(2000, 5000)
@@ -136,6 +142,9 @@ export class Cat {
   /** Encadenamientos fijos: agazaparse siempre termina en salto. */
   _onHoldEnd (ctx) {
     if (this.state === 'crouch') { this._pounceAtBall(); return }
+    // Sale del arenero y se limpia. Siempre.
+    if (this.state === 'litter') { this.setState('groom'); return }
+    if (this.state === 'zoom') { this._zoomNext(); return }
     if (this.state === 'play') {
       const ball = this.props && this.props.ball
       if (ball && ball.active && Math.abs(ball.x - this.x) > 40) {
@@ -240,7 +249,9 @@ export class Cat {
         this.facing = bowl.x > this.x ? 1 : -1
         if (bowl.nibble(dt)) {
           this.energy = Math.min(1, this.energy + 0.35)
-          this.setState('groom', 6000)
+          // Terminar de comer casi siempre termina en el arenero.
+          if (this.props.litter && Math.random() < 0.75) this.goToLitter()
+          else this.setState('groom', 6000)
         }
         break
       }
@@ -436,8 +447,9 @@ export class Cat {
       return
     }
 
-    // Muy cansada: se duerme casi seguro.
+    // Muy cansada, o es una hora en la que un gato simplemente duerme.
     if (this.energy < 0.2) { this.setState('sleep'); return }
+    if (this.activity < 0.25 && Math.random() < 0.55) { this.setState('sleep'); return }
 
     // De vez en cuando se sube a una ventana.
     if (roll < 0.18) {
@@ -459,6 +471,7 @@ export class Cat {
       if (p.tree) options.push(() => this.goUpTree())
       if (p.toys && p.toys.length) options.push(() => this.goToToy())
       if (p.cave && this.energy < 0.45) options.push(() => this.goToCave())
+      if (p.litter) options.push(() => this.goToLitter())
       if (options.length) {
         this.furnitureCooldownUntil = performance.now() + 30000
         options[Math.floor(Math.random() * options.length)]()
@@ -487,7 +500,7 @@ export class Cat {
       return
     }
 
-    const pool = this.energy < 0.45
+    const pool = (this.energy < 0.45 || this.activity < 0.4)
       ? ['sleep', 'sleep', 'loaf', 'idle', 'groom']
       : ['idle', 'sit', 'loaf', 'groom', 'stretch', 'idle']
     this.setState(pool[Math.floor(Math.random() * pool.length)])
@@ -638,6 +651,37 @@ export class Cat {
       return
     }
     this.goTo(post.x, 'scratch')
+  }
+
+  /**
+   * La hora loca: sale disparada de una punta a la otra unas cuantas veces,
+   * sin motivo, como hacen a las cinco de la mañana.
+   */
+  zoomies (times = 4) {
+    if (this.airborne) return
+    this.energy = Math.max(this.energy, 0.8)
+    this.zoomLeft = times
+    this._zoomNext()
+  }
+
+  _zoomNext () {
+    if (this.zoomLeft-- <= 0) { this.setState('sit', 2000); return }
+    const s = this.surface || this.world.floorAt(this.x)
+    const mid = (s.x1 + s.x2) / 2
+    const tx = this.x < mid ? s.x2 - 30 : s.x1 + 30
+    this.goTo(tx, 'zoom', 9000, 'trot')
+  }
+
+  /** Al arenero. Escarba, hace lo suyo, tapa, y despues se limpia. */
+  goToLitter () {
+    const litter = this.props && this.props.litter
+    if (!litter) return
+    this.energy = Math.max(this.energy, 0.4)
+    if (litter.holds(this.x) && this.surface && this.surface.isFloor) {
+      this.setState('litter')
+      return
+    }
+    this.goTo(litter.x, 'litter', 40000, 'trot')
   }
 
   /** A su cueva, a dormir metida adentro. */

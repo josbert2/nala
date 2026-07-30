@@ -4,8 +4,10 @@ import { SpriteSheet } from './engine/sprites.js'
 import { World } from './engine/world.js'
 import { Cat } from './engine/cat.js'
 import { Bowl, Ball, Treat, Bed } from './engine/props.js'
-import { ScratchPost, CatTree, Cave, Toy } from './engine/furniture.js'
-import { Moments, Notes, Schedule } from './engine/moments.js'
+import { ScratchPost, CatTree, Cave, Toy, Litter } from './engine/furniture.js'
+import { Moments, Schedule } from './engine/moments.js'
+import { Routine } from './engine/routine.js'
+import { Messages } from './engine/messages.js'
 
 // Los juguetes que quedan tirados por el piso si no se configura otra cosa.
 // `kind` es el nombre del sprite en furniture.json.
@@ -58,7 +60,10 @@ let toys = []
 let meals = null
 let playtimes = null
 let moments = null
-let notes = null
+let messages = null
+let routine = null
+let litter = null
+let lastState = null
 let origin = { x: 0, y: 0 }        // esquina del escritorio que cubre la ventana
 let displays = null                // cada monitor, en coordenadas de la ventana
 let lookCount = 1                  // cuantas versiones de su pinta hay
@@ -75,6 +80,13 @@ const pointer = {
 let lastTouch = performance.now()   // ultima vez que interactuaste con ella
 let missCooldown = 0
 let missAfterMs = 12 * 60 * 1000    // cuanto aguanta antes de venir a buscarte
+
+/** Le hace decir algo del grupo `pool`, si no esta diciendo otra cosa. */
+function sayNow (pool, ms = 7000) {
+  if (!cat || !messages || cat.bubble) return
+  const m = messages.on(pool)
+  if (m) cat.say(m, ms)
+}
 
 /** Marca que la tocaste. Corta el "te extraña". */
 function touched () {
@@ -125,21 +137,24 @@ window.nala.onBoot(async ({ config, display, look, looks, debug }) => {
   post = new ScratchPost(world, furnSheet, s, at('postAt', 0.28), on('postDisplay'))
   tree = new CatTree(world, furnSheet, s, at('treeAt', 0.55), on('treeDisplay'))
   cave = new Cave(world, furnSheet, s, at('caveAt', 0.72), on('caveDisplay'))
+  litter = new Litter(world, furnSheet, s, at('litterAt', 0.42), on('litterDisplay'))
   toys = (config.toys || DEFAULT_TOYS).map(
     (t) => new Toy(world, furnSheet, s, t.kind, t.at, t.display != null ? t.display : null))
 
-  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys }
+  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys, litter }
   world.setFurniture([post, tree])
   world.setFloorMargin((sheet.ch - sheet.ground) * cat.scale + 2)
 
   meals = new Schedule(config.meals)
   playtimes = new Schedule(config.playtimes)
   moments = new Moments(config.moments)
-  notes = new Notes(config.notes, (config.noteEveryMinutes || 25) * 60 * 1000)
+  routine = new Routine(config.routine || {})
+  messages = new Messages(config)
   missAfterMs = (config.missYouAfterMinutes || 12) * 60 * 1000
 
   resize()
-  if (config.greeting) cat.say(config.greeting, 7000)
+  const hola = config.greeting || messages.greeting()
+  if (hola) cat.say(hola, 9000)
   requestAnimationFrame(loop)
 
   if (debug) {
@@ -169,6 +184,7 @@ window.nala.onCommand((cmd) => {
   if (cmd.type === 'scratch') cat.goToPost()
   if (cmd.type === 'tree') cat.goUpTree()
   if (cmd.type === 'cave') cat.goToCave()
+  if (cmd.type === 'litter') cat.goToLitter()
   if (cmd.type === 'toy') cat.goToToy()
   if (cmd.type === 'free') { cat.target = null; cat.after = null; cat.setState('idle', 500) }
 })
@@ -255,6 +271,7 @@ window.addEventListener('mouseup', (e) => {
     const bursts = held > 700 ? 3 : 1
     for (let i = 0; i < bursts; i++) popHearts(cat.x + (i - 1) * 12, cat.y - 40 - i * 8)
     if (held > 700) cat.setState('purr', 7000)
+    if (Math.random() < 0.5) sayNow('petted', 5000)
   }
 
   grip = null
@@ -349,6 +366,7 @@ const MENU_ITEMS = [
   ['A rascar el poste', () => cat.goToPost()],
   ['Arriba del arbol', () => cat.goUpTree()],
   ['A su cueva', () => cat.goToCave()],
+  ['A su arenero', () => cat.goToLitter()],
   ['A jugar con un juguete', () => cat.goToToy()],
   ['A su cama', () => cat.goToBed()],
   ['Que duerma', () => cat.napNow()],
@@ -508,15 +526,28 @@ function loop (now) {
       cat.mealtime()
     } else if (playtimes.due()) {
       cat.playtime()
+    } else if (routine.zoomiesDue()) {
+      cat.zoomies()
     } else {
       const due = moments.due()
       if (due) {
         if (due.state) cat.setState(due.state, due.hold || 12000)
         if (due.note) cat.say(due.note, 9000)
       } else if (!cat.bubble) {
-        const note = notes.due()
-        if (note) cat.say(note, 8000)
+        const m = messages.due(now, routine.timeOfDay())
+        if (m) cat.say(m, 8500)
       }
+    }
+
+    // El ritmo del dia empuja lo que tiende a hacer: los gatos son
+    // crepusculares, no viven igual a las 4 de la tarde que a las 8.
+    cat.activity = routine.activity()
+
+    // Cosas que dice atadas a lo que le acaba de pasar.
+    if (cat.state !== lastState) {
+      if (lastState === 'sleep') sayNow('waking')
+      else if (lastState === 'eat') sayNow('afterMeal')
+      lastState = cat.state
     }
 
     bowl.update(dt)
@@ -526,6 +557,7 @@ function loop (now) {
     if (now - lastTouch > missAfterMs && now - missCooldown > missAfterMs) {
       missCooldown = now
       cat.missYou()
+      sayNow('missYou')
     }
     cat.update(dt, { pointer })
     sendHotRects()
@@ -550,6 +582,12 @@ function loop (now) {
   drawFurn(cave, 'cave_back')
   if (!inCave) drawFurn(cave, 'cave_front')
 
+  // El arenero igual que la cueva: la bandeja detras, el borde por delante.
+  const inLitter = litter && cat && litter.holds(cat.x) &&
+                   cat.surface && cat.surface.isFloor && !cat.airborne
+  drawFurn(litter, 'litter_back')
+  if (!inLitter) drawFurn(litter, 'litter_front')
+
   // Su cama va partida en dos: el fondo detras de ella y el borde de adelante
   // por encima, para que se la vea metida adentro y no parada sobre la cama.
   if (bed) propSheet.draw(ctx, 'bed_back', 0, bed.x, bed.y, cat.scale, false)
@@ -564,6 +602,7 @@ function loop (now) {
   }
   if (cat) cat.draw(ctx)
   if (inCave) drawFurn(cave, 'cave_front')
+  if (inLitter) drawFurn(litter, 'litter_front')
   if (bed) propSheet.draw(ctx, 'bed_front', 0, bed.x, bed.y, cat.scale, false)
   maybePurr(now)
   drawPurrs(dt)

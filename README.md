@@ -202,6 +202,63 @@ y aparece sola en el menú.
 
 ---
 
+## Lo que te dice
+
+Cada tanto aparece un globito con algo suyo. Los mensajes están en
+`src/renderer/engine/messages.js`, agrupados por momento:
+
+| Grupo | Cuándo sale |
+|---|---|
+| `firstOfDay` | la primera vez en el día que la abrís |
+| `morning` / `afternoon` / `night` / `lateNight` | según la hora |
+| `waking` | cuando se despierta de una siesta |
+| `afterMeal` | cuando termina de comer |
+| `petted` | cuando la acariciás |
+| `missYou` | cuando hace rato que no la tocás y te vino a buscar |
+| `any` | las de siempre, sin motivo |
+| `corazon` | las que pesan. Salen poco a propósito |
+
+Cada grupo es una bolsa: se saca sin repetir hasta agotarla. `corazonChance`
+(0.18 por defecto) es la probabilidad de que una de las del fondo se cuele en
+lugar de una común.
+
+**Las que vienen son un punto de partida.** Se pueden reemplazar enteras desde
+`config/cat.json`, sin tocar código:
+
+```json
+"messages": {
+  "any": ["lo que ella diría", "otra cosa suya"],
+  "corazon": []
+}
+```
+
+Un grupo definido en el config reemplaza al de fábrica completo, así que
+poniendo `[]` se apaga. Las que van a significar algo son las tuyas, con cosas
+que hacía de verdad.
+
+---
+
+## Su día
+
+Los gatos son crepusculares: se encienden al amanecer y al atardecer, y duermen
+entre 13 y 16 horas. Eso no está hecho con eventos sueltos sino con una curva de
+actividad por hora, en `src/renderer/engine/routine.js`:
+
+- **05:00–08:00** — se enciende. Ahí cae la primera hora loca.
+- **09:00–17:00** — la siesta larga, con algún recreo cerca de la comida.
+- **18:00–22:00** — su pico. Juega, ronda, se mete en todo.
+- **22:00** — la segunda hora loca: sale disparada de una punta a la otra.
+- **23:00–04:00** — la ronda de la noche y a la cama.
+
+La curva empuja lo que tiende a hacer, no lo decide: a las tres de la tarde le
+cuesta mucho más ponerse a jugar que a las ocho de la noche. Se puede pisar con
+`routine.activityCurve` en el config (24 números de 0 a 1).
+
+Además tiene **arenero**. Va sola cada tanto, y casi siempre después de comer —
+como corresponde. Escarba, tapa, y sale a lamerse.
+
+---
+
 ## Sus colores
 
 El sprite se genera por código desde una paleta, así que cambiarle el pelaje es

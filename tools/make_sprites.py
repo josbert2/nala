@@ -81,6 +81,14 @@ LOOKS = [
 
 DEFAULT_LOOK = "v2"
 
+# La arena de su arenero y el plastico de la bandeja.
+SAND    = (222, 205, 176, 255)
+SAND_HI = (238, 226, 203, 255)
+SAND_SH = (192, 173, 143, 255)
+TRAY    = (126, 138, 152, 255)
+TRAY_HI = (156, 168, 181, 255)
+TRAY_SH = (94, 104, 118, 255)
+
 # Los rasgos del look que se esta dibujando ahora mismo. Es global a proposito:
 # si no, habria que pasarle un parametro mas a las dieciseis poses solo para que
 # se lo reenvien a head().
@@ -481,6 +489,27 @@ def pose_slide(d, t, P):
         ell(d, x, GROUND - 2 - i * 0.8, 1.1 + i * 0.4, 0.9, P["light"])
 
 
+def pose_dig(d, t, P):
+    """Escarbando el arenero: agachada, las patas delanteras van y vienen."""
+    ph = t * math.tau
+    paw = math.sin(ph) * 3.5
+    bob = abs(math.sin(ph)) * 1.0
+    tail(d, (9, GROUND - 12), (2, GROUND - 20), (10, GROUND - 25), P["dark"])
+    leg(d, 13, GROUND - 9 + bob, GROUND - 1, P["dark"])
+    leg(d, 23, GROUND - 9 + bob, GROUND - 1, P["dark"])
+    stripes_body(d, 21, GROUND - 15 + bob, 10, 4.5, P)
+    ell(d, 21, GROUND - 13 + bob, 11.5, 6, P["base"])
+    ell(d, 23, GROUND - 10 + bob, 8, 3.2, P["light"])
+    # las patitas que escarban
+    d.rectangle([29 + paw, GROUND - 11 + bob, 32.5 + paw, GROUND - 2], fill=P["base"])
+    ell(d, 30.7 + paw, GROUND - 2, 2.2, 1.4, P["light"])
+    head(d, 32, GROUND - 20 + bob, P, eyes="half", tilt=0.3)
+    # arenita saltando
+    for i in range(3):
+        ell(d, 36 + i * 3.2 + paw * 0.6,
+            GROUND - 4 - i * 2.2 - abs(paw) * 0.7, 1.0, 0.9, SAND_HI)
+
+
 def pose_sit_alert(d, t, P):
     """Sentada, atenta, mirando al cursor. Orejas paradas, cola inquieta."""
     swish = math.sin(t * math.tau * 2) * 5
@@ -528,6 +557,7 @@ ANIMATIONS = [
     ("run",          pose_run,        6,     14,   True),
     ("sleep",        pose_sleep,      6,     3,    True),
     ("loaf",         pose_loaf,       6,     4,    True),
+    ("dig",           pose_dig,        6,     9,    True),
     ("scratch",      pose_scratch,    6,     8,    True),
     ("groom",        pose_groom,      6,     6,    True),
     ("stretch",      pose_stretch,    6,     6,    False),
@@ -782,7 +812,31 @@ def furn_wand(d, t, P):
 
 
 # nombre, fn, frames, fps, loop, tablas donde se puede parar [x1, x2, y]
+def furn_litter(d, t, P, front=False):
+    """
+    Su arenero. Va en dos partes como la cueva: el fondo detras de ella y el
+    borde de adelante por encima, asi se la ve parada DENTRO y no arriba.
+    """
+    x1, x2 = 12, 68
+    top = 84
+    if not front:
+        d.rectangle([x1, top, x2, FURN_GROUND - 2], fill=TRAY_SH)      # bandeja
+        d.rectangle([x1, top, x2, top + 2], fill=TRAY_HI)              # canto
+        d.rectangle([x1 + 3, top + 3, x2 - 3, FURN_GROUND - 4], fill=SAND)
+        # grumitos
+        for sx, sy, r in ((24, top + 8, 2.4), (41, top + 12, 2.8), (55, top + 7, 2.1)):
+            ell(d, sx, sy, r, r * 0.65, SAND_SH)
+        for sx, sy in ((31, top + 6), (48, top + 10), (60, top + 13)):
+            ell(d, sx, sy, 1.3, 1.0, SAND_HI)
+    else:
+        d.rectangle([x1, FURN_GROUND - 11, x2, FURN_GROUND - 1], fill=TRAY)
+        d.rectangle([x1, FURN_GROUND - 11, x2, FURN_GROUND - 9], fill=TRAY_HI)
+        d.rectangle([x1, FURN_GROUND - 3, x2, FURN_GROUND - 1], fill=TRAY_SH)
+
+
 FURNITURE = [
+    ("litter_back",  lambda d, t, P: furn_litter(d, t, P, False), 1, 1, False, []),
+    ("litter_front", lambda d, t, P: furn_litter(d, t, P, True),  1, 1, False, []),
     ("post",       furn_post,                                   1, 1, False, [[24, 56, 44]]),
     ("tree",       furn_tree,                                   1, 1, False,
      [[6, 46, 76], [42, 78, 56], [12, 60, 24]]),

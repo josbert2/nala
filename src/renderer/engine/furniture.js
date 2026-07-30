@@ -95,3 +95,19 @@ export class Toy extends Furniture {
     return Math.abs(x - this.x) < 34
   }
 }
+
+/**
+ * Su arenero. Como la cueva, se dibuja en dos partes: la bandeja detras y el
+ * borde de adelante por encima, para que se la vea parada adentro.
+ */
+export class Litter extends Furniture {
+  constructor (world, sheet, scale, xFraction = 0.42, displayIndex = null) {
+    super(world, sheet, scale, 'litter_back', xFraction, displayIndex)
+    this.title = 'su arenero'
+  }
+
+  /** Ya esta adentro de la bandeja. */
+  holds (x) {
+    return Math.abs(x - this.x) < 28
+  }
+}

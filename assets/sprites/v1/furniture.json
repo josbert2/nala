@@ -5,8 +5,22 @@
   ],
   "ground": 108,
   "animations": {
-    "post": {
+    "litter_back": {
       "row": 0,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "litter_front": {
+      "row": 1,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "post": {
+      "row": 2,
       "frames": 1,
       "fps": 1,
       "loop": false,
@@ -19,7 +33,7 @@
       ]
     },
     "tree": {
-      "row": 1,
+      "row": 3,
       "frames": 1,
       "fps": 1,
       "loop": false,
@@ -42,42 +56,42 @@
       ]
     },
     "cave_back": {
-      "row": 2,
-      "frames": 1,
-      "fps": 1,
-      "loop": false,
-      "ledges": []
-    },
-    "cave_front": {
-      "row": 3,
-      "frames": 1,
-      "fps": 1,
-      "loop": false,
-      "ledges": []
-    },
-    "mouse": {
       "row": 4,
       "frames": 1,
       "fps": 1,
       "loop": false,
       "ledges": []
     },
-    "pelotita": {
+    "cave_front": {
       "row": 5,
       "frames": 1,
       "fps": 1,
       "loop": false,
       "ledges": []
     },
-    "pelotita2": {
+    "mouse": {
       "row": 6,
       "frames": 1,
       "fps": 1,
       "loop": false,
       "ledges": []
     },
-    "wand": {
+    "pelotita": {
       "row": 7,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "pelotita2": {
+      "row": 8,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "wand": {
+      "row": 9,
       "frames": 1,
       "fps": 1,
       "loop": false,
