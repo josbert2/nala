@@ -887,8 +887,14 @@ export class Cat {
    * cualquier gato con cualquier caja. No duerme: mira.
    */
   goToBox () {
-    const box = this.props && this.props.box
+    const p = this.props || {}
+    // Si el habitat trae mas de un lugar donde meterse (la caja, el pelotero),
+    // elige uno. Si ya esta metida en alguno, ese.
+    const lugares = (p.boxes && p.boxes.length) ? p.boxes : (p.box ? [p.box] : [])
+    const box = lugares.find((b) => b.holds(this.x)) ||
+                lugares[Math.floor(Math.random() * lugares.length)]
     if (!box) return
+    this.props.box = box
     if (box.holds(this.x) && this.surface && this.surface.isFloor) {
       this.x = box.x
       this.vx = 0

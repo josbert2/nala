@@ -1194,18 +1194,30 @@ def furn_slide(d, t, P):
     d.polygon([(40, 46), (74, g - 8), (71, g - 8), (40, 49)], fill=(236, 140, 132, 255))
 
 
-def furn_ballpit(d, t, P):
-    """El pelotero."""
+def furn_ballpit(d, t, P, front=False):
+    """
+    El pelotero. Como la caja, en dos partes: se mete adentro y le asoma la
+    cabeza por encima de las pelotas.
+    """
     g = FURN_GROUND
-    d.rectangle([8, g - 18, 72, g - 2], fill=PLAS_G)
-    d.rectangle([8, g - 18, 72, g - 15], fill=(150, 206, 166, 255))
-    d.rectangle([8, g - 5, 72, g - 2], fill=(78, 138, 96, 255))
     cols = (PLAS_R, PLAS_Y, PLAS_B, (196, 140, 200, 255))
-    for i in range(10):
-        x = 14 + (i % 5) * 13 + (i // 5) * 6
-        y = g - 21 - (i // 5) * 8
-        ell(d, x, y, 5, 5, cols[i % 4])
-        ell(d, x - 1.6, y - 1.6, 1.6, 1.6, (255, 255, 255, 90))
+    if not front:
+        d.rectangle([8, g - 24, 72, g - 2], fill=(78, 138, 96, 255))
+        d.rectangle([8, g - 24, 72, g - 21], fill=PLAS_G)
+        # las pelotas del fondo
+        for i in range(5):
+            x = 15 + i * 13
+            ell(d, x, g - 19, 5, 5, cols[i % 4])
+            ell(d, x - 1.6, g - 20.6, 1.6, 1.6, (252, 250, 246, 255))
+    else:
+        # el borde de adelante, bajo, con su hilera de pelotas
+        d.rectangle([8, g - 13, 72, g + 6], fill=PLAS_G)
+        d.rectangle([8, g - 13, 72, g - 10], fill=(150, 206, 166, 255))
+        d.rectangle([8, g + 3, 72, g + 6], fill=(78, 138, 96, 255))
+        for i in range(6):
+            x = 12 + i * 11
+            ell(d, x, g - 13, 5, 5, cols[(i + 2) % 4])
+            ell(d, x - 1.6, g - 14.6, 1.6, 1.6, (252, 250, 246, 255))
 
 
 def furn_rope(d, t, P):
@@ -1311,7 +1323,8 @@ FURNITURE = [
     ("tunnel_back",  lambda d, t, P: furn_tunnel(d, t, P, False), 1, 1, False, []),
     ("tunnel_front", lambda d, t, P: furn_tunnel(d, t, P, True),  1, 1, False, []),
     ("slide",        furn_slide,                                1, 1,  False, [[6, 42, 44]]),
-    ("ballpit",      furn_ballpit,                              1, 1,  False, []),
+    ("ballpit_back", lambda d, t, P: furn_ballpit(d, t, P, False), 1, 1, False, []),
+    ("ballpit_front", lambda d, t, P: furn_ballpit(d, t, P, True), 1, 1, False, []),
     ("rope",         furn_rope,                                 6, 4,  True,  []),
     ("box_back",     lambda d, t, P: furn_box(d, t, P, False),  1, 1,  False, []),
     ("box_front",    lambda d, t, P: furn_box(d, t, P, True),   1, 1,  False, []),

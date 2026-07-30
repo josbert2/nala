@@ -165,43 +165,50 @@
         ]
       ]
     },
-    "ballpit": {
+    "ballpit_back": {
       "row": 18,
       "frames": 1,
       "fps": 1,
       "loop": false,
       "ledges": []
     },
-    "rope": {
+    "ballpit_front": {
       "row": 19,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "rope": {
+      "row": 20,
       "frames": 6,
       "fps": 4,
       "loop": true,
       "ledges": []
     },
     "box_back": {
-      "row": 20,
-      "frames": 1,
-      "fps": 1,
-      "loop": false,
-      "ledges": []
-    },
-    "box_front": {
       "row": 21,
       "frames": 1,
       "fps": 1,
       "loop": false,
       "ledges": []
     },
-    "window": {
+    "box_front": {
       "row": 22,
       "frames": 1,
       "fps": 1,
       "loop": false,
       "ledges": []
     },
-    "sill": {
+    "window": {
       "row": 23,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "sill": {
+      "row": 24,
       "frames": 1,
       "fps": 1,
       "loop": false,
@@ -214,14 +221,14 @@
       ]
     },
     "potted_plant": {
-      "row": 24,
+      "row": 25,
       "frames": 1,
       "fps": 1,
       "loop": false,
       "ledges": []
     },
     "curtain": {
-      "row": 25,
+      "row": 26,
       "frames": 6,
       "fps": 3,
       "loop": true,

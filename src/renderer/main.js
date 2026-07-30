@@ -124,7 +124,8 @@ const PIECE_ROLE = {
   tree: 'tree', garden_tree: 'tree', slide: 'tree', sill: 'tree',
   box: 'box',
   cave: 'cave', tunnel: 'cave',
-  bed: 'bed', ballpit: 'bed',
+  bed: 'bed',
+  ballpit: 'box',
   mouse: 'toy', pelotita: 'toy', pelotita2: 'toy', wand: 'toy', rope: 'toy'
 }
 
@@ -259,9 +260,10 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, est
   cave = byRole('cave')
   bed = byRole('bed')
   box = byRole('box')
+  const cuevitas = pieces.filter((p) => PIECE_ROLE[p.kind] === 'box')
   toys = pieces.filter((p) => PIECE_ROLE[p.kind] === 'toy')
 
-  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys, litter, water, box, butterfly, bird: null, gift }
+  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys, litter, water, box, boxes: cuevitas, butterfly, bird: null, gift }
 
   needs = new Needs(config)
   cat.needs = needs
