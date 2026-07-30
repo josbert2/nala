@@ -146,6 +146,43 @@
           "at": 0.93
         }
       ]
+    },
+    {
+      "id": "cuarto",
+      "label": "Su cuarto",
+      "room": {
+        "set": "moderno",
+        "pared": "salmon",
+        "piso": "espiga",
+        "alto": 250,
+        "suelo": 96
+      },
+      "pieces": [
+        {
+          "kind": "potted_plant",
+          "at": 0.18
+        },
+        {
+          "kind": "box",
+          "at": 0.3
+        },
+        {
+          "kind": "post",
+          "at": 0.6
+        },
+        {
+          "kind": "mouse",
+          "at": 0.68
+        },
+        {
+          "kind": "cave",
+          "at": 0.78
+        },
+        {
+          "kind": "bed",
+          "at": 0.9
+        }
+      ]
     }
   ]
 }

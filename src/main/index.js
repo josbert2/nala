@@ -94,6 +94,45 @@ function loadHabitats () {
 
 const HABITATS = loadHabitats()
 
+// ------------------------------------------------------------------- cuartos
+//
+// El decorado de cuarto sale de packs de terceros que NO se pueden
+// redistribuir, asi que sus imagenes viven en la carpeta del usuario y nunca
+// en el repo. Se importan con tools/import_room.py. Si no estan, la app anda
+// igual: el habitat queda sin cuarto y ella vive sobre el escritorio pelado.
+//
+// Se mandan al renderer como data: URI porque la CSP no le deja leer archivos
+// de afuera de la app, y ademas son cuatro kilobytes.
+
+const ROOMS_DIR = path.join(USER_DIR, 'rooms')
+
+function dataUri (file) {
+  const buf = fs.readFileSync(file)
+  return 'data:image/png;base64,' + buf.toString('base64')
+}
+
+function loadRoom (spec) {
+  if (!spec || !spec.set) return null
+  const dir = path.join(ROOMS_DIR, spec.set)
+  try {
+    const man = JSON.parse(fs.readFileSync(path.join(dir, 'room.json'), 'utf8'))
+    const pared = man.paredes.find((p) => p.id === spec.pared) || man.paredes[0]
+    const piso = man.pisos.find((p) => p.id === spec.piso) || man.pisos[0]
+    if (!pared || !piso) return null
+    return {
+      pared: { src: dataUri(path.join(dir, pared.file)), w: pared.w, h: pared.h },
+      piso: { src: dataUri(path.join(dir, piso.file)), w: piso.w, h: piso.h },
+      alto: spec.alto != null ? spec.alto : 230,
+      suelo: spec.suelo != null ? spec.suelo : 96,
+      escala: spec.escala != null ? spec.escala : 2
+    }
+  } catch (err) {
+    console.warn(`[nala] el cuarto "${spec.set}" no esta importado:`, err.message)
+    console.warn('[nala] corré: python3 tools/import_room.py <el zip del pack>')
+    return null
+  }
+}
+
 function currentHabitatId () {
   const ids = HABITATS.habitats.map((h) => h.id)
   if (settings.habitat && ids.includes(settings.habitat)) return settings.habitat
@@ -295,6 +334,7 @@ function createWindow () {
       looks: LOOKS.looks,
       estado,
       habitat: currentHabitat(),
+      room: loadRoom(currentHabitat().room),
       habitats: HABITATS.habitats.map((h) => ({ id: h.id, label: h.label })),
       platform: process.platform,
       debug: DEBUG

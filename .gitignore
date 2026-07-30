@@ -5,3 +5,6 @@ assets/poses/
 assets/palette-preview.png
 __pycache__/
 debug-shot.png
+
+# los tiles de cuartos son de packs que no se pueden redistribuir
+assets/rooms/
