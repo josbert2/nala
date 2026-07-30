@@ -16,6 +16,7 @@ const SPRITES_DIR = path.join(ROOT, 'assets', 'sprites')
 const USER_DIR = app.getPath('userData')
 const CONFIG_PATH = path.join(USER_DIR, 'cat.json')
 const SETTINGS_PATH = path.join(USER_DIR, 'settings.json')
+const STATE_PATH = path.join(USER_DIR, 'estado.json')
 
 // Wayland no le permite a una app posicionarse sola en pantalla, y sin eso la
 // gata no puede caminar por el escritorio. Forzamos XWayland, que si lo permite.
@@ -131,6 +132,31 @@ const DEFAULT_SETTINGS = {
   displayMode: 'all',   // 'all' | 'primary'
   look: null,           // null = la que venga por defecto en looks.json
   habitat: null         // null = el que venga por defecto en habitats.json
+}
+
+// ------------------------------------------------------------------- memoria
+//
+// Lo que se acuerda de una sesion a la otra: como estaba, si ya te saludo hoy,
+// y desde cuando estan juntos. Sin esto cada reinicio la borraba entera y no
+// habia ninguna continuidad.
+
+let estado = loadState()
+
+function loadState () {
+  try {
+    return JSON.parse(fs.readFileSync(STATE_PATH, 'utf8'))
+  } catch (err) {
+    return {}
+  }
+}
+
+function saveState () {
+  try {
+    fs.mkdirSync(USER_DIR, { recursive: true })
+    fs.writeFileSync(STATE_PATH, JSON.stringify(estado, null, 2))
+  } catch (err) {
+    console.warn('[nala] no pude guardar su estado:', err.message)
+  }
 }
 
 function loadSettings () {
@@ -267,6 +293,7 @@ function createWindow () {
       display: stage,
       look: currentLook(),
       looks: LOOKS.looks,
+      estado,
       habitat: currentHabitat(),
       habitats: HABITATS.habitats.map((h) => ({ id: h.id, label: h.label })),
       platform: process.platform,
@@ -356,7 +383,10 @@ function trayImage () {
 function buildTray () {
   tray = new Tray(trayImage())
   const cfg = loadConfig()
-  tray.setToolTip(cfg.name || 'Nala')
+  const dias = estado.desde
+    ? Math.max(0, Math.round((Date.now() - new Date(estado.desde + 'T00:00:00')) / 86400000))
+    : 0
+  tray.setToolTip(dias > 0 ? `${cfg.name || 'Nala'} · ${dias} días juntos` : (cfg.name || 'Nala'))
   refreshTrayMenu()
 }
 
@@ -400,6 +430,7 @@ function refreshTrayMenu () {
     { type: 'separator' },
     { label: 'Servirle la comida', click: send('command', { type: 'feed' }) },
     { label: 'Sacar la pelota', click: send('command', { type: 'play' }) },
+    { label: 'Soltar una mariposa', click: send('command', { type: 'butterfly' }) },
     { label: 'Darle un premio', click: send('command', { type: 'treat' }) },
     { type: 'separator' },
     { label: 'A rascar el poste', click: send('command', { type: 'scratch' }) },
@@ -478,7 +509,8 @@ const SHORTCUTS = [
   ['Control+Alt+R', 'a rascar', { type: 'scratch' }],
   ['Control+Alt+T', 'al arbol', { type: 'tree' }],
   ['Control+Alt+A', 'al arenero', { type: 'litter' }],
-  ['Control+Alt+B', 'a su caja', { type: 'box' }]
+  ['Control+Alt+B', 'a su caja', { type: 'box' }],
+  ['Control+Alt+M', 'una mariposa', { type: 'butterfly' }]
 ]
 
 /**
@@ -539,6 +571,11 @@ ipcMain.handle('get-config', () => loadConfig())
 
 // El menu de click derecho sobre ella tambien puede cambiarle la pinta.
 ipcMain.on('cycle-look', () => cycleLook())
+ipcMain.on('estado', (_e, parcial) => {
+  estado = { ...estado, ...parcial, at: Date.now() }
+  saveState()
+})
+
 ipcMain.on('cycle-habitat', () => cycleHabitat())
 ipcMain.on('set-habitat', (_e, id) => setHabitat(id))
 
@@ -556,6 +593,13 @@ if (!singleInstance) {
     startGeometryPolling()
     startPointerPolling()
     registerShortcuts()
+
+    // El dia que empezaron. Se graba una sola vez, la primera.
+    if (!estado.desde) {
+      estado.desde = new Date().toISOString().slice(0, 10)
+      saveState()
+      console.log('[nala] primer dia juntos:', estado.desde)
+    }
     if (DEBUG) debugSelfTest()
 
     // Si enchufas, sacas o reconfiguras un monitor, el escenario cambia de
@@ -567,6 +611,7 @@ if (!singleInstance) {
 
   app.on('window-all-closed', (e) => e.preventDefault())  // vive en el tray
   app.on('before-quit', () => {
+    saveState()
     clearInterval(geometryTimer)
     clearInterval(pointerTimer)
     globalShortcut.unregisterAll()

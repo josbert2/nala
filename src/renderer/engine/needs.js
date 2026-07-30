@@ -45,6 +45,24 @@ export class Needs {
     this.bano = 0.15
   }
 
+  /** Como esta, para guardarlo. */
+  snapshotRaw () {
+    return { comida: this.comida, agua: this.agua, cariño: this.cariño, bano: this.bano }
+  }
+
+  /**
+   * Vuelve a como estaba, y le corre el tiempo que la app estuvo cerrada.
+   * El tiempo cerrado se topea: si estuvo apagada tres dias no tiene sentido
+   * que vuelva muerta de hambre — se sirve sola, ya hubiera comido.
+   */
+  restore (guardado, segundosCerrada = 0) {
+    if (!guardado) return
+    for (const k of ['comida', 'agua', 'cariño', 'bano']) {
+      if (typeof guardado[k] === 'number') this[k] = clamp01(guardado[k])
+    }
+    this.update(Math.min(segundosCerrada, 4 * 3600))
+  }
+
   update (dt) {
     this.comida = clamp01(this.comida - this.rate.comida * dt)
     this.agua = clamp01(this.agua - this.rate.agua * dt)

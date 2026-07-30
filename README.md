@@ -154,6 +154,30 @@ juguetes) para mandarla a otro monitor por índice.
 
 ---
 
+## Lo que recuerda
+
+Guarda en `~/.config/Nala/estado.json`:
+
+- **Cómo estaba** — sus necesidades y su energía. Al abrirla vuelve donde
+  quedó, y se le corre el tiempo que la app estuvo cerrada. Ese tiempo se
+  **topea en 4 horas**: si estuvo apagada tres días no tiene sentido que vuelva
+  muerta de hambre, se sirve sola, ya hubiera comido.
+- **Si ya te saludó hoy** — así el saludo del día es de verdad uno por día.
+- **Desde cuándo están juntos** — se graba solo la primera vez que corre.
+
+Los días juntos salen en el globo del ícono de bandeja, y cualquier mensaje
+puede usar `{dias}`:
+
+```json
+"messages": { "firstOfDay": ["Van {dias} días así."] }
+```
+
+Para cambiar la fecha de inicio, editá `desde` en `estado.json`. Si querés que
+cuente desde el día que llegó a tu casa y no desde que instalaste la app, es
+ahí.
+
+---
+
 ## Sus hábitats
 
 Hay cuatro decorados y se cambia desde el menú → **Su hábitat**. Se definen en
@@ -330,6 +354,30 @@ cuesta mucho más ponerse a jugar que a las ocho de la noche. Se puede pisar con
 
 Además tiene **arenero**. Va sola cada tanto, y casi siempre después de comer —
 como corresponde. Escarba, tapa, y sale a lamerse.
+
+---
+
+## Lo que recuerda
+
+Guarda en `~/.config/Nala/estado.json`:
+
+- **Cómo estaba** — sus necesidades y su energía. Al abrirla vuelve donde
+  quedó, y se le corre el tiempo que la app estuvo cerrada. Ese tiempo se
+  **topea en 4 horas**: si estuvo apagada tres días no tiene sentido que vuelva
+  muerta de hambre, se sirve sola, ya hubiera comido.
+- **Si ya te saludó hoy** — así el saludo del día es de verdad uno por día.
+- **Desde cuándo están juntos** — se graba solo la primera vez que corre.
+
+Los días juntos salen en el globo del ícono de bandeja, y cualquier mensaje
+puede usar `{dias}`:
+
+```json
+"messages": { "firstOfDay": ["Van {dias} días así."] }
+```
+
+Para cambiar la fecha de inicio, editá `desde` en `estado.json`. Si querés que
+cuente desde el día que llegó a tu casa y no desde que instalaste la app, es
+ahí.
 
 ---
 

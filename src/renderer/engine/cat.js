@@ -72,7 +72,8 @@ export class Cat {
       case 'trot': return 'run'
       case 'chase':
       case 'chaseBall':
-      case 'chaseCursor': return 'run'
+      case 'chaseCursor':
+      case 'chaseButterfly': return 'run'
       case 'slide': return 'slide'
       case 'seek': return 'walk'
       case 'eatTreat': return 'eat'
@@ -123,6 +124,7 @@ export class Cat {
       case 'play': return r(2500, 6000)
       case 'chaseBall': return 9000
       case 'chaseCursor': return 7000
+      case 'chaseButterfly': return 14000
       case 'slide': return 2600
       case 'eatTreat': return 20000
       case 'seek': return 14000
@@ -327,6 +329,26 @@ export class Cat {
         }
         break
       }
+      case 'chaseButterfly': {
+        const b = this.props && this.props.butterfly
+        if (!b || !b.active) { this.setState('idle', 1200); break }
+        const dx = b.x - this.x
+        this.facing = Math.sign(dx) || 1
+        if (Math.abs(dx) < 48) {
+          this.vx = 0
+          // Solo salta si la tiene al alcance. Si vuela alto se queda
+          // mirandola, con la cola dura, que es lo que hacen.
+          if (this.y - b.y < 165) {
+            this.pounceTarget = b.x
+            this.setState('crouch', 520)
+          } else {
+            this.setState('watch', 1400)
+          }
+          break
+        }
+        this.vx = this.facing * RUN_SPEED
+        break
+      }
       case 'chaseCursor': {
         const p = ctx.pointer
         if (!p.active) { this.setState('idle', 1000); break }
@@ -498,6 +520,13 @@ export class Cat {
     const bowl = this.props && this.props.bowl
     if (bowl && bowl.food > 0 && this.state !== 'eat') {
       this.goTo(bowl.x, 'eat')
+      return
+    }
+
+    // Una mariposa dando vueltas no se puede ignorar.
+    const bfly = this.props && this.props.butterfly
+    if (bfly && bfly.active && this.energy > 0.25 && this.state !== 'chaseButterfly') {
+      this.setState('chaseButterfly')
       return
     }
 

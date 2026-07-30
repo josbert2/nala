@@ -716,6 +716,35 @@ def prop_water(d, t, P, full=True):
         ell(d, PX + 12, 15.4, 6.0, 1.6, P["dark"])
 
 
+def prop_butterfly(d, t, P):
+    """
+    Una mariposa. Se dibuja apoyada en la linea del piso de la celda, asi que
+    `y` es su panza: el motor la lleva volando por donde quiera.
+    """
+    g = PROP_GROUND
+    cx = PX + 12
+    # Las alas baten: se ven anchas y se ven de canto.
+    flap = abs(math.sin(t * math.tau))
+    w = 1.6 + flap * 5.4
+    ala = (232, 178, 96, 255)
+    ala_hi = (246, 214, 150, 255)
+    borde = (176, 118, 64, 255)
+    cuerpo = (64, 50, 42, 255)
+    for sign in (-1, 1):
+        x = cx + sign * (w * 0.55 + 2.0)
+        ell(d, x, g - 10, w, 4.4, ala)             # ala de arriba
+        ell(d, x, g - 5, w * 0.72, 3.0, borde)     # ala de abajo
+        ell(d, x, g - 11, w * 0.42, 1.6, ala_hi)   # el brillito
+        ell(d, x + sign * w * 0.3, g - 9, 1.2, 1.2, borde)   # la manchita
+    # El cuerpo y las antenas van al final y bien marcados: si no, a este
+    # tamaño la mariposa se lee como dos manchas y nada mas.
+    d.rectangle([cx - 1.2, g - 12, cx + 1.2, g - 2], fill=cuerpo)
+    ell(d, cx, g - 12.5, 1.8, 1.8, cuerpo)
+    for sign in (-1, 1):
+        d.line([(cx + sign * 0.5, g - 13), (cx + sign * 3.4, g - 17)], fill=cuerpo, width=1)
+        ell(d, cx + sign * 3.4, g - 17, 1.0, 1.0, cuerpo)
+
+
 def prop_ball(d, t, P):
     """Pelotita que rota: el brillo se mueve."""
     ang = t * math.tau
@@ -778,6 +807,7 @@ PROPS = [
     ("bowl_full",  lambda d, t, P: prop_bowl(d, t, P, True),  1, 1, False),
     ("water_full", lambda d, t, P: prop_water(d, t, P, True),  4, 3,  True),
     ("water_empty", lambda d, t, P: prop_water(d, t, P, False), 1, 1,  False),
+    ("butterfly",  prop_butterfly,                             6, 12, True),
     ("ball",       prop_ball,                                  6, 10, True),
     ("treat",      prop_treat,                                 4, 5,  True),
     ("bed_back",   prop_bed_back,                              1, 1,  False),

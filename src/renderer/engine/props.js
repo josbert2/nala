@@ -216,3 +216,88 @@ export class Water extends Anchored {
     this.level = Math.max(0, this.level - 0.25)
   }
 }
+
+/**
+ * Una mariposa.
+ *
+ * Vuela sola eligiendo destinos al azar, y si ella se acerca demasiado se
+ * espanta y sube. No se puede atrapar, y esa es la idea: un gato persiguiendo
+ * una mariposa nunca gana, y por eso lo sigue haciendo.
+ */
+export class Butterfly {
+  constructor (world) {
+    this.world = world
+    this.active = false
+    this.x = 0
+    this.y = 0
+    this.tx = 0
+    this.ty = 0
+    this.phase = 0        // el aleteo
+    this.hold = 0         // cuanto falta para elegir otro destino
+    this.life = 0
+    this.spooked = 0      // cuanto le dura el susto
+  }
+
+  spawn (x, y) {
+    const d = this.world.displayAt ? this.world.displayAt(x) : null
+    this.active = true
+    this.x = x
+    this.y = y != null ? y : this.world.floorAt(x).y - 140
+    this.tx = this.x
+    this.ty = this.y
+    this.life = 70 + Math.random() * 70
+    this.hold = 0
+    this.spooked = 0
+    this._d = d
+  }
+
+  /** Elige un lugar nuevo al que ir, dentro de la pantalla donde esta. */
+  _pick (awayFrom) {
+    const d = this.world.displayAt ? this.world.displayAt(this.x) : null
+    const x1 = d ? d.x + 30 : 30
+    const x2 = d ? d.x + d.width - 30 : this.world.width - 30
+    const suelo = this.world.floorAt(this.x).y
+
+    if (awayFrom != null) {
+      // Espantada: se va para el otro lado y hacia arriba.
+      const lejos = awayFrom > this.x ? x1 : x2
+      this.tx = this.x + (lejos - this.x) * (0.35 + Math.random() * 0.3)
+      this.ty = suelo - 150 - Math.random() * 110
+      this.hold = 1.1
+      return
+    }
+    this.tx = x1 + Math.random() * (x2 - x1)
+    this.ty = suelo - 40 - Math.random() * 190
+    this.hold = 1.4 + Math.random() * 2.2
+  }
+
+  update (dt, catX, catY) {
+    if (!this.active) return
+    this.phase += dt
+    this.life -= dt
+    this.spooked = Math.max(0, this.spooked - dt)
+
+    // Si la tiene encima, se espanta.
+    if (catX != null && Math.hypot(catX - this.x, (catY - 40) - this.y) < 120 &&
+        this.spooked <= 0) {
+      this.spooked = 1.6
+      this._pick(catX)
+    }
+
+    this.hold -= dt
+    if (this.hold <= 0) this._pick()
+
+    const vel = this.spooked > 0 ? 210 : 62
+    const dx = this.tx - this.x
+    const dy = this.ty - this.y
+    const dist = Math.hypot(dx, dy) || 1
+    const paso = Math.min(dist, vel * dt)
+    this.x += (dx / dist) * paso
+    this.y += (dy / dist) * paso
+    // El vaiven del vuelo, que es lo que la hace mariposa y no dron.
+    this.y += Math.sin(this.phase * 7) * 26 * dt
+    this.x += Math.cos(this.phase * 3.4) * 14 * dt
+
+    if (this.life <= 0) this.active = false   // se va sola
+  }
+}

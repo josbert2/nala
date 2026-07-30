@@ -89,7 +89,9 @@ const DEFAULTS = {
   firstOfDay: [
     'Buen día. No me fui.',
     'Hoy también estoy acá.',
-    'Otro día juntos.'
+    'Otro día juntos.',
+    'Van {dias} días así.',
+    'Hoy hace {dias} días que estoy acá.'
   ],
 
   // Llego al plato y no habia nada. Es lo unico que de verdad te pide.
@@ -125,7 +127,8 @@ const DEFAULTS = {
     'Te quise mucho. Todavía.',
     'No estés triste tanto tiempo.',
     'Me llevaste a todos lados. No me olvidé.',
-    'Sigo siendo tuya.'
+    'Sigo siendo tuya.',
+    'Llevamos {dias} días. No los conté, los viví.'
   ]
 }
 
@@ -152,6 +155,11 @@ export class Messages {
     this.greetedOn = null
   }
 
+  /** Cuantos dias llevan juntos. Lo usa {dias} en cualquier mensaje. */
+  setDias (n) {
+    this.dias = n
+  }
+
   /** Saca una del grupo sin repetir hasta agotarlo. */
   take (pool) {
     const source = this.pools[pool]
@@ -159,7 +167,8 @@ export class Messages {
     if (!this.bags[pool] || !this.bags[pool].length) {
       this.bags[pool] = shuffle([...source])
     }
-    return this.bags[pool].pop()
+    const m = this.bags[pool].pop()
+    return this.dias != null ? m.replace('{dias}', this.dias) : m
   }
 
   /** Un mensaje puntual, atado a algo que acaba de pasar. */

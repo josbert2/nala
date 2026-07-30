@@ -3,7 +3,7 @@
 import { SpriteSheet } from './engine/sprites.js'
 import { World } from './engine/world.js'
 import { Cat } from './engine/cat.js'
-import { Bowl, Ball, Treat, Water } from './engine/props.js'
+import { Bowl, Ball, Treat, Water, Butterfly } from './engine/props.js'
 import { Litter, Piece } from './engine/furniture.js'
 import { Moments, Schedule } from './engine/moments.js'
 import { Routine } from './engine/routine.js'
@@ -36,6 +36,7 @@ const ACTION_LABELS = {
   seek: 'buscandote',
   meow: 'miau',
   eatTreat: 'comiendo',
+  chaseButterfly: 'una mariposa',
   inBox: 'en su caja',
   chaseBall: 'jugando',
   crouch: 'jugando',
@@ -75,8 +76,32 @@ let origin = { x: 0, y: 0 }        // esquina del escritorio que cubre la ventan
 let displays = null                // cada monitor, en coordenadas de la ventana
 let lookCount = 1                  // cuantas versiones de su pinta hay
 let habitatCount = 1               // cuantos habitats hay
+let habitatId = 'casa'             // cual esta puesto
 let pieces = []                    // las piezas del habitat puesto
 let box = null                     // su caja, si el habitat trae una
+let butterfly = null
+let nextButterfly = 0              // cuando sale la proxima, en habitats con jardin
+let diasJuntos = 0                 // desde el primer dia
+let nextSave = 0
+
+/** Cuantos dias pasaron desde una fecha YYYY-MM-DD. */
+function diasDesde (iso) {
+  const d = new Date(iso + 'T00:00:00')
+  if (isNaN(d)) return 0
+  const hoy = new Date()
+  hoy.setHours(0, 0, 0, 0)
+  return Math.max(0, Math.round((hoy - d) / 86400000))
+}
+
+/** Le manda al proceso principal lo que tiene que recordar. */
+function guardar () {
+  if (!needs || !cat || !messages) return
+  window.nala.saveEstado({
+    needs: needs.snapshotRaw(),
+    energia: cat.energy,
+    saludadoEl: messages.greetedOn
+  })
+}
 let floorTile = null               // la pieza que se repite a lo ancho del piso
 
 /**
@@ -128,6 +153,14 @@ let lastTouch = performance.now()   // ultima vez que interactuaste con ella
 let missCooldown = 0
 let missAfterMs = 12 * 60 * 1000    // cuanto aguanta antes de venir a buscarte
 
+/** Suelta una mariposa cerca de ella, pero no encima. */
+function soltarMariposa () {
+  if (!butterfly || !cat) return
+  const lado = Math.random() < 0.5 ? -1 : 1
+  const x = Math.max(40, Math.min(world.width - 40, cat.x + lado * (170 + Math.random() * 160)))
+  butterfly.spawn(x, world.floorAt(x).y - 110 - Math.random() * 80)
+}
+
 /** Le hace decir algo del grupo `pool`, si no esta diciendo otra cosa. */
 function sayNow (pool, ms = 7000) {
   if (!cat || !messages || cat.bubble) return
@@ -152,7 +185,7 @@ function resize () {
   if (world) world.resize(window.innerWidth, window.innerHeight, displays)
 }
 
-window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, debug }) => {
+window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, estado, debug }) => {
   origin = { x: display.x, y: display.y }
   displays = display.displays
 
@@ -173,6 +206,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, deb
                   config.bowlDisplay != null ? config.bowlDisplay : null)
   ball = new Ball(world)
   treat = new Treat(world)
+  butterfly = new Butterfly(world)
 
   // Su habitat. Las piezas salen del json: cada una se dibuja sola desde el
   // sprite, y si el sprite le declaro tablas, el motor las usa de superficies.
@@ -185,6 +219,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, deb
   water = new Water(world, at('waterAt', 0.05), on('waterDisplay'))
 
   habitatCount = Array.isArray(habitats) ? habitats.length : 1
+  habitatId = (habitat && habitat.id) || 'casa'
   pieces = buildHabitat(habitat)
 
   // Cada pieza cumple un papel para ella: en el jardin el arbol de verdad es
@@ -198,7 +233,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, deb
   box = byRole('box')
   toys = pieces.filter((p) => PIECE_ROLE[p.kind] === 'toy')
 
-  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys, litter, water, box }
+  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys, litter, water, box, butterfly }
 
   needs = new Needs(config)
   cat.needs = needs
@@ -211,6 +246,15 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, deb
   moments = new Moments(config.moments)
   routine = new Routine(config.routine || {})
   messages = new Messages(config)
+
+  // Lo que se acuerda de la sesion anterior.
+  const mem = estado || {}
+  const cerrada = mem.at ? Math.max(0, (Date.now() - mem.at) / 1000) : 0
+  needs.restore(mem.needs, cerrada)
+  if (typeof mem.energia === 'number') cat.energy = mem.energia
+  if (mem.saludadoEl) messages.greetedOn = mem.saludadoEl
+  diasJuntos = mem.desde ? diasDesde(mem.desde) : 0
+  if (diasJuntos > 0) messages.setDias(diasJuntos)
   missAfterMs = (config.missYouAfterMinutes || 12) * 60 * 1000
 
   resize()
@@ -222,6 +266,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, deb
     // Autotest: saca la pelota y captura el canvas para poder mirarlo.
     setTimeout(() => { cat.playtime(); console.log('[nala] playtime() llamado') }, 2500)
     setTimeout(() => { forceStats = true }, 3200)
+    setTimeout(() => { forceStats = false; soltarMariposa() }, 3500)
     setTimeout(() => {
       console.log(`[nala] ball.active=${ball.active} estado=${cat.state} menu=${menuOpen}`)
     }, 5500)
@@ -251,6 +296,7 @@ window.nala.onCommand((cmd) => {
   if (cmd.type === 'cave') cat.goToCave()
   if (cmd.type === 'litter') cat.goToLitter()
   if (cmd.type === 'box') cat.goToBox()
+  if (cmd.type === 'butterfly') soltarMariposa()
   if (cmd.type === 'water') {
     water.fill()
     if (cat.asking === 'agua') { cat.asking = null; sayNow('gracias', 6000) }
@@ -521,6 +567,7 @@ const MENU_ITEMS = [
   ['Acariciarla', () => { cat.pet(); popHearts(cat.x, cat.y - 40) }],
   ['Darle un premio', () => cat.giveTreat(cat.x + (Math.random() < 0.5 ? -1 : 1) * 170)],
   ['Sacar la pelota', () => cat.playtime()],
+  ['Soltar una mariposa', () => soltarMariposa()],
   ['Servirle la comida', () => cat.mealtime()],
   ['Llenarle el agua', () => water.fill()],
   ['A rascar el poste', () => cat.goToPost()],
@@ -713,6 +760,20 @@ function loop (now) {
     }
 
     needs.update(dt)
+
+    // Se guarda cada tanto, no en cada frame.
+    if (now > nextSave) { nextSave = now + 30000; guardar() }
+    butterfly.update(dt, cat.x, cat.y)
+
+    // En el jardin sale una sola cada tanto. En los otros habitats hay que
+    // pedirla: no queda bien una mariposa dentro de la casa.
+    if (habitatId === 'jardin') {
+      if (!nextButterfly) nextButterfly = now + 30000 + Math.random() * 60000
+      if (!butterfly.active && now > nextButterfly) {
+        soltarMariposa()
+        nextButterfly = 0
+      }
+    }
     bowl.update(dt)
     ball.update(dt)
 
@@ -777,6 +838,10 @@ function loop (now) {
   }
   if (ball && ball.active) {
     propSheet.draw(ctx, 'ball', ball.spin * 1000, ball.x, ball.y, cat.scale, false)
+  }
+  if (butterfly && butterfly.active) {
+    propSheet.draw(ctx, 'butterfly', butterfly.phase * 1000, butterfly.x, butterfly.y,
+                   cat.scale, butterfly.tx < butterfly.x)
   }
   if (cat) cat.draw(ctx)
 
