@@ -39,6 +39,18 @@ siempre está instalada. Por eso hay dos caminos que siempre funcionan:
 
 **Click derecho sobre ella** abre el mismo menú ahí mismo.
 
+### Que arranque sola con la sesión
+
+```bash
+./tools/autostart.sh
+```
+
+Deja un `nala.desktop` en `~/.config/autostart/`. Arranca con 10 segundos de
+retraso: si arranca junto con la sesión todavía no hay escritorio donde ponerse
+y la ventana puede quedar mal ubicada.
+
+Para sacarla: `rm ~/.config/autostart/nala.desktop`.
+
 ### Interacción
 
 | Acción | Qué hace |
