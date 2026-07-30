@@ -43,6 +43,7 @@ const ACTION_LABELS = {
   ofrece: 'es para vos',
   acompana: 'acompañándote',
   watchBird: 'un pajarito',
+  startle: '¿qué fue eso?',
   stalkBird: 'acechando',
   inBox: 'en su caja',
   chaseBall: 'jugando',
@@ -303,8 +304,28 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, est
   }
 })
 
+let ventanasPrev = null            // para saber cual apareció
+let nextSusto = 0
+
 window.nala.onWindows((rects) => {
   if (!world) return
+
+  // Algo aparecio en la pantalla y la agarro desprevenida. Es lo unico que la
+  // hace reaccionar a TU mundo y no al suyo, asi que va con la mano liviana:
+  // solo ventanas grandes, y una vez cada minuto y medio como mucho. Si te
+  // sobresaltara con cada pestaña la ibas a querer apagar en un dia.
+  const clave = (w) => `${w.title}|${w.w}x${w.h}`
+  const ahora = new Set(rects.map(clave))
+  if (ventanasPrev && cat) {
+    const nueva = rects.find((w) => !ventanasPrev.has(clave(w)) && w.w * w.h > 260000)
+    const now = performance.now()
+    const tranquila = ['idle', 'sit', 'loaf', 'groom', 'sleep', 'watch', 'alert']
+    if (nueva && now > nextSusto && tranquila.includes(cat.state)) {
+      nextSusto = now + 90000
+      cat.sobresalto(nueva.x + nueva.w / 2 - origin.x)
+    }
+  }
+  ventanasPrev = ahora
   // De coordenadas de pantalla a coordenadas de la ventana.
   world.setWindows(rects.map((r) => ({ ...r, x: r.x - origin.x, y: r.y - origin.y })))
 })

@@ -216,6 +216,22 @@ de la boca; cuando lo suelta queda en el piso un rato y después vuelve a su lug
 
 ---
 
+## Que reaccione a tu pantalla
+
+Cuando abrís una ventana grande, **se sobresalta**: lomo arqueado, cola inflada,
+orejas para atrás, y después se queda mirando hacia donde apareció.
+
+Es lo único que la hace reaccionar a *tu* mundo y no al suyo — todo lo demás
+pasa en el de ella. Por eso va con la mano liviana: sólo ventanas de más de
+260.000 px², sólo si estaba tranquila, y una vez cada minuto y medio como mucho.
+Si te sobresaltara con cada pestaña la ibas a querer apagar en un día.
+
+Se cuelga de la lista de ventanas que ya publica la extensión de GNOME y que la
+app consulta cada 700 ms para las repisas: compara contra el tick anterior y ve
+cuál es nueva. **Sin la extensión instalada esto no pasa nunca.**
+
+---
+
 ## Los pajaritos
 
 Cada tanto pasa uno, en cualquier hábitat. No cruza de largo: **se posa** en una
@@ -471,6 +487,22 @@ lo deja ahí y se queda esperando que lo veas — *"Es para vos."*
 
 Se le ocurre sola cada tanto, o `Ctrl+Alt+G`. Mientras lo lleva se le ve colgando
 de la boca; cuando lo suelta queda en el piso un rato y después vuelve a su lugar.
+
+---
+
+## Que reaccione a tu pantalla
+
+Cuando abrís una ventana grande, **se sobresalta**: lomo arqueado, cola inflada,
+orejas para atrás, y después se queda mirando hacia donde apareció.
+
+Es lo único que la hace reaccionar a *tu* mundo y no al suyo — todo lo demás
+pasa en el de ella. Por eso va con la mano liviana: sólo ventanas de más de
+260.000 px², sólo si estaba tranquila, y una vez cada minuto y medio como mucho.
+Si te sobresaltara con cada pestaña la ibas a querer apagar en un día.
+
+Se cuelga de la lista de ventanas que ya publica la extensión de GNOME y que la
+app consulta cada 700 ms para las repisas: compara contra el tick anterior y ve
+cuál es nueva. **Sin la extensión instalada esto no pasa nunca.**
 
 ---
 

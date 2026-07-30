@@ -87,6 +87,7 @@ export class Cat {
       case 'inBox': return 'alert'
       case 'watchBird': return 'alert'
       case 'stalkBird': return 'stalk'
+      case 'startle': return 'startle'
       case 'goingBird': return 'walk'
       case 'tomaRegalo': return 'walk'
       case 'llevaRegalo': return 'walk'
@@ -127,6 +128,7 @@ export class Cat {
       // Mirando un pajaro se queda pegada un buen rato.
       case 'watchBird': return r(7000, 16000)
       case 'stalkBird': return 12000
+      case 'startle': return 1300
       case 'goingBird': return 0
       case 'tomaRegalo': return 0
       case 'llevaRegalo': return 25000
@@ -208,6 +210,8 @@ export class Cat {
     }
     if (this.state === 'pedir') { this.asking = null; this.setState('sit'); return }
     if (this.state === 'zoom') { this._zoomNext(); return }
+    // Despues del susto se queda mirando hacia donde paso.
+    if (this.state === 'startle') { this.setState('watch', 3500); return }
     if (this.state === 'goingWater') { this.goToWater(); return }
     if (this.state === 'goingEat') { this.goToEat(); return }
     if (this.state === 'goingBox') { this.goToBox(); return }
@@ -807,6 +811,17 @@ export class Cat {
     treat.drop(x != null ? x : this.x + (Math.random() < 0.5 ? -1 : 1) * 160)
     this.energy = Math.max(this.energy, 0.5)
     this.goTo(treat.x, 'eatTreat')
+  }
+
+  /**
+   * Algo aparecio en la pantalla y la agarro desprevenida. Se sobresalta y
+   * despues se queda mirando para ese lado.
+   */
+  sobresalto (x) {
+    if (this.airborne || this.state === 'startle') return
+    if (x != null) this.facing = x > this.x ? 1 : -1
+    this.energy = Math.max(this.energy, 0.5)
+    this.setState('startle')
   }
 
   /** Maulla. */

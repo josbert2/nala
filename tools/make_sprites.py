@@ -636,6 +636,25 @@ def pose_yawn(d, t, P):
             mix(P["pink"], (208, 92, 100, 255), 0.5))
 
 
+def pose_startle(d, t, P):
+    """
+    Sobresaltada: lomo arqueado, cola inflada y orejas para atras. Va aflojando
+    con el correr de los frames — el susto dura poco y despues queda mirando.
+    """
+    k = max(0.0, 1 - t * 1.5)            # cuanto le queda del susto
+    puff = 3.6 + k * 2.6                 # la cola se infla y se desinfla
+    tail(d, (12, GROUND - 9), (3, GROUND - 24 - k * 5), (15, GROUND - 32 - k * 7),
+         P["dark"], r0=puff, r1=puff * 0.75)
+    leg(d, 13, GROUND - 12 - k * 2, GROUND - 1, P["dark"])
+    leg(d, 27, GROUND - 12 - k * 2, GROUND - 1, P["dark"])
+    stripes_body(d, 20, GROUND - 19 - k * 2, 10, 5, P)
+    ell(d, 20, GROUND - 17 - k * 2, 11, 6.4, P["base"])      # el lomo alto
+    ell(d, 21, GROUND - 14 - k * 2, 8, 3.2, P["light"])
+    leg(d, 17, GROUND - 12 - k * 2, GROUND - 1, P["base"])
+    leg(d, 30, GROUND - 12 - k * 2, GROUND - 1, P["base"])
+    head(d, 31, GROUND - 25 - k * 2, P, eyes="open", tilt=-1.1 - k * 0.5)
+
+
 def pose_stalk(d, t, P):
     """
     Acechando: el cuerpo pegado al piso y las patas avanzando muy despacio,
@@ -714,6 +733,7 @@ ANIMATIONS = [
     ("eat",          pose_eat,        6,     7,    True),
     ("crouch",       pose_crouch,     6,     10,   True),
     ("stalk",        pose_stalk,      8,     7,    True),
+    ("startle",      pose_startle,    6,     9,    False),
     ("yawn",         pose_yawn,       6,     5,    False),
     ("pounce",       pose_pounce,     4,     12,   False),
     ("play",         pose_play,       6,     9,    True),
