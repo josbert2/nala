@@ -92,6 +92,7 @@ let birds = []
 let nextBird = 0
 let gift = null
 let diasJuntos = 0                 // desde el primer dia
+let nombre = 'Nala'
 let nextSave = 0
 
 /** Cuantos dias pasaron desde una fecha YYYY-MM-DD. */
@@ -285,6 +286,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, est
   missAfterMs = (config.missYouAfterMinutes || 12) * 60 * 1000
 
   resize()
+  nombre = config.name || 'Nala'
   const hola = config.greeting || messages.greeting()
   if (hola) cat.say(hola, 9000)
   requestAnimationFrame(loop)
@@ -590,42 +592,83 @@ function drawStats (now) {
 const menuEl = document.getElementById('menu')
 let menuOpen = false
 
-const MENU_ITEMS = [
-  ['Acariciarla', () => { cat.pet(); popHearts(cat.x, cat.y - 40) }],
-  ['Darle un premio', () => cat.giveTreat(cat.x + (Math.random() < 0.5 ? -1 : 1) * 170)],
-  ['Sacar la pelota', () => cat.playtime()],
-  ['Soltar una mariposa', () => soltarMariposa()],
-  ['Que pasen pajaritos', () => soltarBandada()],
-  ['Que te traiga algo', () => cat.traerRegalo()],
-  ['Servirle la comida', () => cat.mealtime()],
-  ['Llenarle el agua', () => water.fill()],
-  ['A rascar el poste', () => cat.goToPost()],
-  ['Arriba del arbol', () => cat.goUpTree()],
-  ['A su cueva', () => cat.goToCave()],
-  ['A su arenero', () => cat.goToLitter()],
-  ['A su caja', () => cat.goToBox(), () => !!box],
-  ['A jugar con un juguete', () => cat.goToToy()],
-  ['A su cama', () => cat.goToBed()],
-  ['Que duerma', () => cat.napNow()],
-  // El tercer campo dice cuando mostrar la opcion. Sin mas de una version de su
-  // pinta, cambiarla no hace nada.
-  ['Cambiarle el hábitat', () => window.nala.cycleHabitat(), () => habitatCount > 1],
-  ['Cambiarle la pinta', () => window.nala.cycleLook(), () => lookCount > 1]
+/**
+ * El menu, agrupado. Con dieciocho opciones en una lista plana no se encontraba
+ * nada. El tercer campo de cada opcion dice cuando mostrarla.
+ */
+const MENU_GROUPS = [
+  {
+    titulo: 'Darle',
+    items: [
+      ['Una caricia', () => { cat.pet(); popHearts(cat.x, cat.y - 40) }],
+      ['Un premio', () => cat.giveTreat(cat.x + (Math.random() < 0.5 ? -1 : 1) * 170)],
+      ['La comida', () => cat.mealtime()],
+      ['Agua', () => water.fill()]
+    ]
+  },
+  {
+    titulo: 'Que juegue',
+    items: [
+      ['Con la pelota', () => cat.playtime()],
+      ['Con un juguete', () => cat.goToToy()],
+      ['Con una mariposa', () => soltarMariposa()],
+      ['Con los pajaritos', () => soltarBandada()]
+    ]
+  },
+  {
+    titulo: 'Pedirle',
+    items: [
+      ['Que te traiga algo', () => cat.traerRegalo()],
+      ['Que rasque el poste', () => cat.goToPost(), () => !!post],
+      ['Que suba al árbol', () => cat.goUpTree(), () => !!tree],
+      ['Que se meta en la caja', () => cat.goToBox(), () => !!box],
+      ['Que vaya al arenero', () => cat.goToLitter()],
+      ['Que se meta en la cueva', () => cat.goToCave(), () => !!cave],
+      ['Que se vaya a la cama', () => cat.goToBed(), () => !!bed],
+      ['Que duerma', () => cat.napNow()]
+    ]
+  },
+  {
+    titulo: 'Cambiar',
+    items: [
+      ['De hábitat', () => window.nala.cycleHabitat(), () => habitatCount > 1],
+      ['De pinta', () => window.nala.cycleLook(), () => lookCount > 1]
+    ]
+  }
 ]
 
 function showMenu (x, y) {
   menuEl.innerHTML = ''
-  for (const [label, action, when] of MENU_ITEMS) {
-    if (when && !when()) continue
-    const b = document.createElement('button')
-    b.textContent = label
-    b.addEventListener('mouseup', (ev) => {
-      ev.stopPropagation()
-      action()
-      touched()
-      hideMenu()
-    })
-    menuEl.appendChild(b)
+
+  // Encabezado: su nombre y que esta haciendo ahora mismo.
+  const cab = document.createElement('div')
+  cab.className = 'cab'
+  const haciendo = ACTION_LABELS[cat.state]
+  cab.innerHTML = `<span class="nom"></span>${haciendo ? '<span class="hac"></span>' : ''}`
+  cab.querySelector('.nom').textContent = nombre
+  if (haciendo) cab.querySelector('.hac').textContent = haciendo
+  menuEl.appendChild(cab)
+
+  for (const grupo of MENU_GROUPS) {
+    const visibles = grupo.items.filter(([, , when]) => !when || when())
+    if (!visibles.length) continue
+
+    const t = document.createElement('div')
+    t.className = 'grupo'
+    t.textContent = grupo.titulo
+    menuEl.appendChild(t)
+
+    for (const [label, action] of visibles) {
+      const b = document.createElement('button')
+      b.textContent = label
+      b.addEventListener('mouseup', (ev) => {
+        ev.stopPropagation()
+        action()
+        touched()
+        hideMenu()
+      })
+      menuEl.appendChild(b)
+    }
   }
   menuEl.hidden = false
   menuOpen = true

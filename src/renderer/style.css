@@ -21,7 +21,7 @@ html, body {
 /* Menu rapido con click derecho sobre ella. */
 .menu {
   position: absolute;
-  min-width: 168px;
+  min-width: 196px;
   padding: 5px;
   border-radius: 12px;
   background: rgba(24, 21, 18, 0.96);
@@ -36,6 +36,37 @@ html, body {
   opacity: 1;
   transform: scale(1);
 }
+
+/* Encabezado del menu: su nombre y que esta haciendo. */
+.menu .cab {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 6px 12px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  margin-bottom: 4px;
+}
+
+.menu .cab .nom {
+  color: #f2ece2;
+  font: 600 13px/1 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.menu .cab .hac {
+  color: #9aa85e;
+  font: 400 11px/1 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Titulo de cada grupo. */
+.menu .grupo {
+  padding: 7px 12px 3px;
+  color: #7d766c;
+  font: 600 9.5px/1 system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+}
+
+.menu .grupo:first-of-type { padding-top: 2px; }
 
 .menu button {
   display: block;
