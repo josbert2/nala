@@ -194,3 +194,25 @@ export class Ball {
     if (this.idleFor > 75) this.active = false
   }
 }
+
+/**
+ * Su bebedero. Casi siempre se lo encuentra lleno — tiene su fuente y se las
+ * arregla sola. Cada tanto lo encuentra vacio y ahi si te lo pide.
+ */
+export class Water extends Anchored {
+  constructor (world, xFraction = 0.05, displayIndex = null) {
+    super(world, xFraction, displayIndex)
+    this.level = 1
+    this.visible = true
+  }
+
+  get anim () { return this.level > 0.06 ? 'water_full' : 'water_empty' }
+  get vacio () { return this.level <= 0.06 }
+
+  fill () { this.level = 1 }
+
+  /** Un buen trago: le baja el nivel un cuarto. */
+  beber () {
+    this.level = Math.max(0, this.level - 0.25)
+  }
+}

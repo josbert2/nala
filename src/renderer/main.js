@@ -3,11 +3,12 @@
 import { SpriteSheet } from './engine/sprites.js'
 import { World } from './engine/world.js'
 import { Cat } from './engine/cat.js'
-import { Bowl, Ball, Treat, Bed } from './engine/props.js'
+import { Bowl, Ball, Treat, Bed, Water } from './engine/props.js'
 import { ScratchPost, CatTree, Cave, Toy, Litter } from './engine/furniture.js'
 import { Moments, Schedule } from './engine/moments.js'
 import { Routine } from './engine/routine.js'
 import { Messages } from './engine/messages.js'
+import { Needs } from './engine/needs.js'
 
 // Los juguetes que quedan tirados por el piso si no se configura otra cosa.
 // `kind` es el nombre del sprite en furniture.json.
@@ -63,6 +64,11 @@ let moments = null
 let messages = null
 let routine = null
 let litter = null
+let water = null
+let needs = null
+let lastAsking = null
+let hoverSince = 0
+let forceStats = false   // solo para NALA_DEBUG: muestra el panel sin hover
 let lastState = null
 let origin = { x: 0, y: 0 }        // esquina del escritorio que cubre la ventana
 let displays = null                // cada monitor, en coordenadas de la ventana
@@ -138,10 +144,15 @@ window.nala.onBoot(async ({ config, display, look, looks, debug }) => {
   tree = new CatTree(world, furnSheet, s, at('treeAt', 0.55), on('treeDisplay'))
   cave = new Cave(world, furnSheet, s, at('caveAt', 0.72), on('caveDisplay'))
   litter = new Litter(world, furnSheet, s, at('litterAt', 0.42), on('litterDisplay'))
+  water = new Water(world, at('waterAt', 0.05), on('waterDisplay'))
   toys = (config.toys || DEFAULT_TOYS).map(
     (t) => new Toy(world, furnSheet, s, t.kind, t.at, t.display != null ? t.display : null))
 
-  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys, litter }
+  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys, litter, water }
+
+  needs = new Needs(config)
+  cat.needs = needs
+  cat.autoServe = config.autoServe !== false
   world.setFurniture([post, tree])
   world.setFloorMargin((sheet.ch - sheet.ground) * cat.scale + 2)
 
@@ -160,6 +171,7 @@ window.nala.onBoot(async ({ config, display, look, looks, debug }) => {
   if (debug) {
     // Autotest: saca la pelota y captura el canvas para poder mirarlo.
     setTimeout(() => { cat.playtime(); console.log('[nala] playtime() llamado') }, 2500)
+    setTimeout(() => { forceStats = true }, 3200)
     setTimeout(() => {
       console.log(`[nala] ball.active=${ball.active} estado=${cat.state} menu=${menuOpen}`)
     }, 5500)
@@ -177,7 +189,10 @@ window.nala.onCommand((cmd) => {
   if (!cat) return
   if (cmd.type === 'come') cat.come(pointer.active ? pointer.x : world.width / 2)
   if (cmd.type === 'sleep') cat.napNow()
-  if (cmd.type === 'feed') cat.mealtime()
+  if (cmd.type === 'feed') {
+    cat.mealtime()
+    if (cat.asking === 'comida') { cat.asking = null; sayNow('gracias', 6000) }
+  }
   if (cmd.type === 'play') cat.playtime()
   if (cmd.type === 'treat') cat.giveTreat()
   if (cmd.type === 'bed') cat.goToBed()
@@ -185,6 +200,10 @@ window.nala.onCommand((cmd) => {
   if (cmd.type === 'tree') cat.goUpTree()
   if (cmd.type === 'cave') cat.goToCave()
   if (cmd.type === 'litter') cat.goToLitter()
+  if (cmd.type === 'water') {
+    water.fill()
+    if (cat.asking === 'agua') { cat.asking = null; sayNow('gracias', 6000) }
+  }
   if (cmd.type === 'toy') cat.goToToy()
   if (cmd.type === 'free') { cat.target = null; cat.after = null; cat.setState('idle', 500) }
 })
@@ -353,6 +372,50 @@ function sendHotRects () {
   window.nala.setHotRects(rects, force)
 }
 
+// -------------------------------------------------------------- como esta ella
+
+const statsEl = document.getElementById('stats')
+const HOVER_DELAY = 800   // cuanto hay que quedarse encima para que aparezca
+
+/**
+ * Si te quedas un momento encima de ella, muestra como esta. Es para poder
+ * mirarla, no para tener que atenderla: ella se arregla sola.
+ */
+function drawStats (now) {
+  const over = forceStats || (cat && !menuOpen && !grip && hit(pointer.x, pointer.y))
+  if (!over) { hoverSince = 0; statsEl.dataset.show = '0'; return }
+  if (!hoverSince) hoverSince = now
+  if (now - hoverSince < HOVER_DELAY) { statsEl.dataset.show = '0'; return }
+
+  const rows = needs.snapshot(cat.energy)
+  if (!statsEl.childElementCount) {
+    for (const r of rows) {
+      const row = document.createElement('div')
+      row.className = 'row'
+      row.innerHTML = `<span class="name"></span><span class="bar"><span class="fill"></span></span>`
+      row.querySelector('.name').textContent = r.label
+      statsEl.appendChild(row)
+    }
+  }
+  rows.forEach((r, i) => {
+    const fill = statsEl.children[i].querySelector('.fill')
+    fill.style.width = `${Math.round(r.value * 100)}%`
+    fill.dataset.low = r.value < 0.2 ? '2' : r.value < 0.4 ? '1' : '0'
+  })
+
+  statsEl.hidden = false
+  statsEl.dataset.show = '1'
+  const b = cat.bounds
+  const w = statsEl.offsetWidth
+  const edges = typeof screenEdges === 'function' ? screenEdges(cat.x) : null
+  const minX = edges ? edges.x1 + 6 : 6
+  const maxX = (edges ? edges.x2 - 6 : window.innerWidth - 6) - w
+  statsEl.style.left = `${Math.max(minX, Math.min(maxX, b.x + b.w / 2 - w / 2))}px`
+  // Si esta diciendo algo, el panel se corre arriba del globito.
+  const above = cat.bubble && !bubbleEl.hidden ? bubbleEl.offsetHeight + 8 : 0
+  statsEl.style.top = `${Math.max(6, b.y - statsEl.offsetHeight - 10 - above)}px`
+}
+
 // ----------------------------------------------------------------- menu rapido
 
 const menuEl = document.getElementById('menu')
@@ -363,6 +426,7 @@ const MENU_ITEMS = [
   ['Darle un premio', () => cat.giveTreat(cat.x + (Math.random() < 0.5 ? -1 : 1) * 170)],
   ['Sacar la pelota', () => cat.playtime()],
   ['Servirle la comida', () => cat.mealtime()],
+  ['Llenarle el agua', () => water.fill()],
   ['A rascar el poste', () => cat.goToPost()],
   ['Arriba del arbol', () => cat.goUpTree()],
   ['A su cueva', () => cat.goToCave()],
@@ -550,8 +614,17 @@ function loop (now) {
       lastState = cat.state
     }
 
+    needs.update(dt)
     bowl.update(dt)
     ball.update(dt)
+
+    // Cuando llega al plato y no hay nada, te lo pide. Es lo unico que
+    // necesita de vos: el resto se lo arregla sola.
+    if (cat.asking !== lastAsking) {
+      if (cat.asking === 'comida') sayNow('pideComida', 9000)
+      if (cat.asking === 'agua') sayNow('pideAgua', 9000)
+      lastAsking = cat.asking
+    }
 
     // Hace rato que no la tocas: te viene a buscar.
     if (now - lastTouch > missAfterMs && now - missCooldown > missAfterMs) {
@@ -591,6 +664,9 @@ function loop (now) {
   // Su cama va partida en dos: el fondo detras de ella y el borde de adelante
   // por encima, para que se la vea metida adentro y no parada sobre la cama.
   if (bed) propSheet.draw(ctx, 'bed_back', 0, bed.x, bed.y, cat.scale, false)
+  if (water) {
+    propSheet.draw(ctx, water.anim, now, water.x, water.y, cat.scale, false)
+  }
   if (bowl && bowl.visible) {
     propSheet.draw(ctx, bowl.anim, now, bowl.x, bowl.y, cat.scale, false)
   }
@@ -606,6 +682,7 @@ function loop (now) {
   if (bed) propSheet.draw(ctx, 'bed_front', 0, bed.x, bed.y, cat.scale, false)
   maybePurr(now)
   drawPurrs(dt)
+  drawStats(now)
   drawHearts(dt)
   drawTip()
   drawBubble()

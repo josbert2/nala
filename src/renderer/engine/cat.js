@@ -41,6 +41,9 @@ export class Cat {
     this.huntCooldownUntil = 0 // no vuelve a cazar el cursor hasta aca
     this.activity = 0.5        // 0 = hora de dormir, 1 = la hora loca
     this.zoomLeft = 0          // vueltas de locura que le quedan
+    this.needs = null          // sus necesidades, si estan puestas
+    this.asking = null         // 'comida' | 'agua' cuando te esta pidiendo
+    this.autoServe = true      // se sirve sola: es independiente
     this.tripCooldownUntil = 0 // ni a irse a otro monitor hasta aca
     this.furnitureCooldownUntil = 0  // ni a usar sus muebles hasta aca
   }
@@ -73,6 +76,10 @@ export class Cat {
       case 'seek': return 'walk'
       case 'eatTreat': return 'eat'
       case 'litter': return 'dig'
+      case 'drink': return 'eat'
+      case 'goingWater':
+      case 'goingEat': return 'walk'
+      case 'pedir': return 'alert'
       case 'zoom': return 'run'
       case 'meow': return 'alert'
       case 'jump':
@@ -96,6 +103,10 @@ export class Cat {
       case 'stretch': return 1400
       case 'scratch': return r(3500, 7500)
       case 'litter': return r(4000, 7000)
+      case 'drink': return r(4500, 7000)
+      case 'goingWater':
+      case 'goingEat': return 0
+      case 'pedir': return r(5000, 8000)
       case 'zoom': return 400
       case 'climbTree': return 3000
       case 'trot': return 45000
@@ -143,8 +154,24 @@ export class Cat {
   _onHoldEnd (ctx) {
     if (this.state === 'crouch') { this._pounceAtBall(); return }
     // Sale del arenero y se limpia. Siempre.
-    if (this.state === 'litter') { this.setState('groom'); return }
+    if (this.state === 'litter') {
+      if (this.needs) this.needs.fueAlBano()
+      this.setState('groom')
+      return
+    }
+    if (this.state === 'drink') {
+      const water = this.props && this.props.water
+      if (water && !water.vacio) {
+        water.beber()
+        if (this.needs) this.needs.tomo(1)
+      }
+      this.setState('groom', 4000)
+      return
+    }
+    if (this.state === 'pedir') { this.asking = null; this.setState('sit'); return }
     if (this.state === 'zoom') { this._zoomNext(); return }
+    if (this.state === 'goingWater') { this.goToWater(); return }
+    if (this.state === 'goingEat') { this.goToEat(); return }
     if (this.state === 'play') {
       const ball = this.props && this.props.ball
       if (ball && ball.active && Math.abs(ball.x - this.x) > 40) {
@@ -249,6 +276,7 @@ export class Cat {
         this.facing = bowl.x > this.x ? 1 : -1
         if (bowl.nibble(dt)) {
           this.energy = Math.min(1, this.energy + 0.35)
+          if (this.needs) this.needs.comio(1)
           // Terminar de comer casi siempre termina en el arenero.
           if (this.props.litter && Math.random() < 0.75) this.goToLitter()
           else this.setState('groom', 6000)
@@ -425,6 +453,26 @@ export class Cat {
   /** Elige que hacer despues. Aca vive la personalidad. */
   _decide (ctx) {
     const roll = Math.random()
+
+    // Sus necesidades van primero, y se las resuelve sola. Solo cuando llega
+    // al plato y esta vacio te pide algo.
+    if (this.needs && this.surface && this.surface.isFloor) {
+      switch (this.needs.urgente) {
+        case 'bano':
+          if (this.props.litter) { this.goToLitter(); return }
+          break
+        case 'agua':
+          if (this.props.water) { this.goToWater(); return }
+          break
+        case 'comida':
+          if (this.props.bowl) { this.goToEat(); return }
+          break
+        case 'cariño':
+          // Que te venga a buscar es cosa suya, no una tarea tuya.
+          if (Math.random() < 0.5) { this.setState('seek'); return }
+          break
+      }
+    }
 
     // El premio gana sobre todo lo demas. Es un premio.
     const treat = this.props && this.props.treat
@@ -618,6 +666,7 @@ export class Cat {
   }
 
   pet () {
+    if (this.needs) this.needs.mimada()
     this.setState('purr')
     this.energy = Math.min(1, this.energy + 0.15)
   }
@@ -670,6 +719,49 @@ export class Cat {
     const mid = (s.x1 + s.x2) / 2
     const tx = this.x < mid ? s.x2 - 30 : s.x1 + 30
     this.goTo(tx, 'zoom', 9000, 'trot')
+  }
+
+  /** A tomar agua. Si el bebedero esta vacio, se sienta al lado y te lo pide. */
+  goToWater () {
+    const water = this.props && this.props.water
+    if (!water) return
+    if (Math.abs(this.x - water.x) < 26 && this.surface && this.surface.isFloor) {
+      this.facing = water.x >= this.x ? 1 : -1
+      if (water.vacio) {
+        // No lo puede resolver sola: esto si te lo tiene que pedir.
+        this.asking = 'agua'
+        this.setState('pedir')
+      } else {
+        this.setState('drink')
+      }
+      return
+    }
+    this.goTo(water.x, 'goingWater', 40000, 'trot')
+  }
+
+  /**
+   * A comer porque tiene hambre, no porque le sirvieron. Se sirve sola: tiene
+   * su comedero. Cada tanto lo encuentra vacio y ahi te lo pide.
+   */
+  goToEat () {
+    const bowl = this.props && this.props.bowl
+    if (!bowl) return
+    if (Math.abs(this.x - bowl.x) < 26 && this.surface && this.surface.isFloor) {
+      this.facing = bowl.x >= this.x ? 1 : -1
+      if (bowl.food <= 0) {
+        if (this.autoServe && Math.random() > 0.25) {
+          bowl.serve()
+          this.setState('eat')
+        } else {
+          this.asking = 'comida'
+          this.setState('pedir')
+        }
+      } else {
+        this.setState('eat')
+      }
+      return
+    }
+    this.goTo(bowl.x, 'goingEat', 40000, 'trot')
   }
 
   /** Al arenero. Escarba, hace lo suyo, tapa, y despues se limpia. */

@@ -598,6 +598,20 @@ def prop_bowl(d, t, P, full=False):
         ell(d, PX + 12, 15.4, 6.0, 1.6, P["dark"])                       # hueco
 
 
+def prop_water(d, t, P, full=True):
+    """Su bebedero. Misma forma que el plato, con agua adentro."""
+    d.polygon([(PX + 3, 15), (PX + 21, 15), (PX + 18, 20), (PX + 6, 20)],
+              fill=P["light"])
+    ell(d, PX + 12, 15, 8, 2.4, P["light"])
+    if full:
+        ripple = math.sin(t * math.tau) * 0.5
+        ell(d, PX + 12, 15, 6.0, 1.8, (108, 158, 186, 255))               # agua
+        ell(d, PX + 12, 14.6 + ripple, 4.4, 1.1, (146, 194, 216, 255))    # reflejo
+        ell(d, PX + 9.5, 14.4, 1.1, 0.7, (198, 228, 240, 255))            # brillito
+    else:
+        ell(d, PX + 12, 15.4, 6.0, 1.6, P["dark"])
+
+
 def prop_ball(d, t, P):
     """Pelotita que rota: el brillo se mueve."""
     ang = t * math.tau
@@ -658,6 +672,8 @@ def prop_bed_front(d, t, P):
 PROPS = [
     ("bowl_empty", lambda d, t, P: prop_bowl(d, t, P, False), 1, 1, False),
     ("bowl_full",  lambda d, t, P: prop_bowl(d, t, P, True),  1, 1, False),
+    ("water_full", lambda d, t, P: prop_water(d, t, P, True),  4, 3,  True),
+    ("water_empty", lambda d, t, P: prop_water(d, t, P, False), 1, 1,  False),
     ("ball",       prop_ball,                                  6, 10, True),
     ("treat",      prop_treat,                                 4, 5,  True),
     ("bed_back",   prop_bed_back,                              1, 1,  False),

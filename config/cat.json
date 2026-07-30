@@ -9,12 +9,14 @@
   "treeAt": 0.55,
   "caveAt": 0.72,
   "litterAt": 0.4,
+  "waterAt": 0.05,
   "bowlDisplay": null,
   "bedDisplay": null,
   "postDisplay": null,
   "treeDisplay": null,
   "caveDisplay": null,
   "litterDisplay": null,
+  "waterDisplay": null,
   "toys": [
     {
       "kind": "mouse",
@@ -63,5 +65,11 @@
   "missYouAfterMinutes": 12,
   "messageEveryMinutes": 35,
   "corazonChance": 0.18,
-  "messages": {}
+  "messages": {},
+  "autoServe": true,
+  "needHours": {
+    "comida": 7,
+    "agua": 5,
+    "cariño": 6
+  }
 }

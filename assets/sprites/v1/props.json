@@ -17,26 +17,38 @@
       "fps": 1,
       "loop": false
     },
-    "ball": {
+    "water_full": {
       "row": 2,
+      "frames": 4,
+      "fps": 3,
+      "loop": true
+    },
+    "water_empty": {
+      "row": 3,
+      "frames": 1,
+      "fps": 1,
+      "loop": false
+    },
+    "ball": {
+      "row": 4,
       "frames": 6,
       "fps": 10,
       "loop": true
     },
     "treat": {
-      "row": 3,
+      "row": 5,
       "frames": 4,
       "fps": 5,
       "loop": true
     },
     "bed_back": {
-      "row": 4,
+      "row": 6,
       "frames": 1,
       "fps": 1,
       "loop": false
     },
     "bed_front": {
-      "row": 5,
+      "row": 7,
       "frames": 1,
       "fps": 1,
       "loop": false

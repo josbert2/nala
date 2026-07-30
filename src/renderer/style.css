@@ -109,3 +109,55 @@ html, body {
   transform: rotate(45deg);
   border-radius: 2px;
 }
+
+/* Como esta: aparece si te quedas un momento encima de ella. */
+.stats {
+  position: absolute;
+  padding: 9px 11px 7px;
+  border-radius: 12px;
+  background: rgba(24, 21, 18, 0.93);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.stats[data-show="1"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stats .row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.stats .row:last-child { margin-bottom: 0; }
+
+.stats .name {
+  width: 52px;
+  color: #cbc3b7;
+  font: 500 10.5px/1 system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: 0.2px;
+}
+
+.stats .bar {
+  width: 88px;
+  height: 6px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.13);
+  overflow: hidden;
+}
+
+.stats .fill {
+  height: 100%;
+  border-radius: 99px;
+  background: #9aa85e;
+  transition: width 300ms ease, background 300ms ease;
+}
+
+.stats .fill[data-low="1"] { background: #d8a24f; }
+.stats .fill[data-low="2"] { background: #cf6f63; }

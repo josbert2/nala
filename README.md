@@ -238,6 +238,35 @@ que hacía de verdad.
 
 ---
 
+## Sus necesidades
+
+Tiene comida, agua, sueño, baño y cariño, y todas bajan solas con el tiempo. Se
+ven pasando el mouse por encima de ella y esperando un momento: aparece un panel
+con las cinco barras.
+
+**Pero no es un tamagotchi.** Ella se las resuelve sola: cuando le baja el agua
+va al bebedero, cuando le baja la comida va al comedero y **se sirve**, cuando le
+sube el baño va al arenero, cuando le falta sueño se duerme. No hay que estar
+atendiéndola — es independiente y ese es el punto.
+
+Lo único que de verdad necesita es cuando llega al plato y no hay nada. Ahí se
+sienta al lado y lo pide (`pideComida` / `pideAgua`). Si le sirven, lo agradece.
+Pasa poco: `autoServe` está en `true`, así que tres de cada cuatro veces se
+sirve sola.
+
+| Necesidad | Tarda en vaciarse | Cómo la tapa |
+|---|---|---|
+| Comida | 7 h | va al comedero y se sirve |
+| Agua | 5 h | va al bebedero |
+| Sueño | según la hora | se duerme donde esté, o va a su cama o cueva |
+| Baño | 9 h, y sube al comer | va al arenero, escarba y se lava |
+| Cariño | 6 h | viene a buscarte. Se tapa acariciándola |
+
+Se ajusta con `needHours` en el config. `autoServe: false` la vuelve más
+dependiente: siempre va a pedir en vez de servirse.
+
+---
+
 ## Su día
 
 Los gatos son crepusculares: se encienden al amanecer y al atardecer, y duermen

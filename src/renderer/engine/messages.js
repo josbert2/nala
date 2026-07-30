@@ -92,6 +92,27 @@ const DEFAULTS = {
     'Otro día juntos.'
   ],
 
+  // Llego al plato y no habia nada. Es lo unico que de verdad te pide.
+  pideComida: [
+    'Se acabó la comida.',
+    'El plato está vacío.',
+    'Miau. Miau de hambre.',
+    'Tengo hambre.'
+  ],
+
+  pideAgua: [
+    'No queda agua.',
+    'El bebedero está seco.',
+    'Tengo sed.'
+  ],
+
+  gracias: [
+    'Gracias.',
+    'Justo eso quería.',
+    'Sabía que ibas a venir.',
+    'Así está mejor.'
+  ],
+
   /**
    * Las que van al fondo. Salen poco a proposito: si aparecieran seguido
    * dejarian de significar algo.
