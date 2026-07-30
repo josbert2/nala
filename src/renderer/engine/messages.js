@@ -57,6 +57,17 @@ const DEFAULTS = {
     'No te quedes hasta tan tarde.'
   ],
 
+  // Lo que sueña. Sale mientras duerme, muy de a ratos.
+  sueños: [
+    'Estoy soñando con el sol de la ventana.',
+    'Soñé que corría por el pasto.',
+    'Hay un pajarito en mi sueño. No se escapa.',
+    'Soñé que me llamabas.',
+    'En el sueño todavía estabas.',
+    'Soñé con esa caja.',
+    'Estoy soñando con vos.'
+  ],
+
   // Se despierta de una siesta.
   waking: [
     'Dormí bien.',

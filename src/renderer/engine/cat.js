@@ -109,6 +109,7 @@ export class Cat {
       case 'loaf': return r(9000, 26000)
       case 'groom': return r(4000, 9000)
       case 'stretch': return 1400
+      case 'yawn': return 1200
       case 'scratch': return r(3500, 7500)
       case 'litter': return r(4000, 7000)
       case 'drink': return r(4500, 7000)
@@ -170,6 +171,9 @@ export class Cat {
   _onHoldEnd (ctx) {
     if (this.state === 'crouch') { this._pounceAtBall(); return }
     // Sale del arenero y se limpia. Siempre.
+    // Al salir de dormir se despereza y bosteza, como corresponde.
+    if (this.state === 'sleep') { this.setState('stretch'); return }
+    if (this.state === 'stretch') { this.setState('yawn'); return }
     if (this.state === 'litter') {
       if (this.needs) this.needs.fueAlBano()
       this.setState('groom')

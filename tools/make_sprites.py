@@ -614,6 +614,28 @@ def pose_dig(d, t, P):
             GROUND - 4 - i * 2.2 - abs(paw) * 0.7, 1.0, 0.9, SAND_HI)
 
 
+def pose_yawn(d, t, P):
+    """
+    El bostezo de recien levantada. La boca se abre y se cierra con la fase, y
+    en el medio saca un poco la lengua.
+    """
+    k = math.sin(t * math.pi)                 # abre y cierra una sola vez
+    bob = math.sin(t * math.tau) * 0.6
+    tail(d, (14, GROUND - 3), (5, GROUND - 12), (13, GROUND - 18), P["dark"])
+    ell(d, 20, GROUND - 8 + bob, 9, 9.5, P["base"])
+    ell(d, 21, GROUND - 4 + bob, 6.5, 5.5, P["light"])
+    stripes_body(d, 20, GROUND - 11 + bob, 8, 7, P)
+    leg(d, 24, GROUND - 9 + bob, GROUND - 1, P["base"])
+    leg(d, 28, GROUND - 9 + bob, GROUND - 1, P["base"])
+    head(d, 27, GROUND - 22, P, eyes="closed", tilt=0.5)
+    # La boca abierta, debajo de la nariz.
+    if k > 0.12:
+        alto = 1.2 + k * 3.4
+        ell(d, 28, GROUND - 18.4 + alto * 0.35, 2.6 + k * 0.9, alto, P["outline"])
+        ell(d, 28, GROUND - 17.6 + alto * 0.55, 1.5 + k * 0.6, alto * 0.55,
+            mix(P["pink"], (208, 92, 100, 255), 0.5))
+
+
 def pose_stalk(d, t, P):
     """
     Acechando: el cuerpo pegado al piso y las patas avanzando muy despacio,
@@ -692,6 +714,7 @@ ANIMATIONS = [
     ("eat",          pose_eat,        6,     7,    True),
     ("crouch",       pose_crouch,     6,     10,   True),
     ("stalk",        pose_stalk,      8,     7,    True),
+    ("yawn",         pose_yawn,       6,     5,    False),
     ("pounce",       pose_pounce,     4,     12,   False),
     ("play",         pose_play,       6,     9,    True),
     ("slide",        pose_slide,      4,     12,   True),

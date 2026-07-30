@@ -738,8 +738,22 @@
         ]
       ]
     },
-    "pounce": {
+    "yawn": {
       "row": 16,
+      "frames": 6,
+      "fps": 5,
+      "loop": false,
+      "eyes": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "pounce": {
+      "row": 17,
       "frames": 4,
       "fps": 12,
       "loop": false,
@@ -787,7 +801,7 @@
       ]
     },
     "play": {
-      "row": 17,
+      "row": 18,
       "frames": 6,
       "fps": 9,
       "loop": true,
@@ -855,7 +869,7 @@
       ]
     },
     "slide": {
-      "row": 18,
+      "row": 19,
       "frames": 4,
       "fps": 12,
       "loop": true,

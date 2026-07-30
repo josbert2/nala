@@ -37,6 +37,7 @@ const ACTION_LABELS = {
   meow: 'miau',
   eatTreat: 'comiendo',
   chaseButterfly: 'una mariposa',
+  yawn: 'recién levantada',
   watchBird: 'un pajarito',
   stalkBird: 'acechando',
   inBox: 'en su caja',
@@ -147,6 +148,7 @@ let lastHotKey = ''
 let hearts = []
 let purrs = []
 let nextPurr = 0
+let nextSueño = 0
 
 const pointer = {
   x: -1, y: -1, active: false, movingMs: 9999, lastMove: 0,
@@ -779,6 +781,17 @@ function loop (now) {
     cat.activity = routine.activity()
 
     // Cosas que dice atadas a lo que le acaba de pasar.
+    // Los sueños salen espaciados: si soñara seguido dejaria de tener gracia.
+    if (cat.state === 'sleep') {
+      if (!nextSueño) nextSueño = now + 45000 + Math.random() * 90000
+      else if (now > nextSueño && !cat.bubble) {
+        sayNow('sueños', 9000)
+        nextSueño = now + 90000 + Math.random() * 150000
+      }
+    } else {
+      nextSueño = 0
+    }
+
     if (cat.state !== lastState) {
       if (lastState === 'sleep') sayNow('waking')
       else if (lastState === 'eat') sayNow('afterMeal')
