@@ -40,6 +40,7 @@ export class Cat {
     this.pinned = false        // el usuario la agarro con el mouse
     this.bubble = null         // {text, until}
     this.huntCooldownUntil = 0 // no vuelve a cazar el cursor hasta aca
+    this.birdCooldownUntil = 0 // deja de obsesionarse con el mismo pajaro
     this.activity = 0.5        // 0 = hora de dormir, 1 = la hora loca
     this.zoomLeft = 0          // vueltas de locura que le quedan
     this.needs = null          // sus necesidades, si estan puestas
@@ -175,6 +176,12 @@ export class Cat {
 
   /** Encadenamientos fijos: agazaparse siempre termina en salto. */
   _onHoldEnd (ctx) {
+    // Se cansa del pajaro. Sin esto lo miraba, terminaba, y _decide la mandaba
+    // a mirar el mismo pajaro otra vez: se quedaba tiesa los dos minutos que
+    // dura el pajaro.
+    if (this.state === 'watchBird' || this.state === 'stalkBird') {
+      this.birdCooldownUntil = performance.now() + 25000
+    }
     if (this.state === 'crouch') { this._pounceAtBall(); return }
     // Sale del arenero y se limpia. Siempre.
     // Al salir de dormir se despereza y bosteza, como corresponde.
@@ -250,7 +257,9 @@ export class Cat {
     const NO_CORTAR = ['eat', 'eatTreat', 'drink', 'litter', 'pedir',
                        'watchBird', 'stalkBird', 'goingBird', 'crouch', 'pounce']
     const bird = this.props && this.props.bird
-    if (bird && bird.active && this.energy > 0.2 && !NO_CORTAR.includes(this.state)) {
+    if (bird && bird.active && this.energy > 0.2 &&
+        performance.now() > this.birdCooldownUntil &&
+        !NO_CORTAR.includes(this.state)) {
       this.watchBird()
       return
     }
@@ -600,6 +609,7 @@ export class Cat {
     // Un pajaro le gana a todo lo demas, hasta a la mariposa.
     const bird = this.props && this.props.bird
     if (bird && bird.active && this.energy > 0.2 &&
+        performance.now() > this.birdCooldownUntil &&
         this.state !== 'watchBird' && this.state !== 'goingBird') {
       this.watchBird()
       return
