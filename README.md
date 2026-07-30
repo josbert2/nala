@@ -210,7 +210,12 @@ Cada tanto pasa uno, en cualquier hábitat. No cruza de largo: **se posa** en un
 tabla de sus muebles o en el piso, y ahí vive — pega saltitos, picotea, se da
 vuelta a mirar, cambia de percha y se va.
 
-Ella no lo persigue de entrada: **se sienta a mirarlo y castañetea**. Ese
+Entran de a uno a tres, del mismo lado y escalonados. Y **se espantan juntos**:
+si uno levanta vuelo, los que están cerca salen atrás. Eso es lo que los hace
+parecer una bandada y no tres pájaros sueltos que casualmente están en el mismo
+lugar.
+
+Ella se ocupa del que tenga más cerca, y no lo persigue de entrada: **se sienta a mirarlo y castañetea**. Ese
 `ek ek ek` que hacen los gatos cuando ven un pájaro que no pueden alcanzar. Sale
 con las mismas partículas que los prrr.
 
@@ -463,7 +468,12 @@ Cada tanto pasa uno, en cualquier hábitat. No cruza de largo: **se posa** en un
 tabla de sus muebles o en el piso, y ahí vive — pega saltitos, picotea, se da
 vuelta a mirar, cambia de percha y se va.
 
-Ella no lo persigue de entrada: **se sienta a mirarlo y castañetea**. Ese
+Entran de a uno a tres, del mismo lado y escalonados. Y **se espantan juntos**:
+si uno levanta vuelo, los que están cerca salen atrás. Eso es lo que los hace
+parecer una bandada y no tres pájaros sueltos que casualmente están en el mismo
+lugar.
+
+Ella se ocupa del que tenga más cerca, y no lo persigue de entrada: **se sienta a mirarlo y castañetea**. Ese
 `ek ek ek` que hacen los gatos cuando ven un pájaro que no pueden alcanzar. Sale
 con las mismas partículas que los prrr.
 

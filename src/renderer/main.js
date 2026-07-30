@@ -88,7 +88,7 @@ let pieces = []                    // las piezas del habitat puesto
 let box = null                     // su caja, si el habitat trae una
 let butterfly = null
 let nextButterfly = 0              // cuando sale la proxima, en habitats con jardin
-let bird = null
+let birds = []
 let nextBird = 0
 let gift = null
 let diasJuntos = 0                 // desde el primer dia
@@ -166,6 +166,18 @@ let lastTouch = performance.now()   // ultima vez que interactuaste con ella
 let missCooldown = 0
 let missAfterMs = 12 * 60 * 1000    // cuanto aguanta antes de venir a buscarte
 
+/** Entran uno a tres, del mismo lado y escalonados, como una bandada. */
+function soltarBandada () {
+  const lado = Math.random() < 0.5 ? -1 : 1
+  const cuantos = 1 + Math.floor(Math.random() * birds.length)
+  birds.slice(0, cuantos).forEach((b, i) => {
+    if (b.active) return
+    b.spawn(lado)
+    b.x -= lado * i * 70          // escalonados, no todos encima
+    b.hold += i * 0.5             // y no se posan todos en el mismo instante
+  })
+}
+
 /** Suelta una mariposa cerca de ella, pero no encima. */
 function soltarMariposa () {
   if (!butterfly || !cat) return
@@ -220,7 +232,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, est
   ball = new Ball(world)
   treat = new Treat(world)
   butterfly = new Butterfly(world)
-  bird = new Bird(world)
+  birds = [new Bird(world), new Bird(world), new Bird(world)]
   gift = new Gift(world)
 
   // Su habitat. Las piezas salen del json: cada una se dibuja sola desde el
@@ -248,7 +260,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, est
   box = byRole('box')
   toys = pieces.filter((p) => PIECE_ROLE[p.kind] === 'toy')
 
-  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys, litter, water, box, butterfly, bird, gift }
+  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys, litter, water, box, butterfly, bird: null, gift }
 
   needs = new Needs(config)
   cat.needs = needs
@@ -280,7 +292,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, est
   if (debug) {
     // Autotest: saca la pelota y captura el canvas para poder mirarlo.
     setTimeout(() => { forceStats = true }, 3200)
-    setTimeout(() => { forceStats = false; bird.spawn(-1) }, 3300)
+    setTimeout(() => { forceStats = false; soltarBandada() }, 3300)
     setTimeout(() => {
       console.log(`[nala] ball.active=${ball.active} estado=${cat.state} menu=${menuOpen}`)
     }, 5500)
@@ -310,7 +322,7 @@ window.nala.onCommand((cmd) => {
   if (cmd.type === 'litter') cat.goToLitter()
   if (cmd.type === 'box') cat.goToBox()
   if (cmd.type === 'butterfly') soltarMariposa()
-  if (cmd.type === 'bird') bird.spawn()
+  if (cmd.type === 'bird') soltarBandada()
   if (cmd.type === 'gift') cat.traerRegalo()
   if (cmd.type === 'water') {
     water.fill()
@@ -583,7 +595,7 @@ const MENU_ITEMS = [
   ['Darle un premio', () => cat.giveTreat(cat.x + (Math.random() < 0.5 ? -1 : 1) * 170)],
   ['Sacar la pelota', () => cat.playtime()],
   ['Soltar una mariposa', () => soltarMariposa()],
-  ['Que pase un pajarito', () => bird.spawn()],
+  ['Que pasen pajaritos', () => soltarBandada()],
   ['Que te traiga algo', () => cat.traerRegalo()],
   ['Servirle la comida', () => cat.mealtime()],
   ['Llenarle el agua', () => water.fill()],
@@ -817,14 +829,32 @@ function loop (now) {
     // Se guarda cada tanto, no en cada frame.
     if (now > nextSave) { nextSave = now + 30000; guardar() }
     butterfly.update(dt, cat.x, cat.y)
-    bird.update(dt, cat.x, cat.vx)
+    for (const b of birds) b.update(dt, cat.x, cat.vx)
+
+    // La bandada se espanta junta: si uno levanta vuelo, los que estan cerca
+    // salen atras. Es lo que las hace parecer una bandada y no tres pajaros
+    // sueltos que casualmente estan en el mismo lugar.
+    for (const b of birds) {
+      if (!b.active || b.posado || b.hold < 4.6) continue
+      for (const o of birds) {
+        if (o !== b && o.active && o.posado && Math.abs(o.x - b.x) < 260) {
+          o.espantar(b.x + (b.x > o.x ? 60 : -60))
+        }
+      }
+    }
+
+    // Ella se ocupa del que tenga mas cerca.
+    const activos = birds.filter((b) => b.active)
+    cat.props.bird = activos.length
+      ? activos.reduce((a, b) => (Math.abs(a.x - cat.x) <= Math.abs(b.x - cat.x) ? a : b))
+      : null
     gift.update(dt, cat.x, cat.y)
 
     // Los pajaritos pasan solos cada tanto, en cualquier habitat: se ven por
     // la ventana aunque ella este adentro.
-    if (!bird.active) {
+    if (!birds.some((b) => b.active)) {
       if (!nextBird) nextBird = now + 60000 + Math.random() * 150000
-      else if (now > nextBird) { bird.spawn(); nextBird = 0 }
+      else if (now > nextBird) { soltarBandada(); nextBird = 0 }
     }
 
     // En el jardin sale una sola cada tanto. En los otros habitats hay que
@@ -909,9 +939,9 @@ function loop (now) {
   if (ball && ball.active) {
     propSheet.draw(ctx, 'ball', ball.spin * 1000, ball.x, ball.y, cat.scale, false)
   }
-  if (bird && bird.active) {
-    propSheet.draw(ctx, bird.anim, bird.phase * 1000, bird.x, bird.y,
-                   cat.scale, bird.facing < 0)
+  for (const b of birds) {
+    if (!b.active) continue
+    propSheet.draw(ctx, b.anim, b.phase * 1000, b.x, b.y, cat.scale, b.facing < 0)
   }
   if (butterfly && butterfly.active) {
     propSheet.draw(ctx, 'butterfly', butterfly.phase * 1000, butterfly.x, butterfly.y,
