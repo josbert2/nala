@@ -3,7 +3,7 @@
 import { SpriteSheet } from './engine/sprites.js'
 import { World } from './engine/world.js'
 import { Cat } from './engine/cat.js'
-import { Bowl, Ball, Treat, Water, Butterfly } from './engine/props.js'
+import { Bowl, Ball, Treat, Water, Butterfly, Bird } from './engine/props.js'
 import { Litter, Piece } from './engine/furniture.js'
 import { Moments, Schedule } from './engine/moments.js'
 import { Routine } from './engine/routine.js'
@@ -37,6 +37,8 @@ const ACTION_LABELS = {
   meow: 'miau',
   eatTreat: 'comiendo',
   chaseButterfly: 'una mariposa',
+  watchBird: 'un pajarito',
+  stalkBird: 'acechando',
   inBox: 'en su caja',
   chaseBall: 'jugando',
   crouch: 'jugando',
@@ -81,6 +83,8 @@ let pieces = []                    // las piezas del habitat puesto
 let box = null                     // su caja, si el habitat trae una
 let butterfly = null
 let nextButterfly = 0              // cuando sale la proxima, en habitats con jardin
+let bird = null
+let nextBird = 0
 let diasJuntos = 0                 // desde el primer dia
 let nextSave = 0
 
@@ -207,6 +211,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, est
   ball = new Ball(world)
   treat = new Treat(world)
   butterfly = new Butterfly(world)
+  bird = new Bird(world)
 
   // Su habitat. Las piezas salen del json: cada una se dibuja sola desde el
   // sprite, y si el sprite le declaro tablas, el motor las usa de superficies.
@@ -233,7 +238,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, est
   box = byRole('box')
   toys = pieces.filter((p) => PIECE_ROLE[p.kind] === 'toy')
 
-  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys, litter, water, box, butterfly }
+  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys, litter, water, box, butterfly, bird }
 
   needs = new Needs(config)
   cat.needs = needs
@@ -266,7 +271,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, est
     // Autotest: saca la pelota y captura el canvas para poder mirarlo.
     setTimeout(() => { cat.playtime(); console.log('[nala] playtime() llamado') }, 2500)
     setTimeout(() => { forceStats = true }, 3200)
-    setTimeout(() => { forceStats = false; soltarMariposa() }, 3500)
+    setTimeout(() => { forceStats = false; bird.spawn(-1) }, 3300)
     setTimeout(() => {
       console.log(`[nala] ball.active=${ball.active} estado=${cat.state} menu=${menuOpen}`)
     }, 5500)
@@ -297,6 +302,7 @@ window.nala.onCommand((cmd) => {
   if (cmd.type === 'litter') cat.goToLitter()
   if (cmd.type === 'box') cat.goToBox()
   if (cmd.type === 'butterfly') soltarMariposa()
+  if (cmd.type === 'bird') bird.spawn()
   if (cmd.type === 'water') {
     water.fill()
     if (cat.asking === 'agua') { cat.asking = null; sayNow('gracias', 6000) }
@@ -568,6 +574,7 @@ const MENU_ITEMS = [
   ['Darle un premio', () => cat.giveTreat(cat.x + (Math.random() < 0.5 ? -1 : 1) * 170)],
   ['Sacar la pelota', () => cat.playtime()],
   ['Soltar una mariposa', () => soltarMariposa()],
+  ['Que pase un pajarito', () => bird.spawn()],
   ['Servirle la comida', () => cat.mealtime()],
   ['Llenarle el agua', () => water.fill()],
   ['A rascar el poste', () => cat.goToPost()],
@@ -632,6 +639,25 @@ function popHearts (x, y) {
 /** Mientras duerme (o mientras la acaricias) le salen prrr flotando. */
 function maybePurr (now) {
   if (!cat) return
+
+  // Mirando un pajaro no ronronea: castañetea. Ese "ek ek ek" que hacen
+  // cuando ven uno y no lo pueden alcanzar.
+  if (cat.state === 'watchBird') {
+    if (now < nextPurr) return
+    nextPurr = now + 1400 + Math.random() * 1600
+    const b = cat.bounds
+    purrs.push({
+      text: 'ek '.repeat(2 + Math.floor(Math.random() * 3)).trim(),
+      x: b.x + b.w * (0.6 + Math.random() * 0.2),
+      y: b.y + b.h * 0.2,
+      vx: 5 + Math.random() * 8,
+      vy: -15 - Math.random() * 8,
+      life: 1,
+      size: 12 + Math.floor(Math.random() * 3)
+    })
+    return
+  }
+
   const purring = cat.state === 'sleep' || cat.state === 'purr'
   if (!purring) { nextPurr = now + 900; return }
   if (now < nextPurr) return
@@ -764,6 +790,14 @@ function loop (now) {
     // Se guarda cada tanto, no en cada frame.
     if (now > nextSave) { nextSave = now + 30000; guardar() }
     butterfly.update(dt, cat.x, cat.y)
+    bird.update(dt, cat.x, cat.vx)
+
+    // Los pajaritos pasan solos cada tanto, en cualquier habitat: se ven por
+    // la ventana aunque ella este adentro.
+    if (!bird.active) {
+      if (!nextBird) nextBird = now + 60000 + Math.random() * 150000
+      else if (now > nextBird) { bird.spawn(); nextBird = 0 }
+    }
 
     // En el jardin sale una sola cada tanto. En los otros habitats hay que
     // pedirla: no queda bien una mariposa dentro de la casa.
@@ -838,6 +872,10 @@ function loop (now) {
   }
   if (ball && ball.active) {
     propSheet.draw(ctx, 'ball', ball.spin * 1000, ball.x, ball.y, cat.scale, false)
+  }
+  if (bird && bird.active) {
+    propSheet.draw(ctx, bird.anim, bird.phase * 1000, bird.x, bird.y,
+                   cat.scale, bird.facing < 0)
   }
   if (butterfly && butterfly.active) {
     propSheet.draw(ctx, 'butterfly', butterfly.phase * 1000, butterfly.x, butterfly.y,

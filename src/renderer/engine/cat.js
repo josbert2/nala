@@ -5,6 +5,7 @@ const WALK_SPEED = 42       // px/s
 const TROT_SPEED = 95       // el trote de cuando se va a otro monitor
 const RUN_SPEED = 130
 const SLIDE_SPEED = 320     // el envion del derrape
+const STALK_SPEED = 22      // el acecho: mas rapido y el pajaro se le va
 const MAX_FALL = 900
 const HUNT_COOLDOWN = 20000  // cuanto espera antes de volver a cazar el cursor
 
@@ -83,6 +84,9 @@ export class Cat {
       case 'goingEat': return 'walk'
       case 'pedir': return 'alert'
       case 'inBox': return 'alert'
+      case 'watchBird': return 'alert'
+      case 'stalkBird': return 'crouch'
+      case 'goingBird': return 'walk'
       case 'goingBox': return 'walk'
       case 'zoom': return 'run'
       case 'meow': return 'alert'
@@ -113,6 +117,10 @@ export class Cat {
       case 'pedir': return r(5000, 8000)
       // En la caja se queda un rato largo, que es lo que hacen.
       case 'inBox': return r(40000, 120000)
+      // Mirando un pajaro se queda pegada un buen rato.
+      case 'watchBird': return r(7000, 16000)
+      case 'stalkBird': return 12000
+      case 'goingBird': return 0
       case 'goingBox': return 0
       case 'zoom': return 400
       case 'climbTree': return 3000
@@ -181,6 +189,7 @@ export class Cat {
     if (this.state === 'goingWater') { this.goToWater(); return }
     if (this.state === 'goingEat') { this.goToEat(); return }
     if (this.state === 'goingBox') { this.goToBox(); return }
+    if (this.state === 'goingBird') { this.watchBird(); return }
     if (this.state === 'play') {
       const ball = this.props && this.props.ball
       if (ball && ball.active && Math.abs(ball.x - this.x) > 40) {
@@ -209,6 +218,17 @@ export class Cat {
     const cx = b.x + b.w / 2
     const cy = b.y + b.h / 2
     const dist = Math.hypot(p.x - cx, p.y - cy)
+
+    // Un pajaro le corta cualquier cosa que este haciendo. No espera a
+    // terminar: los gatos dejan lo que sea para mirar un pajaro.
+    // Lo unico que no deja por un pajaro: comer, el arenero, y estar ya en eso.
+    const NO_CORTAR = ['eat', 'eatTreat', 'drink', 'litter', 'pedir',
+                       'watchBird', 'stalkBird', 'goingBird', 'crouch', 'pounce']
+    const bird = this.props && this.props.bird
+    if (bird && bird.active && this.energy > 0.2 && !NO_CORTAR.includes(this.state)) {
+      this.watchBird()
+      return
+    }
 
     // Le sacudis el cursor cerca y sale a cazarlo, como con un puntero laser.
     // Pide un zarandeo deliberado (varios cambios de direccion), no cualquier
@@ -409,6 +429,34 @@ export class Cat {
         this.vx = this.facing * RUN_SPEED
         break
       }
+      case 'watchBird': {
+        // De lejos no lo persigue: lo mira, y castañetea. Pero si el pajaro se
+        // posa y ella tiene ganas, se decide y lo empieza a acechar.
+        this.vx = 0
+        const p = this.props && this.props.bird
+        if (!p || !p.active) { this.setState('sit', 2500); break }
+        this.facing = p.x > this.x ? 1 : -1
+        if (p.posado && this.energy > 0.3 && Math.random() < dt * 0.5) {
+          this.setState('stalkBird')
+        }
+        break
+      }
+      case 'stalkBird': {
+        // Agazapada y muy despacio: es la unica forma de acercarsele. Si va
+        // rapido el pajaro levanta vuelo mucho antes.
+        const p = this.props && this.props.bird
+        if (!p || !p.active || !p.posado) { this.setState('watchBird'); break }
+        const dx = p.x - this.x
+        this.facing = Math.sign(dx) || 1
+        if (Math.abs(dx) < 58) {
+          this.vx = 0
+          this.pounceTarget = p.x
+          this.setState('crouch', 450)     // se junta y salta
+          break
+        }
+        this.vx = this.facing * STALK_SPEED
+        break
+      }
       case 'inBox': {
         this.vx = 0
         const p = ctx.pointer
@@ -520,6 +568,14 @@ export class Cat {
     const bowl = this.props && this.props.bowl
     if (bowl && bowl.food > 0 && this.state !== 'eat') {
       this.goTo(bowl.x, 'eat')
+      return
+    }
+
+    // Un pajaro le gana a todo lo demas, hasta a la mariposa.
+    const bird = this.props && this.props.bird
+    if (bird && bird.active && this.energy > 0.2 &&
+        this.state !== 'watchBird' && this.state !== 'goingBird') {
+      this.watchBird()
       return
     }
 
@@ -779,6 +835,21 @@ export class Cat {
       return
     }
     this.goTo(box.x, 'goingBox', 40000, 'trot')
+  }
+
+  /**
+   * Se queda mirando al pajaro. Si esta lejos camina hasta quedar debajo, y
+   * ahi se sienta. Nunca lo alcanza.
+   */
+  watchBird () {
+    const b = this.props && this.props.bird
+    if (!b || !b.active) return
+    if (Math.abs(b.x - this.x) < 130 || !this.surface || !this.surface.isFloor) {
+      this.facing = b.x > this.x ? 1 : -1
+      this.setState('watchBird')
+      return
+    }
+    this.goTo(b.x, 'goingBird', 20000)
   }
 
   /** A tomar agua. Si el bebedero esta vacio, se sienta al lado y te lo pide. */

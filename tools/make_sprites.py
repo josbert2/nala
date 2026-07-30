@@ -745,6 +745,48 @@ def prop_butterfly(d, t, P):
         ell(d, cx + sign * 3.4, g - 17, 1.0, 1.0, cuerpo)
 
 
+def prop_bird(d, t, P, posado=False):
+    """
+    Un pajarito. Como la mariposa, se dibuja apoyado en la linea del piso de la
+    celda: volando el motor lo lleva por el aire, posado se apoya de verdad.
+    """
+    g = PROP_GROUND
+    cx = PX + 12
+    cuerpo = (104, 132, 172, 255)
+    claro = (152, 180, 212, 255)
+    panza = (240, 234, 218, 255)
+    pico = (232, 168, 80, 255)
+    ojo = (36, 34, 42, 255)
+
+    if posado:
+        salto = abs(math.sin(t * math.tau * 2)) * 1.4     # picotea
+        ell(d, cx - 1, g - 7, 5.6, 4.6, cuerpo)
+        ell(d, cx - 1.5, g - 6, 3.8, 3.0, panza)
+        d.polygon([(cx - 6, g - 8), (cx - 12, g - 4), (cx - 5, g - 5)], fill=cuerpo)
+        ell(d, cx - 2, g - 8, 3.0, 2.0, claro)            # ala plegada
+        ell(d, cx + 4, g - 11 + salto, 3.4, 3.2, cuerpo)  # cabeza
+        d.polygon([(cx + 6.2, g - 12 + salto), (cx + 9.6, g - 10.5 + salto),
+                   (cx + 6.2, g - 9 + salto)], fill=pico)
+        ell(d, cx + 5, g - 12 + salto, 0.9, 0.9, ojo)
+        for lx in (cx - 2, cx + 1):
+            d.line([(lx, g - 3), (lx, g - 0.5)], fill=pico)
+    else:
+        # Volando. El ala de arriba y la de abajo se cruzan con el aleteo.
+        flap = math.sin(t * math.tau)
+        ell(d, cx - 1, g - 9, 5.4, 4.0, cuerpo)
+        ell(d, cx - 1.5, g - 8, 3.6, 2.6, panza)
+        d.polygon([(cx - 6, g - 10), (cx - 12, g - 6 - flap * 2), (cx - 5, g - 7)],
+                  fill=cuerpo)                                   # cola
+        ell(d, cx + 4, g - 12, 3.2, 3.0, cuerpo)                 # cabeza
+        d.polygon([(cx + 6.2, g - 13), (cx + 9.6, g - 11.5), (cx + 6.2, g - 10)],
+                  fill=pico)
+        ell(d, cx + 5, g - 13, 0.9, 0.9, ojo)
+        d.polygon([(cx - 2, g - 10), (cx + 2, g - 11 - flap * 7),
+                   (cx + 5, g - 9)], fill=claro)                 # ala
+        d.polygon([(cx - 2, g - 9), (cx + 1, g - 8 + flap * 5),
+                   (cx + 4, g - 8)], fill=cuerpo)
+
+
 def prop_ball(d, t, P):
     """Pelotita que rota: el brillo se mueve."""
     ang = t * math.tau
@@ -808,6 +850,8 @@ PROPS = [
     ("water_full", lambda d, t, P: prop_water(d, t, P, True),  4, 3,  True),
     ("water_empty", lambda d, t, P: prop_water(d, t, P, False), 1, 1,  False),
     ("butterfly",  prop_butterfly,                             6, 12, True),
+    ("bird",       lambda d, t, P: prop_bird(d, t, P, False),  6, 11, True),
+    ("bird_perch", lambda d, t, P: prop_bird(d, t, P, True),   6, 4,  True),
     ("ball",       prop_ball,                                  6, 10, True),
     ("treat",      prop_treat,                                 4, 5,  True),
     ("bed_back",   prop_bed_back,                              1, 1,  False),

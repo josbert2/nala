@@ -178,6 +178,30 @@ ahí.
 
 ---
 
+## Los pajaritos
+
+Cada tanto pasa uno, en cualquier hábitat. No cruza de largo: **se posa** en una
+tabla de sus muebles o en el piso, y ahí vive — pega saltitos, picotea, se da
+vuelta a mirar, cambia de percha y se va.
+
+Ella no lo persigue de entrada: **se sienta a mirarlo y castañetea**. Ese
+`ek ek ek` que hacen los gatos cuando ven un pájaro que no pueden alcanzar. Sale
+con las mismas partículas que los prrr.
+
+Y si el pájaro sigue posado, se decide y lo **acecha**: agazapada y muy despacio.
+Ahí está el juego, y está en una sola línea de `Bird.update()`:
+
+```js
+const limite = Math.abs(catVel) > 55 ? 165 : 74
+```
+
+Si va a la carrera el pájaro levanta vuelo de lejos. Si va agazapada y lenta lo
+deja acercarse mucho más. Nunca lo agarra — pero casi.
+
+`Ctrl+Alt+J` hace pasar uno.
+
+---
+
 ## Sus hábitats
 
 Hay cuatro decorados y se cambia desde el menú → **Su hábitat**. Se definen en
@@ -378,6 +402,30 @@ puede usar `{dias}`:
 Para cambiar la fecha de inicio, editá `desde` en `estado.json`. Si querés que
 cuente desde el día que llegó a tu casa y no desde que instalaste la app, es
 ahí.
+
+---
+
+## Los pajaritos
+
+Cada tanto pasa uno, en cualquier hábitat. No cruza de largo: **se posa** en una
+tabla de sus muebles o en el piso, y ahí vive — pega saltitos, picotea, se da
+vuelta a mirar, cambia de percha y se va.
+
+Ella no lo persigue de entrada: **se sienta a mirarlo y castañetea**. Ese
+`ek ek ek` que hacen los gatos cuando ven un pájaro que no pueden alcanzar. Sale
+con las mismas partículas que los prrr.
+
+Y si el pájaro sigue posado, se decide y lo **acecha**: agazapada y muy despacio.
+Ahí está el juego, y está en una sola línea de `Bird.update()`:
+
+```js
+const limite = Math.abs(catVel) > 55 ? 165 : 74
+```
+
+Si va a la carrera el pájaro levanta vuelo de lejos. Si va agazapada y lenta lo
+deja acercarse mucho más. Nunca lo agarra — pero casi.
+
+`Ctrl+Alt+J` hace pasar uno.
 
 ---
 

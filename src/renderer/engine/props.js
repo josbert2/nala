@@ -301,3 +301,152 @@ export class Butterfly {
     if (this.life <= 0) this.active = false   // se va sola
   }
 }
+
+/**
+ * Un pajarito.
+ *
+ * Cruza la pantalla volando, cada tanto se posa en algo, picotea un rato, y se
+ * va. Si ella se acerca demasiado levanta vuelo antes de que llegue — no se
+ * deja agarrar nunca, que es de lo que se trata.
+ */
+export class Bird {
+  constructor (world) {
+    this.world = world
+    this.active = false
+    this.x = 0
+    this.y = 0
+    this.vx = 0
+    this.posado = false
+    this.phase = 0
+    this.hold = 0
+    this.life = 0
+    this.facing = 1
+  }
+
+  get anim () { return this.posado ? 'bird_perch' : 'bird' }
+
+  /** Entra volando por un costado. */
+  spawn (desde) {
+    const d = this.world.displayAt ? this.world.displayAt(this.world.width / 2) : null
+    const x1 = d ? d.x : 0
+    const x2 = d ? d.x + d.width : this.world.width
+    const izq = desde != null ? desde < 0 : Math.random() < 0.5
+
+    this.active = true
+    this.posado = false
+    this.x = izq ? x1 - 30 : x2 + 30
+    this.facing = izq ? 1 : -1
+    this.vx = this.facing * (95 + Math.random() * 60)
+    this.y = this.world.floorAt(Math.max(x1, Math.min(x2, this.x))).y - 190 -
+             Math.random() * 90
+    this.life = 60 + Math.random() * 50
+    this.hold = 1.4 + Math.random() * 1.6
+  }
+
+  /** Busca donde posarse: una tabla de sus muebles, o el piso. */
+  _posarse () {
+    const cerca = this.world.surfaces
+      .filter((sf) => sf.x1 + 20 < this.x && this.x < sf.x2 - 20)
+      .sort((a, b) => a.y - b.y)
+    const sf = cerca[0] || this.world.floorAt(this.x)
+    this.posado = true
+    this.sup = sf
+    this.y = sf.y
+    this.vx = 0
+    this.hold = 5 + Math.random() * 9
+    this.tarea = 0
+  }
+
+  /**
+   * Lo que hace mientras esta posado: pega saltitos, picotea, se queda quieto
+   * mirando. Es lo que lo hace parecer un pajaro y no un adorno.
+   */
+  _vivir (dt) {
+    this.tarea -= dt
+    if (this.tarea > 0) {
+      if (this.saltando) {
+        // Un saltito corto, con su arco.
+        this.saltoT += dt
+        const k = Math.min(1, this.saltoT / 0.28)
+        this.x = this.saltoX + (this.saltoDest - this.saltoX) * k
+        this.y = this.sup.y - Math.sin(k * Math.PI) * 7
+        if (k >= 1) { this.saltando = false; this.y = this.sup.y }
+      }
+      return
+    }
+
+    // Elige que hacer ahora.
+    const r = Math.random()
+    if (r < 0.5 && this.sup) {
+      // Saltito para un costado, sin salirse de la tabla.
+      const dir = Math.random() < 0.5 ? -1 : 1
+      const dest = this.x + dir * (12 + Math.random() * 16)
+      if (dest > this.sup.x1 + 14 && dest < this.sup.x2 - 14) {
+        this.saltando = true
+        this.saltoT = 0
+        this.saltoX = this.x
+        this.saltoDest = dest
+        this.facing = dir
+        this.tarea = 0.3
+        return
+      }
+    }
+    if (r < 0.8) {
+      this.tarea = 0.8 + Math.random() * 1.4    // picotea
+    } else {
+      this.facing *= -1                          // se da vuelta a mirar
+      this.tarea = 0.6 + Math.random()
+    }
+  }
+
+  _volar () {
+    this.posado = false
+    this.vx = this.facing * (110 + Math.random() * 70)
+    this.hold = 3 + Math.random() * 4
+  }
+
+  /** Se espanta y sale disparado hacia arriba. */
+  espantar (desdeX) {
+    if (!this.active) return
+    this.facing = desdeX > this.x ? -1 : 1
+    this.posado = false
+    this.vx = this.facing * 260
+    this.hold = 5
+    this.life = Math.min(this.life, 6)
+  }
+
+  update (dt, catX, catVel) {
+    if (!this.active) return
+    this.phase += dt
+    this.life -= dt
+    this.hold -= dt
+
+    // Cuanto la deja acercarse depende de como venga. Si viene a la carrera
+    // levanta vuelo de lejos; si viene agazapada y despacio lo deja acercarse
+    // mucho mas — y ahi esta el juego.
+    if (catX != null && this.posado) {
+      const cerca = Math.abs(catX - this.x)
+      const limite = catVel != null && Math.abs(catVel) > 55 ? 165 : 74
+      if (cerca < limite) this.espantar(catX)
+    }
+
+    if (this.hold <= 0) {
+      if (this.posado) this._volar()
+      else if (Math.random() < 0.85 && this.life > 12) this._posarse()
+      else this.hold = 1.5 + Math.random() * 2
+    }
+
+    if (this.posado) {
+      this._vivir(dt)
+    } else {
+      this.x += this.vx * dt
+      this.y -= Math.sin(this.phase * 5) * 22 * dt   // el vuelo va a los saltitos
+      if (this.vx !== 0) this.facing = Math.sign(this.vx)
+    }
+
+    const d = this.world.displayAt ? this.world.displayAt(this.x) : null
+    const fuera = d ? (this.x < d.x - 60 || this.x > d.x + d.width + 60)
+                    : (this.x < -60 || this.x > this.world.width + 60)
+    if (this.life <= 0 || fuera) this.active = false
+  }
+}
