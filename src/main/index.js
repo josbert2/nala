@@ -432,6 +432,7 @@ function refreshTrayMenu () {
     { label: 'Sacar la pelota', click: send('command', { type: 'play' }) },
     { label: 'Soltar una mariposa', click: send('command', { type: 'butterfly' }) },
     { label: 'Que pase un pajarito', click: send('command', { type: 'bird' }) },
+    { label: 'Que te traiga algo', click: send('command', { type: 'gift' }) },
     { label: 'Darle un premio', click: send('command', { type: 'treat' }) },
     { type: 'separator' },
     { label: 'A rascar el poste', click: send('command', { type: 'scratch' }) },
@@ -512,7 +513,8 @@ const SHORTCUTS = [
   ['Control+Alt+A', 'al arenero', { type: 'litter' }],
   ['Control+Alt+B', 'a su caja', { type: 'box' }],
   ['Control+Alt+M', 'una mariposa', { type: 'butterfly' }],
-  ['Control+Alt+J', 'un pajarito', { type: 'bird' }]
+  ['Control+Alt+J', 'un pajarito', { type: 'bird' }],
+  ['Control+Alt+G', 'que te traiga algo', { type: 'gift' }]
 ]
 
 /**

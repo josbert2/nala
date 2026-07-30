@@ -3,7 +3,7 @@
 import { SpriteSheet } from './engine/sprites.js'
 import { World } from './engine/world.js'
 import { Cat } from './engine/cat.js'
-import { Bowl, Ball, Treat, Water, Butterfly, Bird } from './engine/props.js'
+import { Bowl, Ball, Treat, Water, Butterfly, Bird, Gift } from './engine/props.js'
 import { Litter, Piece } from './engine/furniture.js'
 import { Moments, Schedule } from './engine/moments.js'
 import { Routine } from './engine/routine.js'
@@ -38,6 +38,9 @@ const ACTION_LABELS = {
   eatTreat: 'comiendo',
   chaseButterfly: 'una mariposa',
   yawn: 'recién levantada',
+  tomaRegalo: 'te trae algo',
+  llevaRegalo: 'te trae algo',
+  ofrece: 'es para vos',
   watchBird: 'un pajarito',
   stalkBird: 'acechando',
   inBox: 'en su caja',
@@ -86,6 +89,7 @@ let butterfly = null
 let nextButterfly = 0              // cuando sale la proxima, en habitats con jardin
 let bird = null
 let nextBird = 0
+let gift = null
 let diasJuntos = 0                 // desde el primer dia
 let nextSave = 0
 
@@ -214,6 +218,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, est
   treat = new Treat(world)
   butterfly = new Butterfly(world)
   bird = new Bird(world)
+  gift = new Gift(world)
 
   // Su habitat. Las piezas salen del json: cada una se dibuja sola desde el
   // sprite, y si el sprite le declaro tablas, el motor las usa de superficies.
@@ -240,7 +245,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, est
   box = byRole('box')
   toys = pieces.filter((p) => PIECE_ROLE[p.kind] === 'toy')
 
-  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys, litter, water, box, butterfly, bird }
+  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys, litter, water, box, butterfly, bird, gift }
 
   needs = new Needs(config)
   cat.needs = needs
@@ -271,13 +276,11 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, est
 
   if (debug) {
     // Autotest: saca la pelota y captura el canvas para poder mirarlo.
-    setTimeout(() => { cat.playtime(); console.log('[nala] playtime() llamado') }, 2500)
     setTimeout(() => { forceStats = true }, 3200)
     setTimeout(() => { forceStats = false; bird.spawn(-1) }, 3300)
     setTimeout(() => {
       console.log(`[nala] ball.active=${ball.active} estado=${cat.state} menu=${menuOpen}`)
     }, 5500)
-    setTimeout(() => { cat.napNow(); console.log('[nala] napNow(): deberian salir prrr') }, 6500)
   }
 })
 
@@ -305,6 +308,7 @@ window.nala.onCommand((cmd) => {
   if (cmd.type === 'box') cat.goToBox()
   if (cmd.type === 'butterfly') soltarMariposa()
   if (cmd.type === 'bird') bird.spawn()
+  if (cmd.type === 'gift') cat.traerRegalo()
   if (cmd.type === 'water') {
     water.fill()
     if (cat.asking === 'agua') { cat.asking = null; sayNow('gracias', 6000) }
@@ -577,6 +581,7 @@ const MENU_ITEMS = [
   ['Sacar la pelota', () => cat.playtime()],
   ['Soltar una mariposa', () => soltarMariposa()],
   ['Que pase un pajarito', () => bird.spawn()],
+  ['Que te traiga algo', () => cat.traerRegalo()],
   ['Servirle la comida', () => cat.mealtime()],
   ['Llenarle el agua', () => water.fill()],
   ['A rascar el poste', () => cat.goToPost()],
@@ -793,7 +798,8 @@ function loop (now) {
     }
 
     if (cat.state !== lastState) {
-      if (lastState === 'sleep') sayNow('waking')
+      if (cat.state === 'ofrece') sayNow('regalo', 8000)
+      else if (lastState === 'sleep') sayNow('waking')
       else if (lastState === 'eat') sayNow('afterMeal')
       lastState = cat.state
     }
@@ -804,6 +810,7 @@ function loop (now) {
     if (now > nextSave) { nextSave = now + 30000; guardar() }
     butterfly.update(dt, cat.x, cat.y)
     bird.update(dt, cat.x, cat.vx)
+    gift.update(dt, cat.x, cat.y)
 
     // Los pajaritos pasan solos cada tanto, en cualquier habitat: se ven por
     // la ventana aunque ella este adentro.
@@ -894,7 +901,14 @@ function loop (now) {
     propSheet.draw(ctx, 'butterfly', butterfly.phase * 1000, butterfly.x, butterfly.y,
                    cat.scale, butterfly.tx < butterfly.x)
   }
+  if (gift && gift.active && !gift.enBoca && furnSheet) {
+    furnSheet.draw(ctx, gift.anim, 0, gift.x, gift.y, cat.scale, false)
+  }
   if (cat) cat.draw(ctx)
+  if (gift && gift.active && gift.enBoca && furnSheet) {
+    furnSheet.draw(ctx, gift.anim, 0, gift.x + cat.facing * 16, gift.y, cat.scale,
+                   cat.facing < 0)
+  }
 
   for (const p of pieces) {
     if (dentro(p)) p.sheet.draw(ctx, p.frontAnim, now, p.x, p.y, cat.scale, false)

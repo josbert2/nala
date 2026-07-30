@@ -450,3 +450,51 @@ export class Bird {
     if (this.life <= 0 || fuera) this.active = false
   }
 }
+
+/**
+ * El regalito que te trae.
+ *
+ * Los gatos le llevan lo que cazan a quien quieren. Ella no caza nada de
+ * verdad, asi que agarra uno de sus juguetes, te lo lleva hasta donde tenes el
+ * cursor, lo deja ahi y se queda esperando que lo veas.
+ */
+export class Gift {
+  constructor (world) {
+    this.world = world
+    this.active = false
+    this.enBoca = false
+    this.anim = 'mouse'
+    this.x = 0
+    this.y = 0
+    this.espera = 0
+  }
+
+  /** Lo levanta: a partir de aca viaja con ella. */
+  agarrar (anim, x) {
+    this.active = true
+    this.enBoca = true
+    this.anim = anim || 'mouse'
+    this.x = x
+    this.espera = 0
+  }
+
+  /** Lo deja en el piso, donde este ella. */
+  soltar (x) {
+    this.enBoca = false
+    this.x = x
+    this.y = this.world.floorAt(x).y
+    this.espera = 90
+  }
+
+  update (dt, catX, catY) {
+    if (!this.active) return
+    if (this.enBoca) {
+      // Colgando de la boca, un poco adelante y a la altura de la cabeza.
+      this.x = catX
+      this.y = catY - 26
+      return
+    }
+    this.espera -= dt
+    if (this.espera <= 0) this.active = false   // se olvida y vuelve a su lugar
+  }
+}

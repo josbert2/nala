@@ -178,6 +178,17 @@ ahí.
 
 ---
 
+## El regalito
+
+Los gatos le llevan lo que cazan a quien quieren. Ella no caza nada de verdad,
+así que agarra uno de sus juguetes, **te lo lleva hasta donde tenés el cursor**,
+lo deja ahí y se queda esperando que lo veas — *"Es para vos."*
+
+Se le ocurre sola cada tanto, o `Ctrl+Alt+G`. Mientras lo lleva se le ve colgando
+de la boca; cuando lo suelta queda en el piso un rato y después vuelve a su lugar.
+
+---
+
 ## Los pajaritos
 
 Cada tanto pasa uno, en cualquier hábitat. No cruza de largo: **se posa** en una
@@ -402,6 +413,17 @@ puede usar `{dias}`:
 Para cambiar la fecha de inicio, editá `desde` en `estado.json`. Si querés que
 cuente desde el día que llegó a tu casa y no desde que instalaste la app, es
 ahí.
+
+---
+
+## El regalito
+
+Los gatos le llevan lo que cazan a quien quieren. Ella no caza nada de verdad,
+así que agarra uno de sus juguetes, **te lo lleva hasta donde tenés el cursor**,
+lo deja ahí y se queda esperando que lo veas — *"Es para vos."*
+
+Se le ocurre sola cada tanto, o `Ctrl+Alt+G`. Mientras lo lleva se le ve colgando
+de la boca; cuando lo suelta queda en el piso un rato y después vuelve a su lugar.
 
 ---
 

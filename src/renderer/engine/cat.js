@@ -87,6 +87,9 @@ export class Cat {
       case 'watchBird': return 'alert'
       case 'stalkBird': return 'stalk'
       case 'goingBird': return 'walk'
+      case 'tomaRegalo': return 'walk'
+      case 'llevaRegalo': return 'walk'
+      case 'ofrece': return 'alert'
       case 'goingBox': return 'walk'
       case 'zoom': return 'run'
       case 'meow': return 'alert'
@@ -122,6 +125,9 @@ export class Cat {
       case 'watchBird': return r(7000, 16000)
       case 'stalkBird': return 12000
       case 'goingBird': return 0
+      case 'tomaRegalo': return 0
+      case 'llevaRegalo': return 25000
+      case 'ofrece': return r(9000, 16000)
       case 'goingBox': return 0
       case 'zoom': return 400
       case 'climbTree': return 3000
@@ -194,6 +200,17 @@ export class Cat {
     if (this.state === 'goingEat') { this.goToEat(); return }
     if (this.state === 'goingBox') { this.goToBox(); return }
     if (this.state === 'goingBird') { this.watchBird(); return }
+
+    // Levanta el juguete y lo lleva hasta donde tenes el cursor.
+    if (this.state === 'tomaRegalo') {
+      const g = this.props && this.props.gift
+      if (g) g.agarrar(this.giftAnim, this.x)
+      const p = ctx && ctx.pointer
+      const destino = p && p.active ? p.x : this.x + this.facing * 200
+      this.goTo(destino, 'ofrece', 25000, 'llevaRegalo')
+      return
+    }
+    if (this.state === 'ofrece') { this.setState('sit'); return }
     if (this.state === 'play') {
       const ball = this.props && this.props.ball
       if (ball && ball.active && Math.abs(ball.x - this.x) > 40) {
@@ -209,6 +226,10 @@ export class Cat {
     this.target = null
     const next = this.after
     this.after = null
+    if (next === 'ofrece') {
+      const g = this.props && this.props.gift
+      if (g) g.soltar(this.x)
+    }
     this.setState(next || 'idle')
   }
 
@@ -267,6 +288,7 @@ export class Cat {
   _act (dt, ctx) {
     switch (this.state) {
       case 'walkTo':
+      case 'llevaRegalo':
       case 'trot': {
         if (!this.target) { this._arrive(); break }
         const dx = this.target.x - this.x
@@ -624,6 +646,7 @@ export class Cat {
       if (p.litter) options.push(() => this.goToLitter())
       // La caja tira mas que el resto: es una caja.
       if (p.box) { options.push(() => this.goToBox()); options.push(() => this.goToBox()) }
+      if (p.gift && p.toys && p.toys.length) options.push(() => this.traerRegalo())
       if (options.length) {
         this.furnitureCooldownUntil = performance.now() + 30000
         options[Math.floor(Math.random() * options.length)]()
@@ -897,6 +920,23 @@ export class Cat {
       return
     }
     this.goTo(bowl.x, 'goingEat', 40000, 'trot')
+  }
+
+  /**
+   * Te trae un regalo. Agarra uno de sus juguetes, te lo lleva hasta el cursor,
+   * lo deja y se queda esperando que lo veas.
+   */
+  traerRegalo () {
+    const p = this.props || {}
+    if (!p.gift || !p.toys || !p.toys.length) return
+    const juguete = p.toys[Math.floor(Math.random() * p.toys.length)]
+    this.giftAnim = juguete.kind
+    this.energy = Math.max(this.energy, 0.5)
+    if (Math.abs(juguete.x - this.x) < 30 && this.surface && this.surface.isFloor) {
+      this.setState('tomaRegalo', 0)
+      return
+    }
+    this.goTo(juguete.x, 'tomaRegalo', 30000, 'trot')
   }
 
   /** Al arenero. Escarba, hace lo suyo, tapa, y despues se limpia. */

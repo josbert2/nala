@@ -68,6 +68,14 @@ const DEFAULTS = {
     'Estoy soñando con vos.'
   ],
 
+  // Te dejo un regalo a los pies y espera que lo veas.
+  regalo: [
+    'Es para vos.',
+    'Te lo traje.',
+    'Mirá lo que cacé.',
+    'Tomá. Cuidalo.'
+  ],
+
   // Se despierta de una siesta.
   waking: [
     'Dormí bien.',
