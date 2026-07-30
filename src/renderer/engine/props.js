@@ -13,7 +13,7 @@ const clamp = (v, max) => Math.max(-max, Math.min(max, v))
  * entero: asi las cosas no se corren de lugar cuando ella pasa a andar por
  * varias. Por defecto van en la principal; `displayIndex` las manda a otra.
  */
-class Anchored {
+export class Anchored {
   constructor (world, xFraction, displayIndex = null) {
     this.world = world
     this.xFraction = xFraction

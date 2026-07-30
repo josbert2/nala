@@ -5,8 +5,20 @@
   "greeting": "",
   "bowlAt": 0.12,
   "bedAt": 0.86,
+  "postAt": 0.28,
+  "treeAt": 0.55,
+  "caveAt": 0.72,
   "bowlDisplay": null,
   "bedDisplay": null,
+  "postDisplay": null,
+  "treeDisplay": null,
+  "caveDisplay": null,
+  "toys": [
+    { "kind": "mouse", "at": 0.2 },
+    { "kind": "pelotita", "at": 0.4 },
+    { "kind": "pelotita2", "at": 0.45 },
+    { "kind": "wand", "at": 0.66 }
+  ],
   "meals": [
     "08:30",
     "13:30",

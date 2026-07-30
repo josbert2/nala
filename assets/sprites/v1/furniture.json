@@ -1,0 +1,87 @@
+{
+  "cell": [
+    80,
+    112
+  ],
+  "ground": 108,
+  "animations": {
+    "post": {
+      "row": 0,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": [
+        [
+          24,
+          56,
+          44
+        ]
+      ]
+    },
+    "tree": {
+      "row": 1,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": [
+        [
+          6,
+          46,
+          76
+        ],
+        [
+          42,
+          78,
+          56
+        ],
+        [
+          12,
+          60,
+          24
+        ]
+      ]
+    },
+    "cave_back": {
+      "row": 2,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "cave_front": {
+      "row": 3,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "mouse": {
+      "row": 4,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "pelotita": {
+      "row": 5,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "pelotita2": {
+      "row": 6,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "wand": {
+      "row": 7,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    }
+  }
+}

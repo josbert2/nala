@@ -53,6 +53,10 @@ vuelve el problema que el filtro venía a resolver. Conviene un camino aparte:
 **Qué es hoy:** una caja oscura redondeada con botones de texto, que aparece con
 un fade + scale de 130ms. Funciona, pero es lo mínimo.
 
+**Se volvió más urgente:** con su casa ya son once opciones en una sola lista
+plana (acariciarla, premio, pelota, comida, rascadero, árbol, cueva, juguete,
+cama, dormir, cambiarle la pinta). Pide separadores o submenús.
+
 **Ideas:**
 
 - Iconitos por opción. Los sprites ya existen en `assets/sprites/<version>/props.png`

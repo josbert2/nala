@@ -4,7 +4,17 @@ import { SpriteSheet } from './engine/sprites.js'
 import { World } from './engine/world.js'
 import { Cat } from './engine/cat.js'
 import { Bowl, Ball, Treat, Bed } from './engine/props.js'
+import { ScratchPost, CatTree, Cave, Toy } from './engine/furniture.js'
 import { Moments, Notes, Schedule } from './engine/moments.js'
+
+// Los juguetes que quedan tirados por el piso si no se configura otra cosa.
+// `kind` es el nombre del sprite en furniture.json.
+const DEFAULT_TOYS = [
+  { kind: 'mouse', at: 0.20 },
+  { kind: 'pelotita', at: 0.40 },
+  { kind: 'pelotita2', at: 0.45 },
+  { kind: 'wand', at: 0.66 }
+]
 
 const canvas = document.getElementById('stage')
 const ctx = canvas.getContext('2d')
@@ -16,6 +26,8 @@ const ACTION_LABELS = {
   play: 'jugando',
   trot: 'paseando',
   loaf: 'mirandote',
+  scratch: 'rascando',
+  climbTree: 'trepando',
   slide: 'derrapando',
   chaseCursor: 'cazando el cursor',
   seek: 'buscandote',
@@ -32,12 +44,17 @@ const ACTION_LABELS = {
 
 let sheet = null
 let propSheet = null
+let furnSheet = null
 let world = null
 let cat = null
 let bowl = null
 let ball = null
 let treat = null
 let bed = null
+let post = null
+let tree = null
+let cave = null
+let toys = []
 let meals = null
 let playtimes = null
 let moments = null
@@ -85,9 +102,10 @@ window.nala.onBoot(async ({ config, display, look, looks, debug }) => {
   const dir = `../../assets/sprites/${look || 'v1'}`
   lookCount = Array.isArray(looks) ? looks.length : 1
 
-  ;[sheet, propSheet] = await Promise.all([
+  ;[sheet, propSheet, furnSheet] = await Promise.all([
     SpriteSheet.load(`${dir}/cat.png`, `${dir}/cat.json`),
-    SpriteSheet.load(`${dir}/props.png`, `${dir}/props.json`)
+    SpriteSheet.load(`${dir}/props.png`, `${dir}/props.json`),
+    SpriteSheet.load(`${dir}/furniture.png`, `${dir}/furniture.json`)
   ])
 
   world = new World(window.innerWidth, window.innerHeight, displays)
@@ -98,7 +116,20 @@ window.nala.onBoot(async ({ config, display, look, looks, debug }) => {
   treat = new Treat(world)
   bed = new Bed(world, config.bedAt != null ? config.bedAt : 0.86,
                 config.bedDisplay != null ? config.bedDisplay : null)
-  cat.props = { bowl, ball, treat, bed }
+
+  // Su casa. El arbol y el rascadero traen tablas: se las damos al mundo para
+  // que sean superficies de verdad y ella pueda subirse.
+  const at = (key, fallback) => (config[key] != null ? config[key] : fallback)
+  const on = (key) => (config[key] != null ? config[key] : null)
+  const s = cat.scale
+  post = new ScratchPost(world, furnSheet, s, at('postAt', 0.28), on('postDisplay'))
+  tree = new CatTree(world, furnSheet, s, at('treeAt', 0.55), on('treeDisplay'))
+  cave = new Cave(world, furnSheet, s, at('caveAt', 0.72), on('caveDisplay'))
+  toys = (config.toys || DEFAULT_TOYS).map(
+    (t) => new Toy(world, furnSheet, s, t.kind, t.at, t.display != null ? t.display : null))
+
+  cat.props = { bowl, ball, treat, bed, post, tree, cave, toys }
+  world.setFurniture([post, tree])
   world.setFloorMargin((sheet.ch - sheet.ground) * cat.scale + 2)
 
   meals = new Schedule(config.meals)
@@ -135,6 +166,10 @@ window.nala.onCommand((cmd) => {
   if (cmd.type === 'play') cat.playtime()
   if (cmd.type === 'treat') cat.giveTreat()
   if (cmd.type === 'bed') cat.goToBed()
+  if (cmd.type === 'scratch') cat.goToPost()
+  if (cmd.type === 'tree') cat.goUpTree()
+  if (cmd.type === 'cave') cat.goToCave()
+  if (cmd.type === 'toy') cat.goToToy()
   if (cmd.type === 'free') { cat.target = null; cat.after = null; cat.setState('idle', 500) }
 })
 
@@ -311,6 +346,10 @@ const MENU_ITEMS = [
   ['Darle un premio', () => cat.giveTreat(cat.x + (Math.random() < 0.5 ? -1 : 1) * 170)],
   ['Sacar la pelota', () => cat.playtime()],
   ['Servirle la comida', () => cat.mealtime()],
+  ['A rascar el poste', () => cat.goToPost()],
+  ['Arriba del arbol', () => cat.goUpTree()],
+  ['A su cueva', () => cat.goToCave()],
+  ['A jugar con un juguete', () => cat.goToToy()],
   ['A su cama', () => cat.goToBed()],
   ['Que duerma', () => cat.napNow()],
   // El tercer campo dice cuando mostrar la opcion. Sin mas de una version de su
@@ -493,6 +532,24 @@ function loop (now) {
   }
 
   ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+  // Sus muebles van detras de ella. El arbol y el rascadero son mas altos que
+  // ella a proposito: se la ve trepando por delante de las tablas.
+  const drawFurn = (f, anim) => {
+    if (f && furnSheet) furnSheet.draw(ctx, anim || f.anim, 0, f.x, f.y, cat.scale, false)
+  }
+  drawFurn(tree)
+  drawFurn(post)
+  for (const t of toys) drawFurn(t)
+
+  // La cueva es el unico mueble que puede ir por delante, y solo cuando ella
+  // esta metida adentro: es mas alta que ella, asi que si fuera siempre por
+  // delante la taparia entera cada vez que pasa caminando.
+  const inCave = cave && cat && cave.holds(cat.x) &&
+                 cat.surface && cat.surface.isFloor && !cat.airborne
+  drawFurn(cave, 'cave_back')
+  if (!inCave) drawFurn(cave, 'cave_front')
+
   // Su cama va partida en dos: el fondo detras de ella y el borde de adelante
   // por encima, para que se la vea metida adentro y no parada sobre la cama.
   if (bed) propSheet.draw(ctx, 'bed_back', 0, bed.x, bed.y, cat.scale, false)
@@ -506,6 +563,7 @@ function loop (now) {
     propSheet.draw(ctx, 'ball', ball.spin * 1000, ball.x, ball.y, cat.scale, false)
   }
   if (cat) cat.draw(ctx)
+  if (inCave) drawFurn(cave, 'cave_front')
   if (bed) propSheet.draw(ctx, 'bed_front', 0, bed.x, bed.y, cat.scale, false)
   maybePurr(now)
   drawPurrs(dt)

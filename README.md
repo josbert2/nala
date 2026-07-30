@@ -34,6 +34,8 @@ siempre está instalada. Por eso hay dos caminos que siempre funcionan:
 | `Ctrl+Alt+C` | servirle la comida |
 | `Ctrl+Alt+L` | que venga |
 | `Ctrl+Alt+K` | mandarla a su cama |
+| `Ctrl+Alt+R` | que vaya a rascar el poste |
+| `Ctrl+Alt+T` | que se suba al árbol |
 
 **Click derecho sobre ella** abre el mismo menú ahí mismo.
 
@@ -95,11 +97,60 @@ ahí, porque el que viene adentro del `.exe` es de solo lectura. **Abrir su
 carpeta** en el menú de bandeja te lleva justo ahí.
 
 Los estados que se pueden usar en `moments.state`: `idle`, `sit`, `sleep`,
-`loaf`, `groom`, `stretch`, `walkTo`, `eat`, `play`, `alert`.
+`loaf`, `groom`, `stretch`, `walkTo`, `eat`, `play`, `alert`, `scratch`.
 
 **`loaf`** es echada como un pan, con las patas metidas debajo: no está
 durmiendo, está mirándote. No se levanta cuando pasás el cursor cerca — se
 queda como está y te sigue con los ojos.
+
+---
+
+## Su casa
+
+En el piso vive todo lo suyo. No es decorado: las cosas tienen medidas y ella
+las usa.
+
+| | |
+|---|---|
+| **Su rascadero** | Se para en dos patas y lo rasca. Arriba tiene una tablita donde se sienta. |
+| **Su casa árbol** | Tres tablas a distinta altura: la baja, el techo de la casita y la de arriba. Sube salta a salta, cada una está al alcance desde la de abajo. |
+| **Su cueva** | Se mete adentro a dormir. Se la ve asomando por la boca. |
+| **Sus juguetes** | Un ratoncito, dos pelotitas y la varita con plumas, tirados por ahí. Cada tanto va y los manotea. |
+| **Su cama** | La de siempre, redonda. |
+| **Su plato** | El de siempre. |
+
+Las tablas del árbol y del rascadero son **superficies de verdad**: se para
+encima, camina por ellas y se cae si llega al borde, igual que con los bordes de
+las ventanas. No están escritas en el código del motor: las declara el generador
+de sprites al lado del dibujo y salen en `furniture.json`, así que mover una
+tabla en el dibujo mueve también el lugar donde ella se para.
+
+Se lo podés pedir desde el tray, desde el click derecho sobre ella, o con los
+atajos. Y si no le decís nada, cada tanto va sola: rasca, se sube al árbol,
+manotea un juguete, o si ya tiene sueño se mete en la cueva.
+
+Dónde va cada cosa se configura en `config/cat.json`, en fracción del ancho de
+**su** pantalla:
+
+```json
+{
+  "postAt": 0.28,
+  "treeAt": 0.55,
+  "caveAt": 0.72,
+  "bedAt":  0.86,
+  "bowlAt": 0.12,
+  "toys": [
+    { "kind": "mouse",     "at": 0.20 },
+    { "kind": "pelotita",  "at": 0.40 },
+    { "kind": "pelotita2", "at": 0.45 },
+    { "kind": "wand",      "at": 0.66 }
+  ]
+}
+```
+
+`kind` es el nombre del sprite en `furniture.json`. Cada cosa acepta además su
+`*Display` (`postDisplay`, `treeDisplay`, `caveDisplay`, y `display` en los
+juguetes) para mandarla a otro monitor por índice.
 
 ---
 
@@ -285,7 +336,8 @@ src/renderer/
     sprites.js       spritesheet y animación
     world.js         el piso y los bordes de ventana como superficies
     cat.js           física, estados y personalidad
-    props.js         el plato, la pelota y el premio
+    props.js         el plato, la pelota, el premio y su cama
+    furniture.js     su casa: rascadero, arbol, cueva y juguetes
     moments.js       horarios y notas
 assets/sprites/
   looks.json         la lista de versiones, de aca la lee la app

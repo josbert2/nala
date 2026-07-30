@@ -17,7 +17,9 @@ export class World {
     this.width = width
     this.height = height
     this.floorMargin = 2      // cuanto sobra del sprite por debajo de sus patas
-    this.ledges = []
+    this.ledges = []          // los bordes de las ventanas abiertas
+    this.furniture = []       // las tablas de sus muebles
+    this.furnitureItems = []
     this.displays = displays && displays.length
       ? displays
       : [{ x: 0, y: 0, width, height, primary: true }]
@@ -69,6 +71,32 @@ export class World {
     this.floors = merged.map((s, i) => ({
       ...s, id: `floor${i}`, isFloor: true, title: 'piso'
     }))
+
+    // Los muebles se anclan al piso, asi que sus tablas se recalculan despues.
+    this._rebuildFurniture()
+  }
+
+  /**
+   * Sus muebles. Se guardan los objetos, no las tablas: cuando cambia el piso
+   * (otro monitor, otro margen) hay que volver a preguntarles donde quedaron.
+   */
+  setFurniture (items) {
+    this.furnitureItems = items || []
+    this._rebuildFurniture()
+  }
+
+  _rebuildFurniture () {
+    this.furniture = this.furnitureItems.flatMap(
+      (f) => (f && f.surfaces ? f.surfaces() : []))
+  }
+
+  /**
+   * Todo lo que no es piso y se puede escalar: las tablas de sus muebles y los
+   * bordes de las ventanas. Las dos cosas se comportan igual, salvo que de las
+   * ventanas se cae cuando la cierran.
+   */
+  get climbables () {
+    return [...this.furniture, ...this.ledges]
   }
 
   /** El piso mas ancho. Sirve de referencia cuando no importa el lugar. */
@@ -143,7 +171,7 @@ export class World {
   }
 
   get surfaces () {
-    return [...this.floors, ...this.ledges]
+    return [...this.floors, ...this.climbables]
   }
 
   surfaceAt (id) {
@@ -153,7 +181,7 @@ export class World {
   /** Superficie mas alta que esta por debajo de (x, y). Siempre existe: el piso. */
   landingBelow (x, y) {
     let best = this.floorAt(x)
-    for (const s of this.ledges) {
+    for (const s of this.climbables) {
       if (x < s.x1 + 4 || x > s.x2 - 4) continue
       if (s.y < y + 2) continue                          // esta arriba, no sirve
       if (s.y < best.y) best = s
@@ -163,7 +191,7 @@ export class World {
 
   /** Repisa alcanzable de un salto desde (x, y). */
   reachableLedge (x, y, maxRise = 190, maxReach = 130) {
-    const candidates = this.ledges.filter((s) => {
+    const candidates = this.climbables.filter((s) => {
       const dy = y - s.y
       if (dy < 30 || dy > maxRise) return false
       const dx = x < s.x1 ? s.x1 - x : x > s.x2 ? x - s.x2 : 0

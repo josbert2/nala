@@ -40,6 +40,7 @@ export class Cat {
     this.bubble = null         // {text, until}
     this.huntCooldownUntil = 0 // no vuelve a cazar el cursor hasta aca
     this.tripCooldownUntil = 0 // ni a irse a otro monitor hasta aca
+    this.furnitureCooldownUntil = 0  // ni a usar sus muebles hasta aca
   }
 
   get bounds () {
@@ -75,6 +76,7 @@ export class Cat {
       case 'purr': return 'idle'
       case 'dragged': return 'fall'
       case 'watch': return 'alert'
+      case 'climbTree': return 'alert'
       default: return state
     }
   }
@@ -88,6 +90,8 @@ export class Cat {
       case 'loaf': return r(9000, 26000)
       case 'groom': return r(4000, 9000)
       case 'stretch': return 1400
+      case 'scratch': return r(3500, 7500)
+      case 'climbTree': return 3000
       case 'trot': return 45000
       case 'watch': return r(2000, 5000)
       case 'purr': return 5000
@@ -209,6 +213,24 @@ export class Cat {
         this.vx = 0
         const p = ctx.pointer
         if (p.active) this.facing = p.x > this.x ? 1 : -1
+        break
+      }
+      case 'scratch': {
+        // Clavada al lado del poste, mirandolo. Si la movieron de ahi, deja.
+        this.vx = 0
+        const post = this.props && this.props.post
+        if (!post) { this.setState('idle', 1200); break }
+        if (!post.holds(this.x)) { this.setState('idle', 1200); break }
+        this.facing = post.x >= this.x ? 1 : -1
+        this.energy = Math.max(0, this.energy - dt * 0.012)
+        break
+      }
+      case 'climbTree': {
+        // Llego al pie del arbol. De aca sube sola, tabla por tabla.
+        this.vx = 0
+        const up = this.world.reachableLedge(this.x, this.y)
+        if (up) { this._jumpTo(up); break }
+        this.setState('sit', 1600)
         break
       }
       case 'eat': {
@@ -426,6 +448,24 @@ export class Cat {
     // O baja de donde esta.
     if (this.surface && !this.surface.isFloor && roll > 0.9) { this._drop(); return }
 
+    // Cada tanto usa sus cosas: el rascadero, un juguete, el arbol, o se mete
+    // en la cueva si ya esta con sueño. Con su propio cooldown, para que no se
+    // pase la vida yendo de un mueble al otro.
+    if (this.surface && this.surface.isFloor && roll < 0.34 &&
+        performance.now() > this.furnitureCooldownUntil) {
+      const p = this.props || {}
+      const options = []
+      if (p.post) options.push(() => this.goToPost())
+      if (p.tree) options.push(() => this.goUpTree())
+      if (p.toys && p.toys.length) options.push(() => this.goToToy())
+      if (p.cave && this.energy < 0.45) options.push(() => this.goToCave())
+      if (options.length) {
+        this.furnitureCooldownUntil = performance.now() + 30000
+        options[Math.floor(Math.random() * options.length)]()
+        return
+      }
+    }
+
     // Cada tanto se manda a otro monitor. Va al trote y de una: a paso de gata
     // cruzar el escritorio entero le llevaria minutos.
     if (this.energy > 0.45 && performance.now() > this.tripCooldownUntil &&
@@ -585,6 +625,58 @@ export class Cat {
       return
     }
     this.goTo(bed.x, 'sleep', 60000, 'trot')
+  }
+
+  /** A rascar el poste. Se para al lado y se despereza contra el. */
+  goToPost () {
+    const post = this.props && this.props.post
+    if (!post) return
+    this.energy = Math.max(this.energy, 0.5)
+    if (post.holds(this.x) && this.surface && this.surface.isFloor) {
+      this.facing = post.x >= this.x ? 1 : -1
+      this.setState('scratch')
+      return
+    }
+    this.goTo(post.x, 'scratch')
+  }
+
+  /** A su cueva, a dormir metida adentro. */
+  goToCave () {
+    const cave = this.props && this.props.cave
+    if (!cave) return
+    this.energy = Math.min(this.energy, 0.4)
+    if (cave.holds(this.x) && this.surface && this.surface.isFloor) {
+      this.napNow()
+      return
+    }
+    this.goTo(cave.x, 'sleep', 60000, 'trot')
+  }
+
+  /**
+   * A lo alto del arbol. Camina hasta el pie y de ahi salta sola, tabla por
+   * tabla: cada una esta al alcance de un salto desde la de abajo.
+   */
+  goUpTree () {
+    const tree = this.props && this.props.tree
+    if (!tree) return
+    this.energy = Math.max(this.energy, 0.55)
+    const up = this.world.reachableLedge(this.x, this.y)
+    if (up) { this._jumpTo(up); return }
+    this.goTo(tree.x, 'climbTree', 30000, 'trot')
+  }
+
+  /** A jugar con uno de sus juguetes: va y lo manotea. */
+  goToToy (toy) {
+    const toys = (this.props && this.props.toys) || []
+    const t = toy || toys[Math.floor(Math.random() * toys.length)]
+    if (!t) return
+    this.energy = Math.max(this.energy, 0.5)
+    if (t.holds(this.x)) {
+      this.facing = t.x >= this.x ? 1 : -1
+      this.setState('play')
+      return
+    }
+    this.goTo(t.x, 'play')
   }
 
   grab (x, y) {

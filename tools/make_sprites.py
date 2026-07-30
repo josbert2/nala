@@ -493,6 +493,32 @@ def pose_sit_alert(d, t, P):
     head(d, 27, GROUND - 23, P, eyes="open", tilt=-0.4)
 
 
+def pose_scratch(d, t, P):
+    """
+    Rascando el poste: parada en dos patas, estirada contra el, las de adelante
+    subiendo y bajando alternadas. La cola contenta.
+    """
+    ph = t * math.tau
+    a = math.sin(ph) * 4
+    b = math.sin(ph + math.pi) * 4
+    swish = math.sin(ph * 1.5) * 4
+
+    tail(d, (16, GROUND - 6), (7 + swish, GROUND - 14), (15 + swish, GROUND - 24), P["dark"])
+    # patas traseras, plantadas
+    leg(d, 18, GROUND - 13, GROUND - 1, P["dark"])
+    leg(d, 23, GROUND - 12, GROUND - 1, P["dark"])
+    # cuerpo estirado hacia arriba
+    ell(d, 23, GROUND - 19, 7.5, 11, P["base"])
+    ell(d, 25, GROUND - 18, 5, 8, P["light"])
+    stripes_body(d, 23, GROUND - 22, 6.5, 9, P)
+    # las de adelante, arriba, una mas alta que la otra
+    d.rectangle([27, GROUND - 33 + a, 30, GROUND - 20], fill=P["base"])
+    d.rectangle([31, GROUND - 33 + b, 34, GROUND - 21], fill=P["base"])
+    ell(d, 28.5, GROUND - 33 + a, 2.2, 1.8, P["light"])       # las manitos
+    ell(d, 32.5, GROUND - 33 + b, 2.2, 1.8, P["light"])
+    head(d, 27, GROUND - 34, P, eyes="half", tilt=-0.3)
+
+
 ANIMATIONS = [
     # nombre,        fn,             frames, fps,  loop
     ("idle",         pose_idle,       8,     6,    True),
@@ -502,6 +528,7 @@ ANIMATIONS = [
     ("run",          pose_run,        6,     14,   True),
     ("sleep",        pose_sleep,      6,     3,    True),
     ("loaf",         pose_loaf,       6,     4,    True),
+    ("scratch",      pose_scratch,    6,     8,    True),
     ("groom",        pose_groom,      6,     6,    True),
     ("stretch",      pose_stretch,    6,     6,    False),
     ("fall",         pose_fall,       4,     10,   True),
@@ -608,6 +635,187 @@ PROPS = [
 ]
 
 
+# ------------------------------------------------------------------- su casa
+#
+# Los muebles no entran en la celda de los objetos: el arbol es mas alto que
+# ella. Van en su propia hoja, con su celda y su linea de piso.
+#
+# Lo importante: el arbol y el rascador declaran sus TABLAS aca, al lado del
+# dibujo, y salen escritas en el json. El motor las lee de ahi y las convierte
+# en superficies del mundo, asi que las medidas viven en un solo lugar: si se
+# mueve una tabla en el dibujo, se mueve tambien donde ella se para.
+
+FURN_W = 80         # ancho de la celda de muebles
+FURN_H = 112        # alto: el arbol ocupa casi toda
+FURN_GROUND = 108   # la linea del piso dentro de la celda
+
+WOOD = (146, 108, 74, 255)
+WOOD_HI = (176, 134, 96, 255)
+WOOD_SH = (112, 82, 56, 255)
+CARPET = (168, 172, 182, 255)      # el gris peludo de los rascadores
+CARPET_HI = (196, 200, 208, 255)
+CARPET_SH = (132, 137, 148, 255)
+SISAL = (198, 168, 112, 255)       # la soga del poste
+SISAL_SH = (166, 138, 86, 255)
+POM = (208, 92, 96, 255)           # el pompon que cuelga, del color de su pelota
+
+
+def plank(d, x1, y1, x2, y2, base=WOOD, hi=WOOD_HI, sh=WOOD_SH):
+    """Una tabla: su cara, una luz arriba y una sombra abajo."""
+    d.rectangle([x1, y1, x2, y2], fill=base)
+    d.rectangle([x1, y1, x2, y1 + 1], fill=hi)
+    d.rectangle([x1, y2 - 1, x2, y2], fill=sh)
+
+
+def carpet_pad(d, x1, y1, x2, y2):
+    """Una tabla alfombrada, con el pelito del borde."""
+    plank(d, x1, y1, x2, y2, CARPET, CARPET_HI, CARPET_SH)
+    for x in range(int(x1), int(x2) + 1, 3):
+        d.point((x, y1 - 1), fill=CARPET_HI)
+
+
+def sisal_column(d, x1, y1, x2, y2):
+    """El poste forrado en soga: las vueltas se ven como rayas horizontales."""
+    d.rectangle([x1, y1, x2, y2], fill=SISAL)
+    for y in range(int(y1), int(y2) + 1, 3):
+        d.line([(x1, y), (x2, y)], fill=SISAL_SH)
+    d.rectangle([x1, y1, x1 + 1, y2], fill=SISAL_SH)     # su lado en sombra
+
+
+def hanging_pom(d, x, y_top, length=13):
+    """El pompon que cuelga de una tabla, colgado de su piolin."""
+    d.line([(x, y_top), (x, y_top + length)], fill=SISAL_SH)
+    ell(d, x, y_top + length + 3, 3.2, 3.2, POM)
+    ell(d, x - 1, y_top + length + 2, 1.1, 1.1, (240, 168, 170, 255))
+
+
+def furn_post(d, t, P):
+    """
+    Su rascadero: base, poste de soga y una tabla arriba para sentarse. Va mas
+    bajo que el arbol a proposito: el arbol tiene que ser el grande.
+    """
+    plank(d, 22, 100, 58, FURN_GROUND)          # base
+    sisal_column(d, 34, 52, 46, 100)            # el poste
+    carpet_pad(d, 24, 44, 56, 52)               # la tabla de arriba
+    hanging_pom(d, 52, 52)
+
+
+def furn_tree(d, t, P):
+    """
+    Su casa arbol: base, tronco de soga, una tabla baja, la casita con su
+    puerta redonda y la tabla de arriba, que es desde donde vigila todo.
+    """
+    plank(d, 14, 101, 66, FURN_GROUND)          # base
+    sisal_column(d, 36, 30, 48, 101)            # tronco
+
+    # la casita, a media altura
+    plank(d, 42, 56, 78, 84)
+    d.rectangle([44, 58, 76, 82], fill=WOOD_SH)          # su interior en sombra
+    plank(d, 42, 56, 78, 58)                             # el techo, mas claro
+    ell(d, 60, 71, 9.5, 9.5, WOOD_HI)                    # el marco de la puerta
+    ell(d, 60, 71, 8.0, 8.0, (52, 40, 32, 255))          # y su hueco oscuro
+
+    carpet_pad(d, 6, 76, 46, 84)                # tabla baja
+    carpet_pad(d, 12, 24, 60, 32)               # tabla de arriba
+    hanging_pom(d, 66, 32, 16)
+
+
+def furn_cave(d, t, P, front=False):
+    """
+    Su cueva. Va partida en dos: el fondo detras de ella y la cascara con la
+    boca recortada por delante, asi se la ve ADENTRO, asomando por el agujero.
+    """
+    CX, CY, RX, RY = 40, 84, 32, 27
+    # La boca tiene que darle lugar a ella ovillada adentro, si no le corta la
+    # cabeza contra el borde de arriba.
+    MOUTH = [CX - 20, CY - 4, CX + 20, CY + 25]
+
+    if not front:
+        # Lo que se ve por el agujero: la sombra de adentro y su almohadon.
+        ell(d, CX, CY, RX, RY, (74, 78, 96, 255))
+        d.ellipse(MOUTH, fill=(52, 55, 70, 255))
+        ell(d, CX, CY + 22, 17, 5, BED_IN)
+        return
+
+    ell(d, CX, CY, RX, RY, BED_RIM)
+    d.pieslice([CX - RX, CY - RY, CX + RX, CY + RY], 180, 360, fill=BED_RIM_HI)
+    # Unos pocos mechones arriba: que lea de tela, igual que su cama, sin que
+    # parezca peluda.
+    fluff(d, CX, CY - 0.5, RX - 1.5, RY - 1.5, BED_RIM_HI, n=13, amp=1.1,
+          a0=math.pi + 0.55, a1=math.tau - 0.55)
+    # El reborde de la boca, un tono mas claro, y despues el agujero.
+    d.ellipse([MOUTH[0] - 2, MOUTH[1] - 2, MOUTH[2] + 2, MOUTH[3] + 2], fill=BED_RIM_HI)
+    d.ellipse(MOUTH, fill=(0, 0, 0, 0))
+
+
+def furn_mouse(d, t, P):
+    """Su ratoncito de trapo."""
+    y = FURN_GROUND - 4
+    body = (150, 146, 156, 255)
+    d.line([(46, y + 1), (56, y - 3)], fill=(190, 150, 150, 255))     # la colita
+    ell(d, 38, y, 8, 4.5, body)
+    ell(d, 33, y - 1, 4.5, 4, body)                                   # la cabeza
+    ell(d, 35, y - 4, 2.4, 2.4, (196, 154, 154, 255))                 # la oreja
+    ell(d, 29.5, y - 0.5, 1.1, 1.1, (60, 52, 50, 255))                # el ojo
+    ell(d, 28.5, y + 1.2, 1.2, 0.9, (206, 132, 132, 255))             # el hocico
+
+
+def furn_pelotita(d, t, P, color=(228, 196, 88, 255), hi=(248, 228, 150, 255)):
+    """Una pelotita chica de las que quedan tiradas por el piso."""
+    y = FURN_GROUND - 4
+    ell(d, 40, y, 4.2, 4.2, color)
+    ell(d, 38.6, y - 1.4, 1.5, 1.5, hi)
+
+
+def furn_wand(d, t, P):
+    """La varita con plumas, apoyada contra la pared."""
+    # El palito, de tres pixeles de grueso para que se vea de lejos.
+    for off, c in ((-1, WOOD_SH), (0, WOOD), (1, WOOD_HI)):
+        d.line([(26 + off, FURN_GROUND - 1), (52 + off, 66)], fill=c)
+    # Las plumas, abiertas en abanico desde la punta.
+    for dx, dy, c in ((1, -11, (226, 118, 126, 255)),
+                      (9, -7, (120, 176, 190, 255)),
+                      (-7, -6, (238, 206, 120, 255))):
+        d.line([(52, 66), (52 + dx, 66 + dy)], fill=c)
+        ell(d, 52 + dx, 66 + dy, 3.0, 3.4, c)
+    ell(d, 52, 66, 2.0, 2.0, WOOD_SH)                 # el nudo donde se atan
+
+
+# nombre, fn, frames, fps, loop, tablas donde se puede parar [x1, x2, y]
+FURNITURE = [
+    ("post",       furn_post,                                   1, 1, False, [[24, 56, 44]]),
+    ("tree",       furn_tree,                                   1, 1, False,
+     [[6, 46, 76], [42, 78, 56], [12, 60, 24]]),
+    ("cave_back",  lambda d, t, P: furn_cave(d, t, P, False),    1, 1, False, []),
+    ("cave_front", lambda d, t, P: furn_cave(d, t, P, True),     1, 1, False, []),
+    ("mouse",      furn_mouse,                                   1, 1, False, []),
+    ("pelotita",   furn_pelotita,                                1, 1, False, []),
+    ("pelotita2",  lambda d, t, P: furn_pelotita(
+        d, t, P, (128, 180, 194, 255), (176, 216, 226, 255)),     1, 1, False, []),
+    ("wand",       furn_wand,                                    1, 1, False, []),
+]
+
+
+def build_furniture(P, out_png, out_json):
+    rows = len(FURNITURE)
+    sheet = Image.new("RGBA", (FURN_W, rows * FURN_H), (0, 0, 0, 0))
+    meta = {"cell": [FURN_W, FURN_H], "ground": FURN_GROUND, "animations": {}}
+
+    for row, (name, fn, nframes, fps, loop, ledges) in enumerate(FURNITURE):
+        cell = Image.new("RGBA", (FURN_W, FURN_H), (0, 0, 0, 0))
+        fn(ImageDraw.Draw(cell), 0.0, P)
+        cell = add_outline(cell, P["outline"])
+        sheet.paste(cell, (0, row * FURN_H), cell)
+        meta["animations"][name] = {
+            "row": row, "frames": nframes, "fps": fps, "loop": loop, "ledges": ledges
+        }
+
+    sheet.save(out_png)
+    with open(out_json, "w") as f:
+        json.dump(meta, f, indent=2)
+    print(f"muebles-> {out_png}  ({rows} piezas)")
+
+
 def build_props(P, out_png, out_json):
     cols = max(p[2] for p in PROPS)
     rows = len(PROPS)
@@ -681,6 +889,8 @@ def build_look(look, palette_path, out_dir):
 
     build_props(P, os.path.join(out_dir, "props.png"),
                 os.path.join(out_dir, "props.json"))
+    build_furniture(P, os.path.join(out_dir, "furniture.png"),
+                    os.path.join(out_dir, "furniture.json"))
     # Cada version tiene su propio icono de bandeja, asi cambiar de pinta
     # tambien le cambia la carita del tray.
     build_icons(sheet, out_dir, full=False)
