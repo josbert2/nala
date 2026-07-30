@@ -614,6 +614,28 @@ def pose_dig(d, t, P):
             GROUND - 4 - i * 2.2 - abs(paw) * 0.7, 1.0, 0.9, SAND_HI)
 
 
+def pose_stalk(d, t, P):
+    """
+    Acechando: el cuerpo pegado al piso y las patas avanzando muy despacio,
+    una por vez. Con la pose de agazaparse, que es quieta, parecia flotar.
+    """
+    ph = t * math.tau
+    sw_f = math.sin(ph) * 2.8
+    sw_b = math.sin(ph + math.pi) * 2.8
+    bob = abs(math.sin(ph * 2)) * 0.5
+    # La cola va baja y estirada, casi rozando el piso.
+    tail(d, (9, GROUND - 8 + bob), (1, GROUND - 5), (11, GROUND - 1), P["dark"])
+    leg(d, 12 + sw_b, GROUND - 9 + bob, GROUND - 1, P["dark"])
+    leg(d, 24 + sw_b, GROUND - 8 + bob, GROUND - 1, P["dark"])
+    stripes_body(d, 21, GROUND - 12 + bob, 11, 4, P)
+    ell(d, 21, GROUND - 11 + bob, 12.5, 4.4, P["base"])
+    ell(d, 23, GROUND - 9 + bob, 9.5, 2.6, P["light"])
+    leg(d, 17 + sw_f, GROUND - 9 + bob, GROUND - 1, P["base"])
+    leg(d, 30 + sw_f, GROUND - 9 + bob, GROUND - 1, P["base"])
+    # La cabeza baja y adelante, con las orejas para atras.
+    head(d, 33, GROUND - 15 + bob, P, eyes="open", tilt=-0.8)
+
+
 def pose_sit_alert(d, t, P):
     """Sentada, atenta, mirando al cursor. Orejas paradas, cola inquieta."""
     swish = math.sin(t * math.tau * 2) * 5
@@ -669,6 +691,7 @@ ANIMATIONS = [
     ("climb",        pose_climb,      6,     8,    True),
     ("eat",          pose_eat,        6,     7,    True),
     ("crouch",       pose_crouch,     6,     10,   True),
+    ("stalk",        pose_stalk,      8,     7,    True),
     ("pounce",       pose_pounce,     4,     12,   False),
     ("play",         pose_play,       6,     9,    True),
     ("slide",        pose_slide,      4,     12,   True),

@@ -85,7 +85,7 @@ export class Cat {
       case 'pedir': return 'alert'
       case 'inBox': return 'alert'
       case 'watchBird': return 'alert'
-      case 'stalkBird': return 'crouch'
+      case 'stalkBird': return 'stalk'
       case 'goingBird': return 'walk'
       case 'goingBox': return 'walk'
       case 'zoom': return 'run'
