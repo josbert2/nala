@@ -2,13 +2,14 @@
 
 const GRAVITY = 1500        // px/s^2
 const WALK_SPEED = 42       // px/s
+const TROT_SPEED = 95       // el trote de cuando se va a otro monitor
 const RUN_SPEED = 130
 const SLIDE_SPEED = 320     // el envion del derrape
 const MAX_FALL = 900
 const HUNT_COOLDOWN = 20000  // cuanto espera antes de volver a cazar el cursor
 
 // Estados que son "estar quieta en algun lado" y pueden elegirse al azar.
-const RESTING = ['idle', 'sit', 'sleep', 'groom', 'stretch']
+const RESTING = ['idle', 'sit', 'sleep', 'groom', 'stretch', 'loaf']
 
 export class Cat {
   constructor (world, sheet, scale) {
@@ -16,12 +17,15 @@ export class Cat {
     this.sheet = sheet
     this.scale = scale
 
-    this.x = world.width * 0.5
-    this.y = world.floor.y
+    // Arranca en el medio de la pantalla principal, no en el medio del
+    // escritorio: con varios monitores eso la dejaba naciendo en el del costado.
+    const home = world.displays.find((d) => d.primary) || world.displays[0]
+    this.x = home.x + home.width * 0.5
+    this.y = world.floorAt(this.x).y
     this.vx = 0
     this.vy = 0
     this.facing = 1
-    this.surface = world.floor
+    this.surface = world.floorAt(this.x)
 
     this.state = 'idle'
     this.anim = 'idle'
@@ -35,6 +39,7 @@ export class Cat {
     this.pinned = false        // el usuario la agarro con el mouse
     this.bubble = null         // {text, until}
     this.huntCooldownUntil = 0 // no vuelve a cazar el cursor hasta aca
+    this.tripCooldownUntil = 0 // ni a irse a otro monitor hasta aca
   }
 
   get bounds () {
@@ -57,6 +62,7 @@ export class Cat {
   _animFor (state) {
     switch (state) {
       case 'walkTo': return 'walk'
+      case 'trot': return 'run'
       case 'chase':
       case 'chaseBall':
       case 'chaseCursor': return 'run'
@@ -79,8 +85,10 @@ export class Cat {
       case 'idle': return r(3000, 9000)
       case 'sit': return r(4000, 12000)
       case 'sleep': return r(25000, 90000)
+      case 'loaf': return r(9000, 26000)
       case 'groom': return r(4000, 9000)
       case 'stretch': return 1400
+      case 'trot': return 45000
       case 'watch': return r(2000, 5000)
       case 'purr': return 5000
       case 'eat': return 30000
@@ -172,7 +180,10 @@ export class Cat {
         this.energy = Math.max(this.energy, 0.5)
         return
       }
-      if (RESTING.includes(this.state) && this.state !== 'stretch') {
+      // Echada no se levanta a mirar: se queda como esta y te sigue con los
+      // ojos, que es justo la gracia de esa pose.
+      if (RESTING.includes(this.state) && this.state !== 'stretch' &&
+          this.state !== 'loaf') {
         this.facing = p.x > cx ? 1 : -1
         this.setState('watch')
       }
@@ -182,12 +193,22 @@ export class Cat {
   /** Ejecuta el estado actual. */
   _act (dt, ctx) {
     switch (this.state) {
-      case 'walkTo': {
+      case 'walkTo':
+      case 'trot': {
         if (!this.target) { this._arrive(); break }
         const dx = this.target.x - this.x
         if (Math.abs(dx) < 5) { this.vx = 0; this._arrive(); break }
         this.facing = Math.sign(dx)
-        this.vx = this.facing * WALK_SPEED
+        // El trote es para cruzar de monitor: a paso de gata tardaria minutos.
+        this.vx = this.facing * (this.state === 'trot' ? TROT_SPEED : WALK_SPEED)
+        break
+      }
+      case 'loaf': {
+        // Echada como un pan, despierta. No se levanta, pero te sigue con la
+        // mirada: la unica parte que se mueve es hacia donde mira.
+        this.vx = 0
+        const p = ctx.pointer
+        if (p.active) this.facing = p.x > this.x ? 1 : -1
         break
       }
       case 'eat': {
@@ -349,16 +370,16 @@ export class Cat {
     this.y = live.y
 
     if (this.x < live.x1 + 6) {
-      if (live.id === 'floor') { this.x = live.x1 + 6; this._turn() } else this._drop()
+      if (live.isFloor) { this.x = live.x1 + 6; this._turn() } else this._drop()
     } else if (this.x > live.x2 - 6) {
-      if (live.id === 'floor') { this.x = live.x2 - 6; this._turn() } else this._drop()
+      if (live.isFloor) { this.x = live.x2 - 6; this._turn() } else this._drop()
     }
   }
 
   _turn () {
     this.facing *= -1
     if (this.target) this.target = null
-    if (this.state === 'walkTo') this.setState('idle', 1200)
+    if (this.state === 'walkTo' || this.state === 'trot') this.setState('idle', 1200)
   }
 
   _drop () {
@@ -403,10 +424,22 @@ export class Cat {
     }
 
     // O baja de donde esta.
-    if (this.surface && this.surface.id !== 'floor' && roll > 0.9) { this._drop(); return }
+    if (this.surface && !this.surface.isFloor && roll > 0.9) { this._drop(); return }
+
+    // Cada tanto se manda a otro monitor. Va al trote y de una: a paso de gata
+    // cruzar el escritorio entero le llevaria minutos.
+    if (this.energy > 0.45 && performance.now() > this.tripCooldownUntil &&
+        Math.random() < 0.10) {
+      const there = this._otherScreenTarget()
+      if (there != null) {
+        this.tripCooldownUntil = performance.now() + 45000
+        this.goTo(there, null, 45000, 'trot')
+        return
+      }
+    }
 
     if (roll < 0.42) {
-      const s = this.surface || this.world.floor
+      const s = this.surface || this.world.floorAt(this.x)
       const min = s.x1 + 20
       const max = s.x2 - 20
       this.target = { x: min + Math.random() * Math.max(1, max - min) }
@@ -415,9 +448,33 @@ export class Cat {
     }
 
     const pool = this.energy < 0.45
-      ? ['sleep', 'sleep', 'idle', 'groom']
-      : ['idle', 'sit', 'groom', 'stretch', 'idle']
+      ? ['sleep', 'sleep', 'loaf', 'idle', 'groom']
+      : ['idle', 'sit', 'loaf', 'groom', 'stretch', 'idle']
     this.setState(pool[Math.floor(Math.random() * pool.length)])
+  }
+
+  /**
+   * Un punto al azar en otro monitor. Solo sirven los que comparten el tramo
+   * de piso con ella: si el piso esta cortado no hay como cruzar caminando.
+   */
+  _otherScreenTarget () {
+    const w = this.world
+    if (!w.displays || w.displays.length < 2) return null
+
+    const here = w.displayAt(this.x)
+    const floor = this.surface && this.surface.isFloor
+      ? this.surface
+      : w.floorAt(this.x)
+
+    const options = w.displays.filter((d) => {
+      if (d === here) return false
+      const cx = d.x + d.width / 2
+      return cx >= floor.x1 && cx <= floor.x2
+    })
+    if (!options.length) return null
+
+    const d = options[Math.floor(Math.random() * options.length)]
+    return d.x + 60 + Math.random() * Math.max(1, d.width - 120)
   }
 
   /** Arranca el derrape hacia tx. */
@@ -454,11 +511,11 @@ export class Cat {
 
   // ---------------------------------------------------------------- comandos
 
-  /** Camina hasta x y ahi hace `then`. */
-  goTo (x, then, hold) {
+  /** Camina hasta x y ahi hace `then`. Con `mode` 'trot' va al trote. */
+  goTo (x, then, hold, mode) {
     this.target = { x: Math.max(20, Math.min(this.world.width - 20, x)) }
     this.after = then || null
-    this.setState('walkTo', hold || 25000)
+    this.setState(mode || 'walkTo', hold || 25000)
   }
 
   come (x) {
@@ -502,7 +559,7 @@ export class Cat {
     if (!ball) return
     const side = Math.random() < 0.5 ? -1 : 1
     const x = Math.max(40, Math.min(this.world.width - 40, this.x + side * (90 + Math.random() * 140)))
-    ball.spawn(x, this.world.floor.y - 160)
+    ball.spawn(x, this.world.floorAt(x).y - 160)
     this.energy = Math.max(this.energy, 0.6)
     this.setState('watch', 1200)
   }
@@ -515,6 +572,19 @@ export class Cat {
   napNow () {
     this.setState('sleep')
     this.energy = Math.min(this.energy, 0.3)
+  }
+
+  /** A su cama. Va al trote hasta ahi y se duerme adentro. */
+  goToBed () {
+    const bed = this.props && this.props.bed
+    if (!bed) return
+    this.energy = Math.min(this.energy, 0.4)
+    // Si ya esta adentro no la hacemos caminar al lugar donde ya esta.
+    if (bed.holds(this.x) && this.surface && this.surface.isFloor) {
+      this.napNow()
+      return
+    }
+    this.goTo(bed.x, 'sleep', 60000, 'trot')
   }
 
   grab (x, y) {

@@ -6,17 +6,57 @@ const FRICTION = 0.86
 
 const clamp = (v, max) => Math.max(-max, Math.min(max, v))
 
-/** El plato. Vive en un punto fijo del piso y se llena a las horas de comer. */
-export class Bowl {
-  constructor (world, xFraction = 0.12) {
+/**
+ * Un objeto clavado a un punto del piso de un monitor.
+ *
+ * `xFraction` es la fraccion del ancho de SU pantalla, no del escritorio
+ * entero: asi las cosas no se corren de lugar cuando ella pasa a andar por
+ * varias. Por defecto van en la principal; `displayIndex` las manda a otra.
+ */
+class Anchored {
+  constructor (world, xFraction, displayIndex = null) {
     this.world = world
     this.xFraction = xFraction
+    this.displayIndex = displayIndex
+  }
+
+  get display () {
+    const ds = this.world.displays
+    if (this.displayIndex != null && ds[this.displayIndex]) return ds[this.displayIndex]
+    return ds.find((d) => d.primary) || ds[0]
+  }
+
+  get x () {
+    const d = this.display
+    return d.x + d.width * this.xFraction
+  }
+
+  get y () { return this.world.floorAt(this.x).y }
+}
+
+/**
+ * Su cama. Se dibuja en dos partes: el fondo va detras de ella y el borde de
+ * adelante por encima, para que quede metida adentro y no parada sobre ella.
+ */
+export class Bed extends Anchored {
+  constructor (world, xFraction = 0.86, displayIndex = null) {
+    super(world, xFraction, displayIndex)
+  }
+
+  /** Ya llego: esta lo bastante cerca como para estar echada adentro. */
+  holds (x) {
+    return Math.abs(x - this.x) < 26
+  }
+}
+
+/** El plato. Vive en un punto fijo del piso y se llena a las horas de comer. */
+export class Bowl extends Anchored {
+  constructor (world, xFraction = 0.12, displayIndex = null) {
+    super(world, xFraction, displayIndex)
     this.food = 0            // 1 = lleno, 0 = vacio
     this.visible = false
   }
 
-  get x () { return this.world.width * this.xFraction }
-  get y () { return this.world.floor.y }
   get anim () { return this.food > 0 ? 'bowl_full' : 'bowl_empty' }
 
   serve () {
@@ -50,7 +90,7 @@ export class Treat {
     this.amount = 0
   }
 
-  get y () { return this.world.floor.y }
+  get y () { return this.world.floorAt(this.x).y }
 
   drop (x) {
     this.active = true

@@ -4,6 +4,9 @@
   "scale": 2,
   "greeting": "",
   "bowlAt": 0.12,
+  "bedAt": 0.86,
+  "bowlDisplay": null,
+  "bedDisplay": null,
   "meals": [
     "08:30",
     "13:30",

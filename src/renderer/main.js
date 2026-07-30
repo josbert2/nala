@@ -3,7 +3,7 @@
 import { SpriteSheet } from './engine/sprites.js'
 import { World } from './engine/world.js'
 import { Cat } from './engine/cat.js'
-import { Bowl, Ball, Treat } from './engine/props.js'
+import { Bowl, Ball, Treat, Bed } from './engine/props.js'
 import { Moments, Notes, Schedule } from './engine/moments.js'
 
 const canvas = document.getElementById('stage')
@@ -14,6 +14,8 @@ const tipEl = document.getElementById('tip')
 // Lo que se muestra en el tooltip segun lo que este haciendo.
 const ACTION_LABELS = {
   play: 'jugando',
+  trot: 'paseando',
+  loaf: 'mirandote',
   slide: 'derrapando',
   chaseCursor: 'cazando el cursor',
   seek: 'buscandote',
@@ -35,11 +37,13 @@ let cat = null
 let bowl = null
 let ball = null
 let treat = null
+let bed = null
 let meals = null
 let playtimes = null
 let moments = null
 let notes = null
-let origin = { x: 0, y: 0 }        // esquina de la pantalla que cubre la ventana
+let origin = { x: 0, y: 0 }        // esquina del escritorio que cubre la ventana
+let displays = null                // cada monitor, en coordenadas de la ventana
 let lastHotKey = ''
 let hearts = []
 let purrs = []
@@ -68,23 +72,27 @@ function resize () {
   canvas.height = Math.round(window.innerHeight * dpr)
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
   ctx.imageSmoothingEnabled = false
-  if (world) world.resize(window.innerWidth, window.innerHeight)
+  if (world) world.resize(window.innerWidth, window.innerHeight, displays)
 }
 
 window.nala.onBoot(async ({ config, display, debug }) => {
   origin = { x: display.x, y: display.y }
+  displays = display.displays
 
   ;[sheet, propSheet] = await Promise.all([
     SpriteSheet.load('../../assets/sprites/cat.png', '../../assets/sprites/cat.json'),
     SpriteSheet.load('../../assets/sprites/props.png', '../../assets/sprites/props.json')
   ])
 
-  world = new World(window.innerWidth, window.innerHeight)
+  world = new World(window.innerWidth, window.innerHeight, displays)
   cat = new Cat(world, sheet, config.scale || 2)
-  bowl = new Bowl(world, config.bowlAt != null ? config.bowlAt : 0.12)
+  bowl = new Bowl(world, config.bowlAt != null ? config.bowlAt : 0.12,
+                  config.bowlDisplay != null ? config.bowlDisplay : null)
   ball = new Ball(world)
   treat = new Treat(world)
-  cat.props = { bowl, ball, treat }
+  bed = new Bed(world, config.bedAt != null ? config.bedAt : 0.86,
+                config.bedDisplay != null ? config.bedDisplay : null)
+  cat.props = { bowl, ball, treat, bed }
   world.setFloorMargin((sheet.ch - sheet.ground) * cat.scale + 2)
 
   meals = new Schedule(config.meals)
@@ -120,6 +128,7 @@ window.nala.onCommand((cmd) => {
   if (cmd.type === 'feed') cat.mealtime()
   if (cmd.type === 'play') cat.playtime()
   if (cmd.type === 'treat') cat.giveTreat()
+  if (cmd.type === 'bed') cat.goToBed()
   if (cmd.type === 'free') { cat.target = null; cat.after = null; cat.setState('idle', 500) }
 })
 
@@ -217,6 +226,17 @@ window.addEventListener('dblclick', (e) => {
 
 window.addEventListener('contextmenu', (e) => e.preventDefault())
 
+/**
+ * Los bordes del monitor donde cae x. La ventana abarca todo el escritorio,
+ * asi que recortar contra window.innerWidth dejaria que el menu o el globito
+ * se abran cruzando la juntura entre dos pantallas.
+ */
+function screenEdges (x) {
+  const d = world && world.displays ? world.displayAt(x) : null
+  if (!d) return { x1: 0, x2: window.innerWidth, y1: 0, y2: window.innerHeight }
+  return { x1: d.x, x2: d.x + d.width, y1: d.y, y2: d.y + d.height }
+}
+
 function hit (x, y) {
   if (!cat) return false
   const b = cat.bounds
@@ -285,6 +305,7 @@ const MENU_ITEMS = [
   ['Darle un premio', () => cat.giveTreat(cat.x + (Math.random() < 0.5 ? -1 : 1) * 170)],
   ['Sacar la pelota', () => cat.playtime()],
   ['Servirle la comida', () => cat.mealtime()],
+  ['A su cama', () => cat.goToBed()],
   ['Que duerma', () => cat.napNow()]
 ]
 
@@ -305,8 +326,9 @@ function showMenu (x, y) {
   menuOpen = true
   const w = menuEl.offsetWidth
   const h = menuEl.offsetHeight
-  menuEl.style.left = `${Math.min(x, window.innerWidth - w - 8)}px`
-  menuEl.style.top = `${Math.min(y, window.innerHeight - h - 8)}px`
+  const e = screenEdges(x)
+  menuEl.style.left = `${Math.max(e.x1 + 8, Math.min(x, e.x2 - w - 8))}px`
+  menuEl.style.top = `${Math.max(e.y1 + 8, Math.min(y, e.y2 - h - 8))}px`
   menuEl.dataset.show = '1'
 }
 
@@ -397,9 +419,10 @@ function drawTip () {
   tipEl.hidden = false
   tipEl.dataset.show = '1'
   const w = tipEl.offsetWidth
-  const left = Math.max(6, Math.min(window.innerWidth - w - 6, b.x + b.w / 2 - w / 2))
+  const e = screenEdges(b.x + b.w / 2)
+  const left = Math.max(e.x1 + 6, Math.min(e.x2 - w - 6, b.x + b.w / 2 - w / 2))
   tipEl.style.left = `${left}px`
-  tipEl.style.top = `${Math.max(6, b.y - tipEl.offsetHeight - 8)}px`
+  tipEl.style.top = `${Math.max(e.y1 + 6, b.y - tipEl.offsetHeight - 8)}px`
 }
 
 // -------------------------------------------------------------------- globito
@@ -414,9 +437,10 @@ function drawBubble () {
   bubbleEl.hidden = false
   bubbleEl.dataset.show = '1'
   const w = bubbleEl.offsetWidth
-  const left = Math.max(8, Math.min(window.innerWidth - w - 8, b.x + b.w / 2 - 30))
+  const e = screenEdges(b.x + b.w / 2)
+  const left = Math.max(e.x1 + 8, Math.min(e.x2 - w - 8, b.x + b.w / 2 - 30))
   bubbleEl.style.left = `${left}px`
-  bubbleEl.style.top = `${Math.max(8, b.y - bubbleEl.offsetHeight - 12)}px`
+  bubbleEl.style.top = `${Math.max(e.y1 + 8, b.y - bubbleEl.offsetHeight - 12)}px`
 }
 
 // ----------------------------------------------------------------------- loop
@@ -459,6 +483,9 @@ function loop (now) {
   }
 
   ctx.clearRect(0, 0, canvas.width, canvas.height)
+  // Su cama va partida en dos: el fondo detras de ella y el borde de adelante
+  // por encima, para que se la vea metida adentro y no parada sobre la cama.
+  if (bed) propSheet.draw(ctx, 'bed_back', 0, bed.x, bed.y, cat.scale, false)
   if (bowl && bowl.visible) {
     propSheet.draw(ctx, bowl.anim, now, bowl.x, bowl.y, cat.scale, false)
   }
@@ -469,6 +496,7 @@ function loop (now) {
     propSheet.draw(ctx, 'ball', ball.spin * 1000, ball.x, ball.y, cat.scale, false)
   }
   if (cat) cat.draw(ctx)
+  if (bed) propSheet.draw(ctx, 'bed_front', 0, bed.x, bed.y, cat.scale, false)
   maybePurr(now)
   drawPurrs(dt)
   drawHearts(dt)

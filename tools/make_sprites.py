@@ -241,6 +241,30 @@ def pose_sleep(d, t, P):
     head(d, 14, GROUND - 13, P, eyes="closed", tilt=0.4)
 
 
+def pose_loaf(d, t, P):
+    """
+    Echada como un pan: las patas metidas debajo, el lomo redondo y la cabeza
+    levantada. No esta durmiendo, esta mirando. Respira lento y parpadea.
+    """
+    breath = math.sin(t * math.tau) * 0.6
+    frame = int(t * 6) % 6
+
+    # la cola le da la vuelta por delante, apoyada en el piso
+    tail(d, (9, GROUND - 3), (3, GROUND - 10), (17, GROUND - 2), P["dark"],
+         r0=3.2, r1=2.3)
+
+    # el bulto del cuerpo: ancho abajo y redondo arriba, sin patas a la vista
+    fluff(d, 22, GROUND - 7 + breath, 12.6, 7.4, P["base"], n=16, amp=1.7)
+    ell(d, 22, GROUND - 7 + breath, 12, 7, P["base"])
+
+    # el pecho claro que llega hasta el piso: es lo que le tapa las patas
+    ell(d, 25, GROUND - 3.5, 9, 3.2, P["light"])
+
+    # cabeza levantada, mirando al frente
+    head(d, 31, GROUND - 17 + breath * 0.5, P,
+         eyes="closed" if frame == 4 else "open", tilt=-0.2)
+
+
 def pose_groom(d, t, P):
     """Sentada lamiendose la pata."""
     ph = t * math.tau
@@ -389,6 +413,7 @@ ANIMATIONS = [
     ("walk",         pose_walk,       8,     10,   True),
     ("run",          pose_run,        6,     14,   True),
     ("sleep",        pose_sleep,      6,     3,    True),
+    ("loaf",         pose_loaf,       6,     4,    True),
     ("groom",        pose_groom,      6,     6,    True),
     ("stretch",      pose_stretch,    6,     6,    False),
     ("fall",         pose_fall,       4,     10,   True),
@@ -402,25 +427,37 @@ ANIMATIONS = [
 
 # ------------------------------------------------------------------- objetos
 
-PROP_CELL = 24
+PROP_CELL = 40        # la cama es ancha: no entraba en los 24 de antes
+PROP_GROUND = 21      # linea del piso dentro de la celda
+
+# El plato, la pelota y el premio estan dibujados pensando en una celda de 24.
+# En vez de reescribirles todas las medidas, los corremos al centro de la nueva.
+PX = (PROP_CELL - 24) / 2
+
+# Su cama: azul grisaceo apagado, que corta bien contra el crema del pelaje.
+BED_RIM = (126, 134, 158, 255)
+BED_RIM_HI = (154, 162, 186, 255)
+BED_IN = (112, 119, 145, 255)      # el almohadon
+BED_IN_SH = (88, 94, 116, 255)     # su sombra contra el rodete de atras
 
 
 def prop_bowl(d, t, P, full=False):
-    d.polygon([(3, 15), (21, 15), (18, 20), (6, 20)], fill=P["light"])   # cuerpo
-    ell(d, 12, 15, 8, 2.4, P["light"])                                   # borde
+    d.polygon([(PX + 3, 15), (PX + 21, 15), (PX + 18, 20), (PX + 6, 20)],
+              fill=P["light"])                                           # cuerpo
+    ell(d, PX + 12, 15, 8, 2.4, P["light"])                              # borde
     if full:
-        ell(d, 12, 15, 6.0, 1.8, (150, 106, 70, 255))                    # comida
-        ell(d, 10, 14, 1.6, 1.2, (176, 130, 88, 255))
-        ell(d, 14, 15, 1.4, 1.1, (176, 130, 88, 255))
+        ell(d, PX + 12, 15, 6.0, 1.8, (150, 106, 70, 255))               # comida
+        ell(d, PX + 10, 14, 1.6, 1.2, (176, 130, 88, 255))
+        ell(d, PX + 14, 15, 1.4, 1.1, (176, 130, 88, 255))
     else:
-        ell(d, 12, 15.4, 6.0, 1.6, P["dark"])                            # hueco
+        ell(d, PX + 12, 15.4, 6.0, 1.6, P["dark"])                       # hueco
 
 
 def prop_ball(d, t, P):
     """Pelotita que rota: el brillo se mueve."""
     ang = t * math.tau
-    ell(d, 12, 14, 6, 6, (208, 92, 96, 255))
-    hx = 12 + math.cos(ang) * 2.6
+    ell(d, PX + 12, 14, 6, 6, (208, 92, 96, 255))
+    hx = PX + 12 + math.cos(ang) * 2.6
     hy = 14 + math.sin(ang) * 2.6
     ell(d, hx, hy, 1.8, 1.8, (240, 168, 170, 255))
 
@@ -430,11 +467,47 @@ def prop_treat(d, t, P):
     bob = math.sin(t * math.tau) * 0.6
     y = 15 + bob
     body = (226, 150, 118, 255)
-    ell(d, 11, y, 6, 3.4, body)
-    d.polygon([(16.5, y), (21, y - 3.4), (21, y + 3.4)], fill=body)   # cola
-    d.polygon([(10, y - 3), (13, y - 5.5), (14, y - 2.6)], fill=(206, 126, 96, 255))
-    ell(d, 7.5, y - 0.8, 0.9, 0.9, (74, 62, 56, 255))                # ojo
-    d.line([(9, y + 1.4), (14, y + 1.4)], fill=(206, 126, 96, 255))
+    ell(d, PX + 11, y, 6, 3.4, body)
+    d.polygon([(PX + 16.5, y), (PX + 21, y - 3.4), (PX + 21, y + 3.4)], fill=body)
+    d.polygon([(PX + 10, y - 3), (PX + 13, y - 5.5), (PX + 14, y - 2.6)],
+              fill=(206, 126, 96, 255))
+    ell(d, PX + 7.5, y - 0.8, 0.9, 0.9, (74, 62, 56, 255))                # ojo
+    d.line([(PX + 9, y + 1.4), (PX + 14, y + 1.4)], fill=(206, 126, 96, 255))
+
+
+# La cama va partida en dos: el fondo se dibuja detras de ella y el borde de
+# adelante por encima, asi queda metida ADENTRO y no parada sobre la cama.
+BED_CX, BED_CY, BED_RX, BED_RY = 20, 14.0, 18.5, 7.0
+BED_BOX = [BED_CX - BED_RX, BED_CY - BED_RY, BED_CX + BED_RX, BED_CY + BED_RY]
+
+
+# El almohadon: el hueco donde se acuesta. El borde de adelante se recorta con
+# esta misma elipse, asi su canto interno queda curvo y no una linea recta.
+BED_IN_BOX = [BED_CX - 13.0, BED_CY - 5.0, BED_CX + 13.0, BED_CY + 3.4]
+
+
+def prop_bed_back(d, t, P):
+    """El fondo de su cama: el rodete de atras y el hueco donde se acuesta."""
+    ell(d, BED_CX, BED_CY, BED_RX, BED_RY, BED_RIM)
+    d.pieslice(BED_BOX, 180, 360, fill=BED_RIM_HI)       # luz en el borde de atras
+    # Unos pocos mechones arriba: lo justo para que lea de tela y no de loza,
+    # que si no se confunde con el plato de comida.
+    fluff(d, BED_CX, BED_CY, BED_RX, BED_RY, BED_RIM_HI,
+          n=14, amp=1.1, a0=math.pi + 0.35, a1=math.tau - 0.35)
+    # El almohadon: sombra abajo del rodete y encima el relleno iluminado, para
+    # que se lea mullido y no como un hueco vacio.
+    d.ellipse(BED_IN_BOX, fill=BED_IN_SH)
+    ell(d, BED_CX, BED_CY - 0.2, 12.0, 3.4, BED_IN)
+
+
+def prop_bed_front(d, t, P):
+    """El borde de adelante. Va POR ENCIMA de ella: es lo que la mete adentro."""
+    d.pieslice(BED_BOX, 0, 180, fill=BED_RIM)
+    d.pieslice([BED_CX - 15.5, BED_CY - 2.0, BED_CX + 15.5, BED_CY + 5.2],
+               0, 180, fill=BED_RIM_HI)
+    # Le comemos el almohadon de arriba: queda un canto curvo, mas fino en el
+    # medio y mas grueso en las puntas, como se ve un rodete de frente.
+    d.ellipse(BED_IN_BOX, fill=(0, 0, 0, 0))
 
 
 PROPS = [
@@ -442,6 +515,8 @@ PROPS = [
     ("bowl_full",  lambda d, t, P: prop_bowl(d, t, P, True),  1, 1, False),
     ("ball",       prop_ball,                                  6, 10, True),
     ("treat",      prop_treat,                                 4, 5,  True),
+    ("bed_back",   prop_bed_back,                              1, 1,  False),
+    ("bed_front",  prop_bed_front,                             1, 1,  False),
 ]
 
 
@@ -449,7 +524,7 @@ def build_props(P, out_png, out_json):
     cols = max(p[2] for p in PROPS)
     rows = len(PROPS)
     sheet = Image.new("RGBA", (cols * PROP_CELL, rows * PROP_CELL), (0, 0, 0, 0))
-    meta = {"cell": [PROP_CELL, PROP_CELL], "ground": 21, "animations": {}}
+    meta = {"cell": [PROP_CELL, PROP_CELL], "ground": PROP_GROUND, "animations": {}}
 
     for row, (name, fn, nframes, fps, loop) in enumerate(PROPS):
         for i in range(nframes):

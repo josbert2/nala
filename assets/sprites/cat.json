@@ -49,56 +49,62 @@
       "fps": 3,
       "loop": true
     },
-    "groom": {
+    "loaf": {
       "row": 6,
+      "frames": 6,
+      "fps": 4,
+      "loop": true
+    },
+    "groom": {
+      "row": 7,
       "frames": 6,
       "fps": 6,
       "loop": true
     },
     "stretch": {
-      "row": 7,
+      "row": 8,
       "frames": 6,
       "fps": 6,
       "loop": false
     },
     "fall": {
-      "row": 8,
+      "row": 9,
       "frames": 4,
       "fps": 10,
       "loop": true
     },
     "climb": {
-      "row": 9,
+      "row": 10,
       "frames": 6,
       "fps": 8,
       "loop": true
     },
     "eat": {
-      "row": 10,
+      "row": 11,
       "frames": 6,
       "fps": 7,
       "loop": true
     },
     "crouch": {
-      "row": 11,
+      "row": 12,
       "frames": 6,
       "fps": 10,
       "loop": true
     },
     "pounce": {
-      "row": 12,
+      "row": 13,
       "frames": 4,
       "fps": 12,
       "loop": false
     },
     "play": {
-      "row": 13,
+      "row": 14,
       "frames": 6,
       "fps": 9,
       "loop": true
     },
     "slide": {
-      "row": 14,
+      "row": 15,
       "frames": 4,
       "fps": 12,
       "loop": true

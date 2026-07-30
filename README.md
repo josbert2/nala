@@ -17,7 +17,9 @@ npm start
 ```
 
 Queda un ícono en el tray. Desde ahí: servirle la comida, sacarle la pelota,
-llamarla, hacerla dormir, esconderla o salir.
+llamarla, mandarla a su cama, hacerla dormir, esconderla o salir. Con más de un
+monitor aparece además **Por dónde anda**, para dejarla en todas las pantallas
+o solo en la principal.
 
 En GNOME el ícono de bandeja depende de la extensión **AppIndicator**, que no
 siempre está instalada. Por eso hay dos caminos que siempre funcionan:
@@ -30,6 +32,7 @@ siempre está instalada. Por eso hay dos caminos que siempre funcionan:
 | `Ctrl+Alt+O` | darle un premio |
 | `Ctrl+Alt+C` | servirle la comida |
 | `Ctrl+Alt+L` | que venga |
+| `Ctrl+Alt+K` | mandarla a su cama |
 
 **Click derecho sobre ella** abre el mismo menú ahí mismo.
 
@@ -61,6 +64,7 @@ Se configura en `config/cat.json`:
   "name": "Nala",
   "scale": 2,
   "bowlAt": 0.12,
+  "bedAt": 0.86,
   "meals":     ["08:30", "13:30", "20:00"],
   "playtimes": ["11:30", "18:30", "22:00"],
   "moments": [
@@ -77,11 +81,24 @@ Se configura en `config/cat.json`:
   opcional que aparece en un globito.
 - **`notes`** — frases sueltas que aparecen cada tanto, sin horario fijo.
   Se muestran en orden aleatorio sin repetir hasta agotarlas.
-- **`bowlAt`** — dónde va el plato, en fracción del ancho de pantalla (0 a 1).
+- **`bowlAt`** — dónde va el plato, en fracción del ancho de **su** pantalla
+  (0 a 1). Es del monitor donde está, no del escritorio entero: así no se corre
+  de lugar cuando ella anda por varias pantallas.
+- **`bedAt`** — lo mismo para su cama. Ahí se va a dormir cuando se lo pedís.
+- **`bowlDisplay`** / **`bedDisplay`** — en qué monitor van, por índice
+  (`0`, `1`, `2`…). Sin poner nada, van en el principal.
 - **`scale`** — 2 la deja de ~96px de alto. Subilo si la querés más grande.
 
+Ya instalada, este archivo se copia a la carpeta de datos de la app y se lee de
+ahí, porque el que viene adentro del `.exe` es de solo lectura. **Abrir su
+carpeta** en el menú de bandeja te lleva justo ahí.
+
 Los estados que se pueden usar en `moments.state`: `idle`, `sit`, `sleep`,
-`groom`, `stretch`, `walkTo`, `eat`, `play`, `alert`.
+`loaf`, `groom`, `stretch`, `walkTo`, `eat`, `play`, `alert`.
+
+**`loaf`** es echada como un pan, con las patas metidas debajo: no está
+durmiendo, está mirándote. No se levanta cuando pasás el cursor cerca — se
+queda como está y te sigue con los ojos.
 
 ---
 
@@ -185,7 +202,17 @@ Sin esto la app arranca igual: Nala se queda viviendo en el piso.
 - **Depurar**: `NALA_DEBUG=1 npm start` loguea cuándo la ventana pasa a sólida,
   dónde está su zona sensible, y guarda una captura del canvas en
   `debug-shot.png` para poder ver qué está dibujando de verdad.
-- **Multi-monitor**: por ahora vive en el monitor primario.
+- **Multi-monitor**: la ventana cubre la unión de todas las pantallas, así que
+  cruza de un monitor al otro caminando y cada tanto se manda sola de excursión
+  a otro. El piso sale de la zona útil de cada monitor —camina **sobre** la
+  barra de tareas, no por debajo— y los tramos contiguos que están a la misma
+  altura se fusionan en uno solo. Si dos monitores quedan a distinta altura los
+  tramos no se unen y ella se da vuelta en el borde en vez de caminar sobre el
+  vacío. Desde el menú de bandeja, en **Por dónde anda**, se puede dejarla solo
+  en la principal.
+- **Escalado**: mezclar monitores con distinto escalado de Windows descoloca las
+  posiciones, porque la ventana se mide en DIP y cada pantalla convierte con su
+  propio factor. La app avisa por consola si detecta esa mezcla.
 
 ---
 

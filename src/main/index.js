@@ -7,7 +7,14 @@ const path = require('path')
 const fs = require('fs')
 
 const ROOT = path.join(__dirname, '..', '..')
-const CONFIG_PATH = path.join(ROOT, 'config', 'cat.json')
+const BUNDLED_CONFIG = path.join(ROOT, 'config', 'cat.json')
+
+// Ya instalada, ROOT vive dentro de app.asar y es de solo lectura. Su config y
+// sus ajustes van a la carpeta de datos del usuario; la primera vez copiamos
+// ahi el cat.json que viene con la app para que se pueda editar.
+const USER_DIR = app.getPath('userData')
+const CONFIG_PATH = path.join(USER_DIR, 'cat.json')
+const SETTINGS_PATH = path.join(USER_DIR, 'settings.json')
 
 // Wayland no le permite a una app posicionarse sola en pantalla, y sin eso la
 // gata no puede caminar por el escritorio. Forzamos XWayland, que si lo permite.
@@ -22,19 +29,118 @@ let win = null
 let tray = null
 let geometryTimer = null
 let windowProvider = null
+let stage = null               // el rectangulo que cubre la ventana ahora mismo
 
 function loadConfig () {
   try {
+    if (!fs.existsSync(CONFIG_PATH)) {
+      fs.mkdirSync(USER_DIR, { recursive: true })
+      fs.copyFileSync(BUNDLED_CONFIG, CONFIG_PATH)
+    }
     return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'))
   } catch (err) {
-    console.error('[nala] no pude leer config/cat.json:', err.message)
-    return { name: 'Nala', scale: 2, moments: [], notes: [] }
+    console.error('[nala] no pude leer cat.json:', err.message)
+    try {
+      return JSON.parse(fs.readFileSync(BUNDLED_CONFIG, 'utf8'))
+    } catch (_) {
+      return { name: 'Nala', scale: 2, moments: [], notes: [] }
+    }
   }
 }
 
+// ------------------------------------------------------------------- ajustes
+
+const DEFAULT_SETTINGS = { displayMode: 'all' }   // 'all' | 'primary'
+
+function loadSettings () {
+  try {
+    return { ...DEFAULT_SETTINGS, ...JSON.parse(fs.readFileSync(SETTINGS_PATH, 'utf8')) }
+  } catch (err) {
+    return { ...DEFAULT_SETTINGS }
+  }
+}
+
+function saveSettings () {
+  try {
+    fs.mkdirSync(USER_DIR, { recursive: true })
+    fs.writeFileSync(SETTINGS_PATH, JSON.stringify(settings, null, 2))
+  } catch (err) {
+    console.error('[nala] no pude guardar settings.json:', err.message)
+  }
+}
+
+let settings = loadSettings()
+
+// ---------------------------------------------------------------- escenario
+//
+// En modo 'all' la ventana cubre la union de todas las pantallas, asi la gata
+// cruza de un monitor al otro caminando y no se entera del borde. En 'primary'
+// se queda en la principal, como antes.
+
+function stageBounds () {
+  const primary = screen.getPrimaryDisplay()
+  const displays = settings.displayMode === 'primary'
+    ? [primary]
+    : screen.getAllDisplays()
+
+  const x = Math.min(...displays.map((d) => d.bounds.x))
+  const y = Math.min(...displays.map((d) => d.bounds.y))
+  const x2 = Math.max(...displays.map((d) => d.bounds.x + d.bounds.width))
+  const y2 = Math.max(...displays.map((d) => d.bounds.y + d.bounds.height))
+
+  // La ventana se mide en DIP y cada pantalla convierte con su propio factor:
+  // si los escalados no coinciden, las posiciones quedan corridas.
+  const scales = [...new Set(displays.map((d) => d.scaleFactor))]
+  if (scales.length > 1) {
+    console.warn(`[nala] pantallas con escalados distintos (${scales.join(', ')}): ` +
+                 'las posiciones pueden quedar corridas.')
+  }
+
+  return {
+    x,
+    y,
+    width: x2 - x,
+    height: y2 - y,
+    scaleFactor: primary.scaleFactor,
+    // Cada monitor en coordenadas de la ventana: el renderer arma un tramo de
+    // piso al pie de cada uno.
+    displays: displays.map((d) => ({
+      x: d.bounds.x - x,
+      y: d.bounds.y - y,
+      width: d.bounds.width,
+      height: d.bounds.height,
+      // El piso va al pie de la zona util, no del monitor: asi camina POR
+      // ENCIMA de la barra de tareas y no le queda medio cuerpo tapado.
+      floorY: d.workArea.y - y + d.workArea.height,
+      primary: d.id === primary.id
+    }))
+  }
+}
+
+/**
+ * Windows recorta la ventana al area de trabajo del monitor principal cuando
+ * el tamaño se pide en el constructor: pedir 5760x1080 devolvia 1920x1032.
+ * Aplicado despues de crearla, y con la ventana redimensionable un instante,
+ * si acepta el escritorio entero.
+ */
+function setStageBounds (w, s) {
+  const was = w.isResizable()
+  w.setResizable(true)
+  w.setBounds({ x: s.x, y: s.y, width: s.width, height: s.height })
+  w.setResizable(was)
+}
+
+/** Recalcula el escenario y lo aplica. Se usa al cambiar de modo o de monitores. */
+function applyStage () {
+  if (!win || win.isDestroyed()) return
+  stage = stageBounds()
+  setStageBounds(win, stage)
+  win.reload()          // el renderer rearma el mundo cuando llega el boot
+}
+
 function createWindow () {
-  const display = screen.getPrimaryDisplay()
-  const { x, y, width, height } = display.bounds
+  stage = stageBounds()
+  const { x, y, width, height } = stage
 
   win = new BrowserWindow({
     x,
@@ -62,6 +168,10 @@ function createWindow () {
     }
   })
 
+  // Recien creada quedo recortada al monitor principal: le damos el tamaño de
+  // verdad ahora, que es cuando Windows lo acepta.
+  setStageBounds(win, stage)
+
   win.setAlwaysOnTop(true, 'screen-saver')
   win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
   // Arranca en modo "el mouse me atraviesa". Solo se vuelve solida cuando el
@@ -73,7 +183,7 @@ function createWindow () {
   win.webContents.on('did-finish-load', () => {
     win.webContents.send('boot', {
       config: loadConfig(),
-      display: { x, y, width, height, scaleFactor: display.scaleFactor },
+      display: stage,
       platform: process.platform,
       debug: DEBUG
     })
@@ -153,8 +263,23 @@ function buildTray () {
   tray = new Tray(icon)
   const cfg = loadConfig()
   tray.setToolTip(cfg.name || 'Nala')
+  refreshTrayMenu()
+}
 
+/** Cambia por donde puede andar y rearma la ventana en el acto. */
+function setDisplayMode (mode) {
+  if (settings.displayMode === mode) return
+  settings.displayMode = mode
+  saveSettings()
+  applyStage()
+  refreshTrayMenu()
+}
+
+function refreshTrayMenu () {
+  if (!tray) return
+  const cfg = loadConfig()
   const send = (channel, payload) => () => win && win.webContents.send(channel, payload)
+  const multi = screen.getAllDisplays().length > 1
 
   tray.setContextMenu(Menu.buildFromTemplate([
     { label: cfg.name || 'Nala', enabled: false },
@@ -164,12 +289,33 @@ function buildTray () {
     { label: 'Darle un premio', click: send('command', { type: 'treat' }) },
     { type: 'separator' },
     { label: 'Que venga', click: send('command', { type: 'come' }) },
+    { label: 'Mandarla a su cama', click: send('command', { type: 'bed' }) },
     { label: 'Que duerma', click: send('command', { type: 'sleep' }) },
     { label: 'Dejarla en paz', click: send('command', { type: 'free' }) },
     { type: 'separator' },
+    {
+      label: 'Por donde anda',
+      // Con un solo monitor la opcion no dice nada: no la mostramos.
+      visible: multi,
+      submenu: [
+        {
+          label: 'Solo la pantalla principal',
+          type: 'radio',
+          checked: settings.displayMode === 'primary',
+          click: () => setDisplayMode('primary')
+        },
+        {
+          label: 'Todas las pantallas',
+          type: 'radio',
+          checked: settings.displayMode === 'all',
+          click: () => setDisplayMode('all')
+        }
+      ]
+    },
+    { type: 'separator', visible: multi },
     { label: 'Esconder / mostrar', click: () => { if (win.isVisible()) win.hide(); else win.show() } },
     { label: 'Recargar', click: () => win && win.reload() },
-    { label: 'Abrir carpeta', click: () => shell.openPath(ROOT) },
+    { label: 'Abrir su carpeta', click: () => shell.openPath(USER_DIR) },
     { type: 'separator' },
     { label: 'Salir', click: () => app.quit() }
   ]))
@@ -184,7 +330,8 @@ const SHORTCUTS = [
   ['Control+Alt+P', 'la pelota', { type: 'play' }],
   ['Control+Alt+O', 'un premio', { type: 'treat' }],
   ['Control+Alt+C', 'la comida', { type: 'feed' }],
-  ['Control+Alt+L', 'que venga', { type: 'come' }]
+  ['Control+Alt+L', 'que venga', { type: 'come' }],
+  ['Control+Alt+K', 'a su cama', { type: 'bed' }]
 ]
 
 /**
@@ -259,7 +406,11 @@ if (!singleInstance) {
     registerShortcuts()
     if (DEBUG) debugSelfTest()
 
-    screen.on('display-metrics-changed', () => win && win.reload())
+    // Si enchufas, sacas o reconfiguras un monitor, el escenario cambia de
+    // tamaño: hay que rehacer la ventana, no solo recargarla.
+    for (const ev of ['display-added', 'display-removed', 'display-metrics-changed']) {
+      screen.on(ev, () => { applyStage(); refreshTrayMenu() })
+    }
   })
 
   app.on('window-all-closed', (e) => e.preventDefault())  // vive en el tray

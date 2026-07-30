@@ -2,30 +2,103 @@
 
 /**
  * El mundo son superficies horizontales sobre las que la gata puede pararse:
- * el piso (borde inferior de la pantalla) y el borde superior de cada ventana
- * abierta.
+ * el piso y el borde superior de cada ventana abierta.
+ *
+ * El escritorio puede tener varios monitores, asi que el piso no es uno solo:
+ * hay un tramo por pantalla, al pie de cada una. Los tramos que se tocan y
+ * estan a la misma altura se fusionan en uno, asi la gata cruza de un monitor
+ * al otro caminando, sin enterarse del borde.
+ *
+ * Todas las coordenadas son locales a la ventana, que cubre la union de todas
+ * las pantallas. El origen lo resta el renderer antes de llegar aca.
  */
 export class World {
-  constructor (width, height) {
+  constructor (width, height, displays) {
     this.width = width
     this.height = height
     this.floorMargin = 2      // cuanto sobra del sprite por debajo de sus patas
     this.ledges = []
+    this.displays = displays && displays.length
+      ? displays
+      : [{ x: 0, y: 0, width, height, primary: true }]
     this.resize(width, height)
   }
 
-  resize (width, height) {
+  resize (width, height, displays) {
     this.width = width
     this.height = height
-    this.floor = {
-      x1: 0, x2: width, y: height - this.floorMargin, id: 'floor', title: 'piso'
-    }
+    if (displays && displays.length) this.displays = displays
+    this._rebuildFloors()
   }
 
   /** El sprite tiene pixeles por debajo de la linea de patas: no los cortemos. */
   setFloorMargin (m) {
     this.floorMargin = Math.max(2, m)
-    this.resize(this.width, this.height)
+    this._rebuildFloors()
+  }
+
+  /**
+   * Un tramo de piso por monitor, al pie de cada uno. Después se fusionan los
+   * que son contiguos y estan a la misma altura: con los monitores alineados
+   * en fila queda un unico piso de punta a punta del escritorio.
+   *
+   * Si dos monitores estan a alturas distintas quedan tramos separados, y ella
+   * se da vuelta en el borde en vez de caminar sobre el vacio.
+   */
+  _rebuildFloors () {
+    const segments = this.displays
+      .map((d) => ({
+        x1: d.x,
+        x2: d.x + d.width,
+        // Al pie de la zona util: encima de la barra de tareas, no debajo.
+        y: (d.floorY != null ? d.floorY : d.y + d.height) - this.floorMargin
+      }))
+      .sort((a, b) => a.x1 - b.x1)
+
+    const merged = []
+    for (const s of segments) {
+      const prev = merged[merged.length - 1]
+      // Contiguos (o casi) y a la misma altura: es el mismo piso.
+      if (prev && Math.abs(prev.y - s.y) <= 2 && s.x1 - prev.x2 <= 2) {
+        prev.x2 = Math.max(prev.x2, s.x2)
+      } else {
+        merged.push({ ...s })
+      }
+    }
+
+    this.floors = merged.map((s, i) => ({
+      ...s, id: `floor${i}`, isFloor: true, title: 'piso'
+    }))
+  }
+
+  /** El piso mas ancho. Sirve de referencia cuando no importa el lugar. */
+  get floor () {
+    return this.floors.reduce((a, b) => (b.x2 - b.x1 > a.x2 - a.x1 ? b : a), this.floors[0])
+  }
+
+  /**
+   * El piso que hay bajo x. Si x cae en un hueco entre monitores devuelve el
+   * mas cercano, para que nunca falte suelo donde aterrizar.
+   */
+  floorAt (x) {
+    for (const f of this.floors) {
+      if (x >= f.x1 && x <= f.x2) return f
+    }
+    let best = this.floors[0]
+    let bestDist = Infinity
+    for (const f of this.floors) {
+      const d = x < f.x1 ? f.x1 - x : x - f.x2
+      if (d < bestDist) { bestDist = d; best = f }
+    }
+    return best
+  }
+
+  /** El monitor que contiene x (o el mas cercano). */
+  displayAt (x) {
+    for (const d of this.displays) {
+      if (x >= d.x && x <= d.x + d.width) return d
+    }
+    return this.displays[0]
   }
 
   /**
@@ -37,7 +110,9 @@ export class World {
     const ledges = []
     rects.forEach((r, i) => {
       const y = r.y
-      if (y < 24 || y > this.height - 40) return       // fuera de pantalla util
+      const d = this.displayAt(r.x + r.w / 2)
+      // Fuera de la zona util de SU monitor, no de la del escritorio entero.
+      if (y < d.y + 24 || y > d.y + d.height - 40) return
       const x1 = Math.max(0, r.x)
       const x2 = Math.min(this.width, r.x + r.w)
       if (x2 - x1 < 90) return
@@ -68,7 +143,7 @@ export class World {
   }
 
   get surfaces () {
-    return [this.floor, ...this.ledges]
+    return [...this.floors, ...this.ledges]
   }
 
   surfaceAt (id) {
@@ -77,7 +152,7 @@ export class World {
 
   /** Superficie mas alta que esta por debajo de (x, y). Siempre existe: el piso. */
   landingBelow (x, y) {
-    let best = this.floor
+    let best = this.floorAt(x)
     for (const s of this.ledges) {
       if (x < s.x1 + 4 || x > s.x2 - 4) continue
       if (s.y < y + 2) continue                          // esta arriba, no sirve
