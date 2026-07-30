@@ -1,0 +1,13 @@
+{
+  "default": "v2",
+  "looks": [
+    {
+      "id": "v1",
+      "label": "v1"
+    },
+    {
+      "id": "v2",
+      "label": "v2"
+    }
+  ]
+}

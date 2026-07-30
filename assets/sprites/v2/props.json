@@ -1,0 +1,45 @@
+{
+  "cell": [
+    40,
+    40
+  ],
+  "ground": 21,
+  "animations": {
+    "bowl_empty": {
+      "row": 0,
+      "frames": 1,
+      "fps": 1,
+      "loop": false
+    },
+    "bowl_full": {
+      "row": 1,
+      "frames": 1,
+      "fps": 1,
+      "loop": false
+    },
+    "ball": {
+      "row": 2,
+      "frames": 6,
+      "fps": 10,
+      "loop": true
+    },
+    "treat": {
+      "row": 3,
+      "frames": 4,
+      "fps": 5,
+      "loop": true
+    },
+    "bed_back": {
+      "row": 4,
+      "frames": 1,
+      "fps": 1,
+      "loop": false
+    },
+    "bed_front": {
+      "row": 5,
+      "frames": 1,
+      "fps": 1,
+      "loop": false
+    }
+  }
+}

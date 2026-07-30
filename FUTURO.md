@@ -55,7 +55,7 @@ un fade + scale de 130ms. Funciona, pero es lo mínimo.
 
 **Ideas:**
 
-- Iconitos por opción. Los sprites ya existen en `assets/sprites/props.png`
+- Iconitos por opción. Los sprites ya existen en `assets/sprites/<version>/props.png`
   (plato, pelota, pescadito, cama) — se pueden recortar con la misma grilla que
   usa `SpriteSheet`, así el menú queda del mismo mundo que ella.
 - Un encabezado chiquito con su nombre y qué está haciendo ahora

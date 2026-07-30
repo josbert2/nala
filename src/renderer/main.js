@@ -44,6 +44,7 @@ let moments = null
 let notes = null
 let origin = { x: 0, y: 0 }        // esquina del escritorio que cubre la ventana
 let displays = null                // cada monitor, en coordenadas de la ventana
+let lookCount = 1                  // cuantas versiones de su pinta hay
 let lastHotKey = ''
 let hearts = []
 let purrs = []
@@ -75,13 +76,18 @@ function resize () {
   if (world) world.resize(window.innerWidth, window.innerHeight, displays)
 }
 
-window.nala.onBoot(async ({ config, display, debug }) => {
+window.nala.onBoot(async ({ config, display, look, looks, debug }) => {
   origin = { x: display.x, y: display.y }
   displays = display.displays
 
+  // Cada version de su pinta tiene su propia carpeta. El proceso principal nos
+  // dice cual esta puesta; si no dijo nada, la primera que existio.
+  const dir = `../../assets/sprites/${look || 'v1'}`
+  lookCount = Array.isArray(looks) ? looks.length : 1
+
   ;[sheet, propSheet] = await Promise.all([
-    SpriteSheet.load('../../assets/sprites/cat.png', '../../assets/sprites/cat.json'),
-    SpriteSheet.load('../../assets/sprites/props.png', '../../assets/sprites/props.json')
+    SpriteSheet.load(`${dir}/cat.png`, `${dir}/cat.json`),
+    SpriteSheet.load(`${dir}/props.png`, `${dir}/props.json`)
   ])
 
   world = new World(window.innerWidth, window.innerHeight, displays)
@@ -306,12 +312,16 @@ const MENU_ITEMS = [
   ['Sacar la pelota', () => cat.playtime()],
   ['Servirle la comida', () => cat.mealtime()],
   ['A su cama', () => cat.goToBed()],
-  ['Que duerma', () => cat.napNow()]
+  ['Que duerma', () => cat.napNow()],
+  // El tercer campo dice cuando mostrar la opcion. Sin mas de una version de su
+  // pinta, cambiarla no hace nada.
+  ['Cambiarle la pinta', () => window.nala.cycleLook(), () => lookCount > 1]
 ]
 
 function showMenu (x, y) {
   menuEl.innerHTML = ''
-  for (const [label, action] of MENU_ITEMS) {
+  for (const [label, action, when] of MENU_ITEMS) {
+    if (when && !when()) continue
     const b = document.createElement('button')
     b.textContent = label
     b.addEventListener('mouseup', (ev) => {

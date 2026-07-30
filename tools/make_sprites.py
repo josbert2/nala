@@ -6,8 +6,13 @@ Dibuja una hoja de sprites pixel-art (una fila por animacion) a partir de una
 paleta de colores. La paleta se puede extraer de fotos reales con
 tools/photo_palette.py, asi el sprite queda con SU pelaje.
 
+Hay mas de una version de su pinta (ver LOOKS). Cada una sale a su propia
+carpeta, assets/sprites/<id>/, y se elige desde el menu de bandeja. Ademas se
+escribe assets/sprites/looks.json, que es de donde la app saca la lista.
+
 Uso:
-    python3 tools/make_sprites.py
+    python3 tools/make_sprites.py                  # todas las versiones
+    python3 tools/make_sprites.py --look v2        # solo una
     python3 tools/make_sprites.py --palette config/palette.json
 """
 
@@ -30,13 +35,72 @@ DEFAULT_PALETTE = {
     "light":   "#fdfcf9",   # pecho, patas, blaze
     "pink":    "#e8a5a4",   # nariz y orejas
     "eye":     "#9aa85e",   # verde oliva
+    # Roles que trajo la v2. En la v1 apuntan a los de siempre, asi sigue
+    # saliendo exactamente igual que antes.
+    "deep":    "#a89f95",
+    "pupil":   "#4b423a",
 }
+
+# Medida sobre las fotos de su Instagram, corrigiendo la luz calida del cuarto
+# con el blanco de su hocico como referencia. Sale mas tibia que la v1: el
+# gorro es un taupe marronoso y no un gris neutro, y los ojos son oliva caqui
+# apagado, no verde.
+#
+# Ella es blanca entera: el gris es SOLO el gorro de la cabeza y la cola. El
+# lomo, el pecho, la panza y las patas van blancos.
+PALETTE_V2 = {
+    "outline": "#463a30",   # marron oscuro, mas calido
+    "base":    "#ece5d8",   # su blanco, que de cerca es crema
+    "light":   "#fbf8f2",   # blaze, pecho, patitas
+    "dark":    "#8d8178",   # el taupe del gorro y de la cola
+    "deep":    "#5d5149",   # el tabby oscuro del centro del gorro
+    "pink":    "#dd9b88",   # nariz salmon y orejas
+    "eye":     "#a7a36b",   # oliva caqui
+    "pupil":   "#0d1119",   # pupila casi negra
+}
+
+# Sus versiones. `marks` prende los rasgos que dibuja de mas cada una: son
+# todos opt-in, asi que agregar una version nueva no toca a las anteriores.
+LOOKS = [
+    {
+        "id": "v1",
+        "label": "v1",
+        "palette": DEFAULT_PALETTE,
+        "marks": {},
+    },
+    {
+        "id": "v2",
+        "label": "v2",
+        "palette": PALETTE_V2,
+        "marks": {
+            "tabby": True,     # el gorro en dos tonos, partido por el blaze
+            "eyeRing": True,   # iris con delineado y pupila grande
+        },
+    },
+]
+
+DEFAULT_LOOK = "v2"
+
+# Los rasgos del look que se esta dibujando ahora mismo. Es global a proposito:
+# si no, habria que pasarle un parametro mas a las dieciseis poses solo para que
+# se lo reenvien a head().
+MARKS = {}
+
+
+def mk(name):
+    """Si el look que se esta dibujando tiene ese rasgo prendido."""
+    return bool(MARKS.get(name))
 
 # ---------------------------------------------------------------- primitivas
 
 
 def ell(d, cx, cy, rx, ry, fill):
     d.ellipse([cx - rx, cy - ry, cx + rx, cy + ry], fill=fill)
+
+
+def mix(a, b, k):
+    """Mezcla dos colores. Sirve para que los tonos no corten de golpe."""
+    return tuple(round(a[i] + (b[i] - a[i]) * k) for i in range(4))
 
 
 def bezier(p0, p1, p2, steps=14):
@@ -132,11 +196,24 @@ def head(d, cx, cy, P, eyes="open", tilt=0.0):
     # el gorro gris, que le baja hasta la altura de los ojos
     d.pieslice([cx - 8, cy - 6.5, cx + 8, cy + 7.5], 182, 358, fill=P["dark"])
 
+    if mk("tabby"):
+        # El gorro no es de un solo gris: tiene el centro mas oscuro y se va
+        # aclarando hacia las sienes, que es lo que le da el aire de tabby.
+        d.pieslice([cx - 6.2, cy - 6.2, cx + 6.2, cy + 4.0], 195, 345, fill=P["deep"])
+        d.pieslice([cx - 4.0, cy - 5.6, cx + 4.0, cy + 1.0], 200, 340,
+                   fill=mix(P["deep"], P["dark"], 0.35))
+
     # el blaze blanco que le baja por el medio de la frente
     d.polygon([(cx - 2.5, cy + 1.5), (cx - 0.2, cy - 7.4), (cx + 2.5, cy + 1.5)], fill=P["light"])
 
     # cachetes de pelo largo (solo la mitad de abajo, para no comerse el gorro)
     fluff(d, cx, cy + 1.5, 8.1, 6.4, P["base"], n=9, amp=1.7, a0=0.25, a1=math.pi - 0.25)
+
+    if mk("tabby"):
+        # El gris le baja por fuera de cada ojo hasta el cachete. Es lo que en
+        # las fotos le hace la mascara: blaze blanco al medio y gris a los lados.
+        for ex in (cx - 6.0, cx + 6.4):
+            ell(d, ex, cy - 0.6, 2.2, 3.0, P["dark"])
 
     # hocico
     ell(d, cx + 1, cy + 3.6, 5.2, 3.5, P["light"])
@@ -144,9 +221,20 @@ def head(d, cx, cy, P, eyes="open", tilt=0.0):
     # ojos
     if eyes == "open":
         for ex in (cx - 3.6, cx + 3.6):
-            ell(d, ex, cy - 0.4, 2.0, 2.2, P["eye"])
-            ell(d, ex, cy - 0.4, 0.75, 1.7, P["outline"])       # pupila
-            ell(d, ex - 0.8, cy - 1.7, 0.55, 0.55, P["light"])  # brillo
+            if mk("eyeRing"):
+                # Como los tiene de verdad: delineado marron finito, iris oliva
+                # y pupila oscura. En las fotos la pupila le tapa casi todo el
+                # ojo, pero a cuatro pixeles eso la deja con dos botones negros
+                # y lo que la hace ella es el oliva: va mas chica que en la foto,
+                # lo justo para que el anillo se vea entero alrededor.
+                ell(d, ex, cy - 0.4, 2.5, 2.8, P["deep"])
+                ell(d, ex, cy - 0.4, 2.15, 2.45, P["eye"])
+                ell(d, ex, cy - 0.45, 0.9, 1.8, P["pupil"])
+                ell(d, ex - 0.9, cy - 1.7, 0.65, 0.65, P["light"])
+            else:
+                ell(d, ex, cy - 0.4, 2.0, 2.2, P["eye"])
+                ell(d, ex, cy - 0.4, 0.75, 1.7, P["outline"])       # pupila
+                ell(d, ex - 0.8, cy - 1.7, 0.55, 0.55, P["light"])  # brillo
     elif eyes == "half":
         d.rectangle([cx - 5.4, cy - 1.2, cx - 1.8, cy + 0.4], fill=P["eye"])
         d.rectangle([cx + 1.8, cy - 1.2, cx + 5.4, cy + 0.4], fill=P["eye"])
@@ -541,13 +629,22 @@ def build_props(P, out_png, out_json):
     print(f"props  -> {out_png}  ({rows} objetos)")
 
 
-def build(palette_path, out_png, out_json):
-    pal = dict(DEFAULT_PALETTE)
+def build_look(look, palette_path, out_dir):
+    """Dibuja una version entera: su hoja de sprites, sus objetos y su icono."""
+    global MARKS
+
+    pal = dict(look["palette"])
     if palette_path and os.path.exists(palette_path):
         with open(palette_path) as f:
             pal.update(json.load(f).get("roles", {}))
 
     P = {k: hex2rgba(v) for k, v in pal.items()}
+
+    # De aca leen las poses que rasgos les toca dibujar.
+    MARKS = dict(look.get("marks") or {})
+
+    out_png = os.path.join(out_dir, "cat.png")
+    out_json = os.path.join(out_dir, "cat.json")
 
     cols = max(a[2] for a in ANIMATIONS)
     rows = len(ANIMATIONS)
@@ -556,6 +653,9 @@ def build(palette_path, out_png, out_json):
     meta = {
         "cell": [CELL, CELL],
         "ground": GROUND,
+        "look": look["id"],
+        "label": look["label"],
+        "marks": MARKS,
         "palette": pal,
         "animations": {},
     }
@@ -571,20 +671,51 @@ def build(palette_path, out_png, out_json):
             "row": row, "frames": nframes, "fps": fps, "loop": loop
         }
 
-    os.makedirs(os.path.dirname(out_png), exist_ok=True)
+    os.makedirs(out_dir, exist_ok=True)
     sheet.save(out_png)
     with open(out_json, "w") as f:
         json.dump(meta, f, indent=2)
 
-    print(f"sheet  -> {out_png}  ({sheet.width}x{sheet.height}, {rows} animaciones)")
-    print(f"meta   -> {out_json}")
+    print(f"[{look['id']}] hoja    -> {out_png}  "
+          f"({sheet.width}x{sheet.height}, {rows} animaciones)")
 
-    d = os.path.dirname(out_png)
-    build_props(P, os.path.join(d, "props.png"), os.path.join(d, "props.json"))
-    build_icons(sheet, os.path.dirname(d))
+    build_props(P, os.path.join(out_dir, "props.png"),
+                os.path.join(out_dir, "props.json"))
+    # Cada version tiene su propio icono de bandeja, asi cambiar de pinta
+    # tambien le cambia la carita del tray.
+    build_icons(sheet, out_dir, full=False)
+    return sheet
 
 
-def build_icons(sheet, assets_dir):
+def build(palette_path, sprites_dir, only=None):
+    """Todas las versiones, cada una en su carpeta, mas el indice que lee la app."""
+    looks = [lk for lk in LOOKS if only in (None, lk["id"])]
+    if not looks:
+        raise SystemExit(f"no conozco la version '{only}'. "
+                         f"Hay: {', '.join(lk['id'] for lk in LOOKS)}")
+
+    sheets = {}
+    for look in looks:
+        sheets[look["id"]] = build_look(
+            look, palette_path, os.path.join(sprites_dir, look["id"]))
+
+    # De aca saca la app la lista para el menu de bandeja. Va con TODAS las
+    # versiones, no solo las que se acaban de dibujar.
+    index_path = os.path.join(sprites_dir, "looks.json")
+    os.makedirs(sprites_dir, exist_ok=True)
+    with open(index_path, "w") as f:
+        json.dump({
+            "default": DEFAULT_LOOK,
+            "looks": [{"id": lk["id"], "label": lk["label"]} for lk in LOOKS],
+        }, f, indent=2)
+    print(f"indice  -> {index_path}  ({len(LOOKS)} versiones)")
+
+    # El icono de la bandeja y el del instalador salen de la version por defecto.
+    base = sheets.get(DEFAULT_LOOK) or next(iter(sheets.values()))
+    build_icons(base, os.path.dirname(sprites_dir), full=True)
+
+
+def build_icons(sheet, out_dir, full=True):
     """
     Icono de bandeja y de la app, sacados de su pose sentada.
     Sin tray.png Electron crea un icono vacio y el menu queda inalcanzable.
@@ -599,20 +730,25 @@ def build_icons(sheet, assets_dir):
     square = Image.new("RGBA", (side, side), (0, 0, 0, 0))
     square.paste(cell, ((side - cell.width) // 2, (side - cell.height) // 2), cell)
 
+    os.makedirs(out_dir, exist_ok=True)
     tray = square.resize((44, 44), Image.NEAREST)
-    tray.save(os.path.join(assets_dir, "tray.png"))
+    tray.save(os.path.join(out_dir, "tray.png"))
+    if not full:
+        return
 
     icon = square.resize((side * 12, side * 12), Image.NEAREST).resize((512, 512), Image.NEAREST)
-    icon.save(os.path.join(assets_dir, "icon.png"))
+    icon.save(os.path.join(out_dir, "icon.png"))
 
-    print(f"iconos -> {assets_dir}/tray.png (44x44), {assets_dir}/icon.png (512x512)")
+    print(f"iconos  -> {out_dir}/tray.png (44x44), {out_dir}/icon.png (512x512)")
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     ap.add_argument("--palette", default=os.path.join(root, "config/palette.json"))
-    ap.add_argument("--out", default=os.path.join(root, "assets/sprites/cat.png"))
-    ap.add_argument("--meta", default=os.path.join(root, "assets/sprites/cat.json"))
+    ap.add_argument("--sprites", default=os.path.join(root, "assets/sprites"),
+                    help="carpeta donde va una subcarpeta por version")
+    ap.add_argument("--look", default=None,
+                    help="dibujar solo esa version (por defecto, todas)")
     a = ap.parse_args()
-    build(a.palette, a.out, a.meta)
+    build(a.palette, a.sprites, a.look)

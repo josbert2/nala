@@ -8,6 +8,7 @@ const fs = require('fs')
 
 const ROOT = path.join(__dirname, '..', '..')
 const BUNDLED_CONFIG = path.join(ROOT, 'config', 'cat.json')
+const SPRITES_DIR = path.join(ROOT, 'assets', 'sprites')
 
 // Ya instalada, ROOT vive dentro de app.asar y es de solo lectura. Su config y
 // sus ajustes van a la carpeta de datos del usuario; la primera vez copiamos
@@ -48,9 +49,42 @@ function loadConfig () {
   }
 }
 
+// ------------------------------------------------------- versiones de su pinta
+//
+// Cada version vive en assets/sprites/<id>/ con su hoja, sus objetos y su
+// icono. La lista la escribe tools/make_sprites.py en looks.json: aca no hay
+// nada hardcodeado, agregar una version es volver a correr el script.
+
+const LOOKS_PATH = path.join(SPRITES_DIR, 'looks.json')
+const FALLBACK_LOOKS = { default: 'v1', looks: [{ id: 'v1', label: 'Version 1' }] }
+
+function loadLooks () {
+  try {
+    const idx = JSON.parse(fs.readFileSync(LOOKS_PATH, 'utf8'))
+    if (Array.isArray(idx.looks) && idx.looks.length) return idx
+    throw new Error('looks.json no trae ninguna version')
+  } catch (err) {
+    console.warn('[nala] no pude leer looks.json:', err.message)
+    console.warn('[nala] regeneralo con: python3 tools/make_sprites.py')
+    return FALLBACK_LOOKS
+  }
+}
+
+const LOOKS = loadLooks()
+
+/** La version elegida. Si nunca eligio ninguna, la que viene por defecto. */
+function currentLook () {
+  const ids = LOOKS.looks.map((l) => l.id)
+  if (settings.look && ids.includes(settings.look)) return settings.look
+  return ids.includes(LOOKS.default) ? LOOKS.default : ids[0]
+}
+
 // ------------------------------------------------------------------- ajustes
 
-const DEFAULT_SETTINGS = { displayMode: 'all' }   // 'all' | 'primary'
+const DEFAULT_SETTINGS = {
+  displayMode: 'all',   // 'all' | 'primary'
+  look: null            // null = la que venga por defecto en looks.json
+}
 
 function loadSettings () {
   try {
@@ -184,6 +218,8 @@ function createWindow () {
     win.webContents.send('boot', {
       config: loadConfig(),
       display: stage,
+      look: currentLook(),
+      looks: LOOKS.looks,
       platform: process.platform,
       debug: DEBUG
     })
@@ -249,18 +285,27 @@ function startGeometryPolling () {
 
 // ------------------------------------------------------------------------ tray
 
-function buildTray () {
-  const iconPath = path.join(ROOT, 'assets', 'tray.png')
-  const icon = fs.existsSync(iconPath)
-    ? nativeImage.createFromPath(iconPath)
-    : nativeImage.createEmpty()
-
-  if (icon.isEmpty()) {
-    console.warn('[nala] falta assets/tray.png: el icono de bandeja va a quedar vacio.')
-    console.warn('[nala] regeneralo con: python3 tools/make_sprites.py')
+/**
+ * La carita del tray, la de la version que este puesta. Si esa no esta cae al
+ * icono suelto de assets/, que es el que arma el instalador.
+ */
+function trayImage () {
+  const tries = [
+    path.join(SPRITES_DIR, currentLook(), 'tray.png'),
+    path.join(ROOT, 'assets', 'tray.png')
+  ]
+  for (const p of tries) {
+    if (!fs.existsSync(p)) continue
+    const img = nativeImage.createFromPath(p)
+    if (!img.isEmpty()) return img
   }
+  console.warn('[nala] no encontre ningun tray.png: el icono va a quedar vacio.')
+  console.warn('[nala] regeneralo con: python3 tools/make_sprites.py')
+  return nativeImage.createEmpty()
+}
 
-  tray = new Tray(icon)
+function buildTray () {
+  tray = new Tray(trayImage())
   const cfg = loadConfig()
   tray.setToolTip(cfg.name || 'Nala')
   refreshTrayMenu()
@@ -273,6 +318,26 @@ function setDisplayMode (mode) {
   saveSettings()
   applyStage()
   refreshTrayMenu()
+}
+
+/**
+ * Le cambia la pinta. La hoja de sprites la carga el renderer al arrancar, asi
+ * que hay que recargarlo: se la ve aparecer de nuevo con la version puesta.
+ */
+function setLook (id) {
+  if (!LOOKS.looks.some((l) => l.id === id)) return
+  if (currentLook() === id) return
+  settings.look = id
+  saveSettings()
+  if (tray) tray.setImage(trayImage())
+  if (win && !win.isDestroyed()) win.reload()
+  refreshTrayMenu()
+}
+
+/** La que sigue en la lista. Es lo que usa el click derecho sobre ella. */
+function cycleLook () {
+  const ids = LOOKS.looks.map((l) => l.id)
+  setLook(ids[(ids.indexOf(currentLook()) + 1) % ids.length])
 }
 
 function refreshTrayMenu () {
@@ -313,6 +378,18 @@ function refreshTrayMenu () {
       ]
     },
     { type: 'separator', visible: multi },
+    {
+      label: 'Su pinta',
+      // Con una sola version no hay nada que elegir.
+      visible: LOOKS.looks.length > 1,
+      submenu: LOOKS.looks.map((l) => ({
+        label: l.label,
+        type: 'radio',
+        checked: currentLook() === l.id,
+        click: () => setLook(l.id)
+      }))
+    },
+    { type: 'separator', visible: LOOKS.looks.length > 1 },
     { label: 'Esconder / mostrar', click: () => { if (win.isVisible()) win.hide(); else win.show() } },
     { label: 'Recargar', click: () => win && win.reload() },
     { label: 'Abrir su carpeta', click: () => shell.openPath(USER_DIR) },
@@ -389,6 +466,9 @@ ipcMain.on('hot-rects', (_e, payload) => {
 })
 
 ipcMain.handle('get-config', () => loadConfig())
+
+// El menu de click derecho sobre ella tambien puede cambiarle la pinta.
+ipcMain.on('cycle-look', () => cycleLook())
 
 // ------------------------------------------------------------------------ ciclo
 

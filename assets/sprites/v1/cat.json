@@ -4,13 +4,18 @@
     48
   ],
   "ground": 42,
+  "look": "v1",
+  "label": "v1",
+  "marks": {},
   "palette": {
     "outline": "#4b423a",
     "base": "#ebe5dc",
     "dark": "#a89f95",
     "light": "#fdfcf9",
     "pink": "#e8a5a4",
-    "eye": "#9aa85e"
+    "eye": "#9aa85e",
+    "deep": "#a89f95",
+    "pupil": "#4b423a"
   },
   "animations": {
     "idle": {

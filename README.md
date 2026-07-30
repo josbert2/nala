@@ -17,9 +17,10 @@ npm start
 ```
 
 Queda un ícono en el tray. Desde ahí: servirle la comida, sacarle la pelota,
-llamarla, mandarla a su cama, hacerla dormir, esconderla o salir. Con más de un
-monitor aparece además **Por dónde anda**, para dejarla en todas las pantallas
-o solo en la principal.
+llamarla, mandarla a su cama, hacerla dormir, esconderla o salir. También
+**Su pinta**, para elegir qué versión de ella querés ver. Con más de un monitor
+aparece además **Por dónde anda**, para dejarla en todas las pantallas o solo en
+la principal.
 
 En GNOME el ícono de bandeja depende de la extensión **AppIndicator**, que no
 siempre está instalada. Por eso hay dos caminos que siempre funcionan:
@@ -102,12 +103,59 @@ queda como está y te sigue con los ojos.
 
 ---
 
+## Sus versiones
+
+Hay más de una versión de su pinta. Se elige desde el tray, en **Su pinta**, o
+con **Cambiarle la pinta** en el click derecho sobre ella. Se cambia en el acto:
+la ventana se recarga y ella vuelve a aparecer con la nueva.
+
+| | |
+|---|---|
+| **v1** | La primera. Gris neutro en la cabeza y la cola, cuerpo todo blanco, ojos verde oliva. |
+| **v2** | Medida sobre las fotos de su Instagram. El gris es un taupe más tibio y marronoso, le baja del gorro por el lomo hasta la cola, la punta de la cola es más oscura, el gorro va en dos tonos partido por el blaze, y los ojos son oliva caqui con la pupila grande y delineado. |
+
+La que viene puesta es la **v2**. La elegida queda guardada, así que sobrevive a
+reiniciar la PC.
+
+Cada versión vive en su propia carpeta, `assets/sprites/<id>/`, con su hoja de
+sprites, sus objetos y su ícono de bandeja. La lista la escribe el generador en
+`assets/sprites/looks.json`: la app la lee de ahí, no hay nada hardcodeado.
+
+### Agregar una versión nueva
+
+En `tools/make_sprites.py`, agregar una entrada a `LOOKS`:
+
+```python
+{
+    "id": "v3",
+    "label": "v3",
+    "palette": {...},          # los nueve roles de color
+    "marks": {"saddle": True}, # los rasgos que dibuja de más
+}
+```
+
+`marks` es lo que hace que agregar una versión no toque a las anteriores: todos
+los rasgos son opt-in, y las que no los tienen prendidos dibujan lo mismo que
+antes. Los que hay hoy: `saddle` (el manto gris del lomo), `tabby` (el gorro en
+dos tonos), `tailTip` (la punta de la cola oscura) y `eyeRing` (los ojos con
+delineado y pupila grande).
+
+Después:
+
+```bash
+python3 tools/make_sprites.py            # todas
+python3 tools/make_sprites.py --look v3  # solo esa
+```
+
+y aparece sola en el menú.
+
+---
+
 ## Sus colores
 
 El sprite se genera por código desde una paleta, así que cambiarle el pelaje es
-cambiar seis colores. La paleta que viene está sacada de sus fotos: blanca de
-pelo largo, gorro gris tabby en la cabeza, blaze blanco en la frente, nariz rosa,
-ojos verde oliva.
+cambiar unos colores. Los roles son `outline`, `base`, `light`, `shade`, `dark`,
+`deep`, `pink`, `eye` y `pupil`.
 
 Para regenerar los sprites después de tocar algo:
 
@@ -239,8 +287,11 @@ src/renderer/
     cat.js           física, estados y personalidad
     props.js         el plato, la pelota y el premio
     moments.js       horarios y notas
+assets/sprites/
+  looks.json         la lista de versiones, de aca la lee la app
+  v1/ v2/            una carpeta por version: cat.png, props.png, tray.png
 tools/
-  make_sprites.py    genera los sprites desde la paleta
+  make_sprites.py    genera los sprites de cada version desde su paleta
   photo_palette.py   saca la paleta de sus fotos
   photo_to_sprite.py convierte una foto en sprite pixel-art
 gnome-extension/     geometría de ventanas bajo Wayland
