@@ -919,7 +919,7 @@ function loop (now) {
     // Los pajaritos pasan solos cada tanto, en cualquier habitat: se ven por
     // la ventana aunque ella este adentro.
     if (!birds.some((b) => b.active)) {
-      if (!nextBird) nextBird = now + 60000 + Math.random() * 150000
+      if (!nextBird) nextBird = now + 240000 + Math.random() * 420000
       else if (now > nextBird) { soltarBandada(); nextBird = 0 }
     }
 
@@ -957,7 +957,7 @@ function loop (now) {
       cat.missYou()
       sayNow('missYou')
     }
-    cat.update(dt, { pointer })
+    cat.update(dt, { pointer, dt })
     updateGaze(dt)
     sendHotRects()
   }

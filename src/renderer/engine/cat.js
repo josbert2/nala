@@ -187,7 +187,7 @@ export class Cat {
     // a mirar el mismo pajaro otra vez: se quedaba tiesa los dos minutos que
     // dura el pajaro.
     if (this.state === 'watchBird' || this.state === 'stalkBird') {
-      this.birdCooldownUntil = performance.now() + 25000
+      this.birdCooldownUntil = performance.now() + 60000
     }
     if (this.state === 'crouch') { this._pounceAtBall(); return }
     // Sale del arenero y se limpia. Siempre.
@@ -268,6 +268,8 @@ export class Cat {
                        'watchBird', 'stalkBird', 'goingBird', 'crouch', 'pounce']
     const bird = this.props && this.props.bird
     if (bird && bird.active && this.energy > 0.2 &&
+        Math.abs(bird.x - this.x) < 600 &&     // no cruza la pantalla por uno
+        Math.random() < ctx.dt * 0.8 &&        // ni le llama la atencion siempre
         performance.now() > this.birdCooldownUntil &&
         this.after !== 'goingBird' &&          // ya va para alla
         !NO_CORTAR.includes(this.state)) {
@@ -643,6 +645,7 @@ export class Cat {
     // Un pajaro le gana a todo lo demas, hasta a la mariposa.
     const bird = this.props && this.props.bird
     if (bird && bird.active && this.energy > 0.2 &&
+        Math.abs(bird.x - this.x) < 600 &&
         performance.now() > this.birdCooldownUntil &&
         this.state !== 'watchBird' && this.state !== 'goingBird') {
       this.watchBird()
