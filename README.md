@@ -288,23 +288,50 @@ como corresponde. Escarba, tapa, y sale a lamerse.
 
 ---
 
-## Su cara
+## Sus versiones
 
-El gris va de **un solo lado**: le cubre la mitad izquierda de la cabeza y esa
-oreja, y la otra mitad es blanca entera, como en las fotos. La otra oreja es
-blanca con el rosa por dentro. El blaze blanco no está en el medio de la cara
-sino justo sobre el borde del parche, abriéndose hacia el lado blanco.
+Hay tres pintas y se cambia desde el menú → **Cambiarle la pinta**. Cada una
+tiene su propia carpeta en `assets/sprites/<id>/`, y se definen en `LOOKS` en
+`tools/make_sprites.py`.
 
-Está en `head()` en `tools/make_sprites.py`. El parche es un `pieslice` de 168° a
-292° (en Pillow 0° es la derecha, 180° la izquierda, 270° arriba), con unos
-mechones sueltos desflecándole el borde para que no corte en una línea limpia.
+| | Su cara | Ojos |
+|---|---|---|
+| `v1` | gorro gris cruzado, gris neutro | grandes, sin delineado |
+| `v2` | gorro gris cruzado, paleta tibia | grandes, con delineado |
+| `v3` | **parche de un solo lado** | más chicos y juntos |
+
+`v3` es la que está corregida contra sus fotos y es la que viene por defecto.
+`v2` quedó **intacta**, pixel por pixel, por si esa gusta más.
+
+Lo que distingue una versión de otra son dos cosas, las dos opt-in para que
+agregar una no toque a las anteriores:
+
+- **`marks`** — rasgos que se dibujan de más: `tabby` (el gorro en dos tonos),
+  `eyeRing` (iris con delineado), `sideCap` (el parche de un lado en vez del
+  gorro cruzado).
+- **`eyes`** — cuál de los `EYE_SETS` usa: `normal` o `small`.
+
+### El parche de un lado (v3)
+
+Le cubre **su** izquierda, que mirándola de frente cae del lado derecho, y le
+queda **por encima** del ojo, no tapándolo. Esa oreja es gris; la otra es blanca
+con un tono apenas más oscuro para que no desaparezca sobre la cabeza blanca
+(el contorno de 1px sólo agarra bordes contra transparente, no contra otro
+relleno). El blaze arranca entre los ojos y se abre hacia el lado blanco.
+
+Es un `pieslice` de 250° a 350° — en Pillow 0° es la derecha, 180° la izquierda,
+270° arriba — con unos mechones sueltos desflecándole el borde.
 
 **Cuando camina hacia el otro lado el parche cambia de lado**, porque el sprite
-se espeja. Eso es correcto: si ella se da vuelta, la marca que tenía a la
-izquierda pasa a verse a la derecha.
+se espeja. Eso es correcto: si ella se da vuelta, la marca que tenía a un lado
+pasa a verse del otro.
 
-Para pasarlo al otro lado hay que rotar los dos ángulos del `pieslice` 180°
-(168, 292 → 348, 112) y cambiar el `sign < 0` de las orejas.
+### Los ojos
+
+`EYE_SETS` tiene dos juegos de medidas, y cada uno lleva dos: con qué radios los
+dibuja el generador y con qué radios los repinta el motor. Son números distintos
+a propósito — Pillow rasteriza más gordo que `2*r` y hay que compensarlo, o la
+mirada le queda distinta a la del sprite.
 
 ---
 

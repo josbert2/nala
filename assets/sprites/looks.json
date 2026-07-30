@@ -1,5 +1,5 @@
 {
-  "default": "v2",
+  "default": "v3",
   "looks": [
     {
       "id": "v1",
@@ -8,6 +8,10 @@
     {
       "id": "v2",
       "label": "v2"
+    },
+    {
+      "id": "v3",
+      "label": "v3"
     }
   ]
 }
