@@ -288,6 +288,26 @@ como corresponde. Escarba, tapa, y sale a lamerse.
 
 ---
 
+## Su cara
+
+El gris va de **un solo lado**: le cubre la mitad izquierda de la cabeza y esa
+oreja, y la otra mitad es blanca entera, como en las fotos. La otra oreja es
+blanca con el rosa por dentro. El blaze blanco no está en el medio de la cara
+sino justo sobre el borde del parche, abriéndose hacia el lado blanco.
+
+Está en `head()` en `tools/make_sprites.py`. El parche es un `pieslice` de 168° a
+292° (en Pillow 0° es la derecha, 180° la izquierda, 270° arriba), con unos
+mechones sueltos desflecándole el borde para que no corte en una línea limpia.
+
+**Cuando camina hacia el otro lado el parche cambia de lado**, porque el sprite
+se espeja. Eso es correcto: si ella se da vuelta, la marca que tenía a la
+izquierda pasa a verse a la derecha.
+
+Para pasarlo al otro lado hay que rotar los dos ángulos del `pieslice` 180°
+(168, 292 → 348, 112) y cambiar el `sign < 0` de las orejas.
+
+---
+
 ## Cómo mira
 
 Dos cosas que hacen que se lea como un gato y no como un muñeco:

@@ -106,10 +106,10 @@ EYE_MARKS = []
 # lados fraccionarios y termina mas gorda que 2*r. La pupila real ocupa 3x4 px,
 # asi que el motor tiene que apuntar a eso o le cambia la mirada.
 EYE_GEOM = {
-    True:  {"ring": [2.6, 3.0], "iris": [2.2, 2.6], "pupil": [1.3, 2.05],
-            "hi": 0.65, "hiOffset": [-0.9, -1.3], "maxGaze": 1.15},
-    False: {"ring": None,       "iris": [2.1, 2.4], "pupil": [1.15, 1.95],
-            "hi": 0.55, "hiOffset": [-0.8, -1.3], "maxGaze": 1.05},
+    True:  {"ring": [2.75, 3.1], "iris": [2.45, 2.75], "pupil": [0.85, 1.55],
+            "hi": 0.7, "hiOffset": [-1.0, -1.4], "maxGaze": 1.25},
+    False: {"ring": None,        "iris": [2.35, 2.55], "pupil": [0.8, 1.45],
+            "hi": 0.6, "hiOffset": [-0.9, -1.4], "maxGaze": 1.2},
 }
 
 
@@ -207,46 +207,55 @@ def head(d, cx, cy, P, eyes="open", tilt=0.0):
     # melena: mechones que rodean toda la cabeza
     fluff(d, cx, cy + 0.5, 8.3, 7.3, P["base"], n=15, amp=1.8)
 
-    # orejas: grises por fuera, rosas por dentro, con mechon en la punta
+    # Orejas. La izquierda es la gris; la derecha es blanca como el resto de ese
+    # lado de la cara. Rosas por dentro las dos.
     for sign, ox in ((-1, -5), (1, 5)):
         bx = cx + ox
         tipx = bx + 1 + sign * tilt * 2
         tipy = cy - 12 + abs(tilt)
-        d.polygon([(bx - 3.2, cy - 4), (tipx, tipy), (bx + 3.2, cy - 3)], fill=P["dark"])
+        outer = P["dark"] if sign < 0 else P["base"]
+        d.polygon([(bx - 3.2, cy - 4), (tipx, tipy), (bx + 3.2, cy - 3)], fill=outer)
         d.polygon([(bx - 1.2, cy - 5), (tipx + sign * 0.4, tipy + 3.0), (bx + 1.8, cy - 4)],
                   fill=P["pink"])
 
     # craneo
     ell(d, cx, cy, 8, 7, P["base"])
 
-    # el gorro gris, que le baja hasta la altura de los ojos
-    d.pieslice([cx - 8, cy - 6.5, cx + 8, cy + 7.5], 182, 358, fill=P["dark"])
+    # El parche gris va de UN SOLO lado: el izquierdo. En las fotos le cubre la
+    # mitad izquierda de la cabeza y esa oreja, y la otra mitad es blanca entera.
+    # Antes estaba simetrico y por eso no se le parecia.
+    #
+    # Angulos de Pillow: 0 = derecha, 90 = abajo, 180 = izquierda, 270 = arriba.
+    # De 168 a 292 es: un poco por debajo de la horizontal izquierda, sube por
+    # ese lado, cruza el techo y pasa apenas del centro.
+    d.pieslice([cx - 8, cy - 6.5, cx + 8, cy + 7.5], 168, 292, fill=P["dark"])
 
     if mk("tabby"):
-        # El gorro no es de un solo gris: tiene el centro mas oscuro y se va
-        # aclarando hacia las sienes, que es lo que le da el aire de tabby.
-        d.pieslice([cx - 6.2, cy - 6.2, cx + 6.2, cy + 4.0], 195, 345, fill=P["deep"])
-        d.pieslice([cx - 4.0, cy - 5.6, cx + 4.0, cy + 1.0], 200, 340,
+        # Dentro del parche, el centro mas oscuro: es lo que le da el tabby.
+        d.pieslice([cx - 6.4, cy - 6.2, cx + 6.4, cy + 4.0], 176, 285, fill=P["deep"])
+        d.pieslice([cx - 4.2, cy - 5.8, cx + 4.2, cy + 1.2], 186, 278,
                    fill=mix(P["deep"], P["dark"], 0.35))
 
-    # el blaze blanco que le baja por el medio de la frente
-    d.polygon([(cx - 2.5, cy + 1.5), (cx - 0.2, cy - 7.4), (cx + 2.5, cy + 1.5)], fill=P["light"])
+    # El borde del parche no es una linea limpia: unos mechones lo desflecan.
+    for a in (0.30, 0.52, 0.74, 0.96):
+        ang = math.pi + 0.55 + a * 0.9
+        ell(d, cx + math.cos(ang) * 3.0, cy + math.sin(ang) * 5.2, 1.5, 1.5, P["dark"])
+    ell(d, cx - 7.2, cy + 1.6, 1.6, 1.6, P["dark"])
 
-    # cachetes de pelo largo (solo la mitad de abajo, para no comerse el gorro)
+    # El blaze blanco, justo sobre el borde del parche y no en el medio de la
+    # cara: en las fotos arranca entre los ojos y se abre hacia el lado blanco.
+    d.polygon([(cx + 0.4, cy + 2.0), (cx + 1.4, cy - 7.2), (cx + 3.4, cy + 2.0)],
+              fill=P["light"])
+
+    # cachetes de pelo largo (solo la mitad de abajo, para no comerse el parche)
     fluff(d, cx, cy + 1.5, 8.1, 6.4, P["base"], n=9, amp=1.7, a0=0.25, a1=math.pi - 0.25)
-
-    if mk("tabby"):
-        # El gris le baja por fuera de cada ojo hasta el cachete. Es lo que en
-        # las fotos le hace la mascara: blaze blanco al medio y gris a los lados.
-        for ex in (cx - 6.0, cx + 6.4):
-            ell(d, ex, cy - 0.6, 2.2, 3.0, P["dark"])
 
     # hocico
     ell(d, cx + 1, cy + 3.6, 5.2, 3.5, P["light"])
 
     # ojos
     if eyes == "open":
-        for ex in (cx - 3.6, cx + 3.6):
+        for ex in (cx - 3.3, cx + 3.3):
             EYE_MARKS.append([round(ex, 2), round(cy - 0.4, 2)])
             if mk("eyeRing"):
                 # Como los tiene de verdad: delineado marron finito, iris oliva
@@ -254,14 +263,14 @@ def head(d, cx, cy, P, eyes="open", tilt=0.0):
                 # ojo, pero a cuatro pixeles eso la deja con dos botones negros
                 # y lo que la hace ella es el oliva: va mas chica que en la foto,
                 # lo justo para que el anillo se vea entero alrededor.
-                ell(d, ex, cy - 0.4, 2.5, 2.8, P["deep"])
-                ell(d, ex, cy - 0.4, 2.15, 2.45, P["eye"])
-                ell(d, ex, cy - 0.45, 0.9, 1.8, P["pupil"])
-                ell(d, ex - 0.9, cy - 1.7, 0.65, 0.65, P["light"])
+                ell(d, ex, cy - 0.4, 2.6, 2.9, P["deep"])
+                ell(d, ex, cy - 0.4, 2.3, 2.6, P["eye"])
+                ell(d, ex, cy - 0.45, 0.55, 1.35, P["pupil"])
+                ell(d, ex - 1.0, cy - 1.8, 0.65, 0.65, P["light"])
             else:
-                ell(d, ex, cy - 0.4, 2.0, 2.2, P["eye"])
-                ell(d, ex, cy - 0.4, 0.75, 1.7, P["outline"])       # pupila
-                ell(d, ex - 0.8, cy - 1.7, 0.55, 0.55, P["light"])  # brillo
+                ell(d, ex, cy - 0.4, 2.2, 2.4, P["eye"])
+                ell(d, ex, cy - 0.4, 0.5, 1.3, P["outline"])        # pupila
+                ell(d, ex - 0.9, cy - 1.7, 0.55, 0.55, P["light"])  # brillo
     elif eyes == "half":
         d.rectangle([cx - 5.4, cy - 1.2, cx - 1.8, cy + 0.4], fill=P["eye"])
         d.rectangle([cx + 1.8, cy - 1.2, cx + 5.4, cy + 0.4], fill=P["eye"])
