@@ -41,6 +41,7 @@ const ACTION_LABELS = {
   tomaRegalo: 'te trae algo',
   llevaRegalo: 'te trae algo',
   ofrece: 'es para vos',
+  acompana: 'acompañándote',
   watchBird: 'un pajarito',
   stalkBird: 'acechando',
   inBox: 'en su caja',
@@ -153,6 +154,8 @@ let hearts = []
 let purrs = []
 let nextPurr = 0
 let nextSueño = 0
+let trabajo = 0                    // que tan activo venis con el mouse
+let nextAcompanar = 0
 
 const pointer = {
   x: -1, y: -1, active: false, movingMs: 9999, lastMove: 0,
@@ -762,6 +765,11 @@ function loop (now) {
 
   pointer.movingMs = now - pointer.lastMove
 
+  // Cuanto venis moviendo el mouse, suavizado. Es lo mas cerca que se puede
+  // estar de "esta trabajando" sin espiarte el teclado.
+  const activo = pointer.movingMs < 900 ? 1 : 0
+  trabajo += (activo - trabajo) * Math.min(1, dt * 0.35)
+
   if (cat) {
     // Rutina del dia: comer y jugar mandan sobre lo demas.
     if (meals.due()) {
@@ -837,6 +845,14 @@ function loop (now) {
       if (cat.asking === 'comida') sayNow('pideComida', 9000)
       if (cat.asking === 'agua') sayNow('pideAgua', 9000)
       lastAsking = cat.asking
+    }
+
+    // Si venis trabajando hace un rato, se viene a acompañar. No pide nada:
+    // se echa al lado y se queda.
+    if (trabajo > 0.75 && now > nextAcompanar && cat.energy > 0.25 &&
+        ['idle', 'sit', 'loaf', 'groom'].includes(cat.state)) {
+      nextAcompanar = now + 8 * 60 * 1000
+      cat.acompanar({ pointer })
     }
 
     // Hace rato que no la tocas: te viene a buscar.

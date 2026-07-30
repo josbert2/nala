@@ -91,6 +91,8 @@ export class Cat {
       case 'tomaRegalo': return 'walk'
       case 'llevaRegalo': return 'walk'
       case 'ofrece': return 'alert'
+      case 'acompana': return 'loaf'
+      case 'vaAcompanar': return 'walk'
       case 'goingBox': return 'walk'
       case 'zoom': return 'run'
       case 'meow': return 'alert'
@@ -129,6 +131,9 @@ export class Cat {
       case 'tomaRegalo': return 0
       case 'llevaRegalo': return 25000
       case 'ofrece': return r(9000, 16000)
+      // Acompañando se queda un rato largo: es la idea.
+      case 'acompana': return r(45000, 110000)
+      case 'vaAcompanar': return 0
       case 'goingBox': return 0
       case 'zoom': return 400
       case 'climbTree': return 3000
@@ -218,6 +223,7 @@ export class Cat {
       return
     }
     if (this.state === 'ofrece') { this.setState('sit'); return }
+    if (this.state === 'vaAcompanar') { this.acompanar(ctx); return }
     if (this.state === 'play') {
       const ball = this.props && this.props.ball
       if (ball && ball.active && Math.abs(ball.x - this.x) > 40) {
@@ -492,6 +498,13 @@ export class Cat {
         this.vx = this.facing * STALK_SPEED
         break
       }
+      case 'acompana': {
+        // Echada al lado tuyo mientras trabajas. No hace nada: esta.
+        this.vx = 0
+        const p = ctx.pointer
+        if (p.active) this.facing = p.x > this.x ? 1 : -1
+        break
+      }
       case 'inBox': {
         this.vx = 0
         const p = ctx.pointer
@@ -555,10 +568,21 @@ export class Cat {
     }
   }
 
+  /** Los estados que la desplazan caminando. Chocar contra el borde los corta. */
+  static get CAMINANDO () {
+    return ['walkTo', 'trot', 'llevaRegalo', 'seek', 'chase', 'chaseBall',
+            'chaseCursor', 'chaseButterfly', 'stalkBird', 'zoom']
+  }
+
   _turn () {
     this.facing *= -1
     if (this.target) this.target = null
-    if (this.state === 'walkTo' || this.state === 'trot') this.setState('idle', 1200)
+    // Cortar TODOS los estados que caminan, no solo dos. Con la lista corta,
+    // los modos nuevos se quedaban empujando contra la pared sin fin.
+    if (Cat.CAMINANDO.includes(this.state)) {
+      this.after = null
+      this.setState('idle', 1400)
+    }
   }
 
   _drop () {
@@ -936,6 +960,21 @@ export class Cat {
    * Te trae un regalo. Agarra uno de sus juguetes, te lo lleva hasta el cursor,
    * lo deja y se queda esperando que lo veas.
    */
+  /**
+   * Se viene a acompañar. Camina hasta cerca de donde estas trabajando y se
+   * echa ahi al lado, sin pedir nada.
+   */
+  acompanar (ctx) {
+    const p = ctx && ctx.pointer
+    if (!p || !p.active) { this.setState('idle', 2000); return }
+    if (Math.abs(p.x - this.x) < 190 && this.surface && this.surface.isFloor) {
+      this.facing = p.x > this.x ? 1 : -1
+      this.setState('acompana')
+      return
+    }
+    this.goTo(p.x + (p.x > this.x ? -120 : 120), 'vaAcompanar', 25000, 'trot')
+  }
+
   traerRegalo () {
     const p = this.props || {}
     if (!p.gift || !p.toys || !p.toys.length) return

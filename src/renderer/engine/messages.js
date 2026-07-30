@@ -76,6 +76,14 @@ const DEFAULTS = {
     'Tomá. Cuidalo.'
   ],
 
+  // Se vino a echar al lado tuyo mientras trabajas.
+  acompana: [
+    'Seguí, yo me quedo acá.',
+    'No molesto. Solo me echo.',
+    'Me gusta cuando trabajás.',
+    'Acá estoy si me necesitás.'
+  ],
+
   // Se despierta de una siesta.
   waking: [
     'Dormí bien.',

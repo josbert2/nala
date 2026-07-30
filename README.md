@@ -178,6 +178,21 @@ ahí.
 
 ---
 
+## Que se venga a acompañar
+
+Si venís moviendo el mouse un rato largo — o sea, si estás trabajando — cada
+tanto se viene, se echa al lado de donde tenés el cursor y se queda. No pide
+nada: está. *"Seguí, yo me quedo acá."*
+
+La actividad se mide con un promedio móvil de si moviste el mouse hace menos de
+un segundo. Es lo más cerca de "está trabajando" que se puede estar sin espiarte
+el teclado, y no requiere ningún permiso.
+
+Con un descanso de 8 minutos entre una vez y la siguiente, para que sea algo que
+pasa y no algo que hace todo el tiempo.
+
+---
+
 ## El regalito
 
 Los gatos le llevan lo que cazan a quien quieren. Ella no caza nada de verdad,
@@ -413,6 +428,21 @@ puede usar `{dias}`:
 Para cambiar la fecha de inicio, editá `desde` en `estado.json`. Si querés que
 cuente desde el día que llegó a tu casa y no desde que instalaste la app, es
 ahí.
+
+---
+
+## Que se venga a acompañar
+
+Si venís moviendo el mouse un rato largo — o sea, si estás trabajando — cada
+tanto se viene, se echa al lado de donde tenés el cursor y se queda. No pide
+nada: está. *"Seguí, yo me quedo acá."*
+
+La actividad se mide con un promedio móvil de si moviste el mouse hace menos de
+un segundo. Es lo más cerca de "está trabajando" que se puede estar sin espiarte
+el teclado, y no requiere ningún permiso.
+
+Con un descanso de 8 minutos entre una vez y la siguiente, para que sea algo que
+pasa y no algo que hace todo el tiempo.
 
 ---
 
