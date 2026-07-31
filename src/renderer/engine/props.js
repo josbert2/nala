@@ -483,7 +483,7 @@ export class Gift {
     this.enBoca = false
     this.x = x
     this.y = this.world.floorAt(x).y
-    this.espera = 90
+    this.espera = 420
   }
 
   update (dt, catX, catY) {
@@ -494,7 +494,10 @@ export class Gift {
       this.y = catY - 26
       return
     }
+    // Si ella esta al lado — durmiendo con el, por ejemplo — el juguete se
+    // queda. Solo se guarda cuando ella ya no esta cerca hace rato.
+    if (catX != null && Math.abs(catX - this.x) < 130) return
     this.espera -= dt
-    if (this.espera <= 0) this.active = false   // se olvida y vuelve a su lugar
+    if (this.espera <= 0) this.active = false
   }
 }

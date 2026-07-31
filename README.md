@@ -211,8 +211,13 @@ Los gatos le llevan lo que cazan a quien quieren. Ella no caza nada de verdad,
 así que agarra uno de sus juguetes, **te lo lleva hasta donde tenés el cursor**,
 lo deja ahí y se queda esperando que lo veas — *"Es para vos."*
 
-Se le ocurre sola cada tanto, o `Ctrl+Alt+G`. Mientras lo lleva se le ve colgando
-de la boca; cuando lo suelta queda en el piso un rato y después vuelve a su lugar.
+Se le ocurre sola **cada 12 a 20 minutos** como mucho — antes entraba en la
+ruleta cada 30 segundos y andaba con el juguete en la boca todo el tiempo, que
+no es lo que hace un gato.
+
+Y cuando se va a la cama, cada tanto **se lleva un juguete y se duerme con él al
+lado**. El juguete tirado no se evapora: mientras ella esté cerca se queda ahí
+todo lo que haga falta, y recién se guarda cuando ella ya no está hace rato.
 
 ---
 
@@ -485,8 +490,13 @@ Los gatos le llevan lo que cazan a quien quieren. Ella no caza nada de verdad,
 así que agarra uno de sus juguetes, **te lo lleva hasta donde tenés el cursor**,
 lo deja ahí y se queda esperando que lo veas — *"Es para vos."*
 
-Se le ocurre sola cada tanto, o `Ctrl+Alt+G`. Mientras lo lleva se le ve colgando
-de la boca; cuando lo suelta queda en el piso un rato y después vuelve a su lugar.
+Se le ocurre sola **cada 12 a 20 minutos** como mucho — antes entraba en la
+ruleta cada 30 segundos y andaba con el juguete en la boca todo el tiempo, que
+no es lo que hace un gato.
+
+Y cuando se va a la cama, cada tanto **se lleva un juguete y se duerme con él al
+lado**. El juguete tirado no se evapora: mientras ella esté cerca se queda ahí
+todo lo que haga falta, y recién se guarda cuando ella ya no está hace rato.
 
 ---
 

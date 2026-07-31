@@ -41,6 +41,7 @@ export class Cat {
     this.bubble = null         // {text, until}
     this.huntCooldownUntil = 0 // no vuelve a cazar el cursor hasta aca
     this.birdCooldownUntil = 0 // deja de obsesionarse con el mismo pajaro
+    this.giftCooldownUntil = 0 // traer un regalo es cada tanto, no seguido
     this.activity = 0.5        // 0 = hora de dormir, 1 = la hora loca
     this.zoomLeft = 0          // vueltas de locura que le quedan
     this.needs = null          // sus necesidades, si estan puestas
@@ -92,6 +93,7 @@ export class Cat {
       case 'tomaRegalo': return 'walk'
       case 'llevaRegalo': return 'walk'
       case 'ofrece': return 'alert'
+      case 'dormirConEl': return 'sleep'
       case 'acompana': return 'loaf'
       case 'vaAcompanar': return 'walk'
       case 'goingBox': return 'walk'
@@ -133,6 +135,7 @@ export class Cat {
       case 'tomaRegalo': return 0
       case 'llevaRegalo': return 25000
       case 'ofrece': return r(9000, 16000)
+      case 'dormirConEl': return 0
       // Acompañando se queda un rato largo: es la idea.
       case 'acompana': return r(45000, 110000)
       case 'vaAcompanar': return 0
@@ -264,6 +267,8 @@ export class Cat {
     if (next === 'ofrece') {
       const g = this.props && this.props.gift
       if (g) g.soltar(this.x)
+      // Que sea algo que pasa, no algo que hace.
+      this.giftCooldownUntil = performance.now() + 12 * 60000 + Math.random() * 480000
     }
     this.setState(next || 'idle')
   }
@@ -880,6 +885,18 @@ export class Cat {
   }
 
   /** A su cama. Va al trote hasta ahi y se duerme adentro. */
+  /** Cada tanto se lleva un juguete a la cama y lo deja al lado suyo. */
+  _llevarseAlgoALaCama () {
+    const p = this.props || {}
+    if (!p.gift || !p.toys || !p.toys.length) return false
+    if (p.gift.active) return false
+    if (Math.random() > 0.35) return false
+    const j = p.toys[Math.floor(Math.random() * p.toys.length)]
+    this.giftAnim = j.kind
+    p.gift.agarrar(j.kind, this.x)
+    return true
+  }
+
   goToBed () {
     const bed = this.props && this.props.bed
     if (!bed) return
@@ -889,7 +906,9 @@ export class Cat {
       this.napNow()
       return
     }
-    this.goTo(bed.x, 'sleep', 60000, 'trot')
+    // Cada tanto se lleva un juguete y se duerme con el al lado.
+    this._llevarseAlgoALaCama()
+    this.goTo(bed.x, 'dormirConEl', 60000, 'trot')
   }
 
   /** A rascar el poste. Se para al lado y se despereza contra el. */
@@ -1026,6 +1045,7 @@ export class Cat {
   traerRegalo () {
     const p = this.props || {}
     if (!p.gift || !p.toys || !p.toys.length) return
+    if (performance.now() < this.giftCooldownUntil) return
     const juguete = p.toys[Math.floor(Math.random() * p.toys.length)]
     this.giftAnim = juguete.kind
     this.energy = Math.max(this.energy, 0.5)
