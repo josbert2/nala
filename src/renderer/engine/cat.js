@@ -42,6 +42,7 @@ export class Cat {
     this.huntCooldownUntil = 0 // no vuelve a cazar el cursor hasta aca
     this.birdCooldownUntil = 0 // deja de obsesionarse con el mismo pajaro
     this.giftCooldownUntil = 0 // traer un regalo es cada tanto, no seguido
+    this.enojadaHasta = 0      // mientras dure, no quiere que la toquen
     this.activity = 0.5        // 0 = hora de dormir, 1 = la hora loca
     this.tuActividad = 0.5     // cuanto venis usando la compu vos
     this.zoomLeft = 0          // vueltas de locura que le quedan
@@ -90,6 +91,8 @@ export class Cat {
       case 'watchBird': return 'alert'
       case 'stalkBird': return 'stalk'
       case 'rear': return 'rear'
+      case 'enojada': return 'angry'
+      case 'seVa': return 'walk'
       case 'startle': return 'startle'
       case 'goingBird': return 'walk'
       case 'tomaRegalo': return 'walk'
@@ -133,6 +136,8 @@ export class Cat {
       case 'watchBird': return r(7000, 16000)
       case 'stalkBird': return 12000
       case 'rear': return r(1400, 2600)
+      case 'enojada': return r(2400, 3600)
+      case 'seVa': return 20000
       case 'startle': return 1300
       case 'goingBird': return 0
       case 'tomaRegalo': return 0
@@ -239,6 +244,13 @@ export class Cat {
     }
     if (this.state === 'pedir') { this.asking = null; this.setState('sit'); return }
     if (this.state === 'zoom') { this._zoomNext(); return }
+    // Despues de bufar se va, que es lo que hacen: no se quedan al lado tuyo.
+    if (this.state === 'enojada') {
+      const s = this.surface || this.world.floorAt(this.x)
+      const lejos = this.x < (s.x1 + s.x2) / 2 ? s.x2 - 40 : s.x1 + 40
+      this.goTo(lejos, 'sit', 20000, 'seVa')
+      return
+    }
     // Despues del susto se queda mirando hacia donde paso.
     if (this.state === 'startle') { this.setState('watch', 3500); return }
 
@@ -337,6 +349,7 @@ export class Cat {
     switch (this.state) {
       case 'walkTo':
       case 'llevaRegalo':
+      case 'seVa':
       case 'trot': {
         if (!this.target) { this._arrive(); break }
         const dx = this.target.x - this.x
@@ -880,6 +893,22 @@ export class Cat {
     this.setState('startle')
   }
 
+  /**
+   * Se enojo. Es lo que pasa cuando le acariciás de mas: los gatos se
+   * sobreestimulan y te bufan. Se queda un rato sin querer que la toquen, y si
+   * insistis se enoja de nuevo.
+   */
+  enojarse (desdeX) {
+    if (this.airborne) return
+    if (desdeX != null) this.facing = desdeX > this.x ? 1 : -1
+    this.enojadaHasta = performance.now() + 55000
+    this.setState('enojada')
+  }
+
+  get enojada () {
+    return performance.now() < this.enojadaHasta
+  }
+
   /** Maulla. */
   meow () {
     this.setState('meow')
@@ -904,6 +933,7 @@ export class Cat {
   }
 
   pet () {
+    if (this.enojada) { this.enojarse(); return }
     if (this.needs) this.needs.mimada()
     this.setState('purr')
     this.energy = Math.min(1, this.energy + 0.15)

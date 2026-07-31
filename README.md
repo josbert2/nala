@@ -679,6 +679,21 @@ mirada le queda distinta a la del sprite.
 
 ---
 
+## Cuando se enoja
+
+Acariciala **cinco veces en menos de 25 segundos** y se sobreestimula: orejas
+planas para atrás, ojos entrecerrados, la boca abierta del bufido y la cola
+dando latigazos bajos. Después se levanta y **se va para el otro lado**, que es
+lo que hacen — no se quedan al lado tuyo cuando se hartaron.
+
+Y queda **casi un minuto sin querer que la toques**. Si insistís durante ese
+rato, se enoja de nuevo en vez de ronronear.
+
+Es la interacción que más se parece a un gato de verdad: no es que le caigas
+mal, es que las caricias tienen un límite y cuando lo pasás te lo dice.
+
+---
+
 ## Que se pare en dos patas
 
 Jugando, **muy de vez en cuando** se para en dos patas a manotear el aire. Sale

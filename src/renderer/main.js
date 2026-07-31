@@ -38,6 +38,8 @@ const ACTION_LABELS = {
   eatTreat: 'comiendo',
   chaseButterfly: 'una mariposa',
   yawn: 'recién levantada',
+  enojada: 'dejala',
+  seVa: 'se va',
   tomaRegalo: 'te trae algo',
   llevaRegalo: 'te trae algo',
   ofrece: 'es para vos',
@@ -165,6 +167,7 @@ const pointer = {
   speed: 0, wiggle: 0, lastDir: 0, reversals: []
 }
 
+let caricias = []                  // cuando la acariciaste, para ver si te pasas
 let lastTouch = performance.now()   // ultima vez que interactuaste con ella
 let missCooldown = 0
 let missAfterMs = 12 * 60 * 1000    // cuanto aguanta antes de venir a buscarte
@@ -434,7 +437,20 @@ window.addEventListener('mouseup', (e) => {
   } else if (grip.moved) {
     cat.release()                                       // la levantaste y la soltas
   } else {
-    // No la moviste: fue una caricia. Cuanto mas la sostuviste, mas ronronea.
+    // No la moviste: fue una caricia. Pero si le acariciás de más se
+    // sobreestimula y te bufa, que es exactamente lo que hacen.
+    const now = performance.now()
+    caricias = caricias.filter((t) => now - t < 25000)
+    caricias.push(now)
+    if (caricias.length >= 5 || cat.enojada) {
+      caricias = []
+      cat.enojarse(pointer.x)
+      sayNow('enojada', 5000)
+      grip = null
+      touched()
+      return
+    }
+
     cat.pet()
     const bursts = held > 700 ? 3 : 1
     for (let i = 0; i < bursts; i++) popHearts(cat.x + (i - 1) * 12, cat.y - 40 - i * 8)

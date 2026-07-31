@@ -700,6 +700,33 @@ def pose_startle(d, t, P):
     head(d, 31, GROUND - 25 - k * 2, P, eyes="open", tilt=-1.1 - k * 0.5)
 
 
+def pose_angry(d, t, P):
+    """
+    Enojada: orejas planas para atras, ojos entrecerrados, la boca abierta del
+    bufido y la cola dando latigazos bajos y rapidos. Se le paso la mano con
+    las caricias.
+    """
+    ph = t * math.tau
+    sw = math.sin(ph * 3)                     # el latigazo va rapido
+    tenso = abs(math.sin(ph * 2)) * 0.9
+    # La cola baja, barriendo el piso de un lado al otro.
+    tail(d, (14, GROUND - 4), (4 + sw * 8, GROUND - 6), (17 + sw * 15, GROUND - 2),
+         P["dark"])
+    stripes_body(d, 20, GROUND - 11, 8, 7, P)
+    ell(d, 20, GROUND - 8, 9, 9.2, P["base"])
+    ell(d, 21, GROUND - 4, 6.5, 5.5, P["light"])
+    leg(d, 24, GROUND - 9, GROUND - 1, P["base"])
+    leg(d, 28, GROUND - 9, GROUND - 1, P["base"])
+    head(d, 27, GROUND - 21 - tenso, P, eyes="half", tilt=-1.5)
+    # La boca abierta del bufido, con los colmillos.
+    by = GROUND - 21 - tenso + 3.2
+    d.polygon([(25.4, by), (30.6, by), (28, by + 5.2)], fill=P["outline"])
+    d.polygon([(26.4, by + 0.7), (29.6, by + 0.7), (28, by + 3.4)],
+              fill=mix(P["pink"], (208, 92, 100, 255), 0.55))
+    d.polygon([(25.8, by + 0.2), (27.0, by + 0.2), (26.4, by + 2.2)], fill=P["light"])
+    d.polygon([(29.0, by + 0.2), (30.2, by + 0.2), (29.6, by + 2.2)], fill=P["light"])
+
+
 def pose_rear(d, t, P):
     """
     Parada en dos patas, manoteando algo en el aire.
@@ -815,6 +842,7 @@ ANIMATIONS = [
     ("crouch",       pose_crouch,     6,     10,   True),
     ("stalk",        pose_stalk,      8,     7,    True),
     ("rear",         pose_rear,       6,     9,    True),
+    ("angry",        pose_angry,      6,     11,   True),
     ("startle",      pose_startle,    6,     9,    False),
     ("yawn",         pose_yawn,       6,     5,    False),
     ("pounce",       pose_pounce,     4,     12,   False),

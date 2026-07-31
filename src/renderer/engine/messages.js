@@ -84,6 +84,15 @@ const DEFAULTS = {
     'Acá estoy si me necesitás.'
   ],
 
+  // Le acariciaste de mas y se sobreestimulo.
+  enojada: [
+    'Ya está. Basta.',
+    'Bueno, suficiente.',
+    'Fsss.',
+    'Dejame un rato.',
+    'Ahí me hartaste.'
+  ],
+
   // Se despierta de una siesta.
   waking: [
     'Dormí bien.',
