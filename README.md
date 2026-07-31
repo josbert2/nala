@@ -679,6 +679,25 @@ mirada le queda distinta a la del sprite.
 
 ---
 
+## Parpadeo y orejas
+
+Antes **sólo parpadeaba en `idle`**: en todas las demás poses tenía los ojos
+fijos como un muñeco. Ahora parpadea en cualquier pose con los ojos abiertos —
+`head()` recibe la fase de la animación y cierra los ojos en un tramo corto de
+la vuelta. Como cada animación tiene su largo y su velocidad, ninguna parpadea
+al mismo tiempo que otra. La única que no parpadea es `run`, que corre con los
+ojos entrecerrados a propósito.
+
+Y las orejas **ya no se mueven las dos juntas**, que es lo que menos hace un
+gato: hay un tic que gira **una sola**, en dos momentos distintos de la vuelta y
+cada vez la otra.
+
+Las ventanas de tiempo están elegidas para que caigan en algún frame de todas
+las animaciones, que van de 4 a 8 frames. Con la primera versión, las de 4
+frames no parpadeaban nunca.
+
+---
+
 ## Su cola
 
 La cola es lo más expresivo que tiene un gato, y estaba diciendo siempre lo

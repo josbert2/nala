@@ -274,11 +274,29 @@ def hex2rgba(h):
 # ------------------------------------------------------------------- partes
 
 
-def head(d, cx, cy, P, eyes="open", tilt=0.0):
+def head(d, cx, cy, P, eyes="open", tilt=0.0, t=None):
     """
     Su cabeza: gorro gris tabby arriba, blaze blanco al medio de la frente,
     melena de pelo largo alrededor, orejas rosas por dentro.
+
+    Si se le pasa `t` (la fase de la animacion) tambien parpadea y le da un tic
+    de oreja. Antes solo parpadeaba en idle: en el resto de las poses tenia los
+    ojos fijos como un muñeco, y las dos orejas se movian siempre juntas, que es
+    lo que menos hace un gato.
     """
+    # Un parpadeo corto en un punto de la vuelta. Como cada animacion tiene su
+    # largo y su velocidad, ninguna parpadea al mismo tiempo que otra.
+    if eyes == "open" and t is not None and 0.72 <= t < 0.86:
+        eyes = "closed"
+
+    # El tic: se mueve UNA oreja sola, no las dos. En dos momentos distintos de
+    # la vuelta, y cada vez la otra.
+    tic, cual = 0.0, 0
+    if t is not None:
+        if 0.26 <= t < 0.36:
+            tic, cual = 0.9, -1
+        elif 0.50 <= t < 0.58:
+            tic, cual = 0.7, 1
     # melena: mechones que rodean toda la cabeza
     fluff(d, cx, cy + 0.5, 8.3, 7.3, P["base"], n=15, amp=1.8)
 
@@ -286,8 +304,9 @@ def head(d, cx, cy, P, eyes="open", tilt=0.0):
     # lado de la cara. Rosas por dentro las dos.
     for sign, ox in ((-1, -5), (1, 5)):
         bx = cx + ox
-        tipx = bx + 1 + sign * tilt * 2
-        tipy = cy - 12 + abs(tilt)
+        gira = tilt + (tic if sign == cual else 0.0)
+        tipx = bx + 1 + sign * gira * 2
+        tipy = cy - 12 + abs(gira)
         if mk("sideCap"):
             # Con el parche de un lado, esa oreja es gris y la otra blanca. La
             # blanca necesita un tono apenas mas oscuro o desaparece sobre la
@@ -394,7 +413,7 @@ def pose_sit(d, t, P):
     stripes_body(d, 20, GROUND - 11 + bob, 8, 7, P)
     leg(d, 24, GROUND - 9 + bob, GROUND - 1, P["base"])      # patas delanteras
     leg(d, 28, GROUND - 9 + bob, GROUND - 1, P["base"])
-    head(d, 27, GROUND - 22, P)
+    head(d, 27, GROUND - 22, P, t=t)
 
 
 def pose_idle(d, t, P):
@@ -428,7 +447,7 @@ def pose_walk(d, t, P):
     # patas delanteras
     leg(d, 15 + swing_f, GROUND - 10 + bob, GROUND - 1, P["base"])
     leg(d, 29 + swing_f, GROUND - 10 + bob, GROUND - 1, P["base"])
-    head(d, 31, GROUND - 20, P)
+    head(d, 31, GROUND - 20, P, t=t)
 
 
 def pose_run(d, t, P):
@@ -597,7 +616,7 @@ def pose_play(d, t, P):
     leg(d, 24, GROUND - 9, GROUND - 1, P["base"])
     d.rectangle([28, GROUND - 18 - swat, 32, GROUND - 8 - swat * 0.3], fill=P["base"])
     ell(d, 30, GROUND - 18 - swat, 2.4, 2.0, P["base"])
-    head(d, 27, GROUND - 22, P, eyes="open", tilt=0.3)
+    head(d, 27, GROUND - 22, P, eyes="open", tilt=0.3, t=t)
 
 
 def pose_slide(d, t, P):
@@ -711,7 +730,7 @@ def pose_sit_alert(d, t, P):
     stripes_body(d, 20, GROUND - 11, 8, 7, P)
     leg(d, 24, GROUND - 9, GROUND - 1, P["base"])
     leg(d, 28, GROUND - 9, GROUND - 1, P["base"])
-    head(d, 27, GROUND - 23, P, eyes="open", tilt=-0.4)
+    head(d, 27, GROUND - 23, P, eyes="open", tilt=-0.4, t=t)
 
 
 def pose_scratch(d, t, P):
