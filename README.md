@@ -679,6 +679,20 @@ mirada le queda distinta a la del sprite.
 
 ---
 
+## Que se pare en dos patas
+
+Jugando, **muy de vez en cuando** se para en dos patas a manotear el aire. Sale
+poco a propósito: es un gesto puntual y si lo hiciera seguido dejaría de llamar
+la atención. Un 5% por segundo mientras juega, y un 8% mientras persigue una
+mariposa que vuela alto.
+
+La celda mide 48 px y parada ocupa casi todo el alto, así que las medidas van
+justas para que las orejas no queden cortadas. Y las patas delanteras van bien
+separadas del cuerpo: pegadas al torso desaparecían, porque son del mismo color
+y quedaban dentro de la silueta.
+
+---
+
 ## Parpadeo y orejas
 
 Antes **sólo parpadeaba en `idle`**: en todas las demás poses tenía los ojos

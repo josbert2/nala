@@ -700,6 +700,43 @@ def pose_startle(d, t, P):
     head(d, 31, GROUND - 25 - k * 2, P, eyes="open", tilt=-1.1 - k * 0.5)
 
 
+def pose_rear(d, t, P):
+    """
+    Parada en dos patas, manoteando algo en el aire.
+
+    Sale poco a proposito: es un gesto puntual, y si lo hiciera seguido dejaria
+    de llamar la atencion. La celda mide 48 y parada ocupa casi todo el alto,
+    asi que las medidas van justas para que las orejas no queden cortadas.
+    """
+    ph = t * math.tau
+    manota = math.sin(ph * 2) * 3.6
+    bal = math.sin(ph) * 1.1                  # se balancea para no caerse
+
+    # La cola le hace de contrapeso, estirada para atras.
+    tail(d, (12, GROUND - 8), (2, GROUND - 15 + bal), (11, GROUND - 25), P["dark"])
+
+    leg(d, 17 - bal, GROUND - 10, GROUND - 1, P["dark"])
+    leg(d, 23 - bal, GROUND - 10, GROUND - 1, P["base"])
+
+    # El cuerpo, parado y estirado.
+    stripes_body(d, 21 + bal, GROUND - 21, 6, 8, P)
+    ell(d, 21 + bal, GROUND - 19, 7.2, 9.5, P["base"])
+    ell(d, 23 + bal, GROUND - 17, 4.6, 6.5, P["light"])
+
+    # Las patas delanteras arriba, manoteando alternadas.
+    # Bien separadas del cuerpo: pegadas al torso se perdian, porque son del
+    # mismo color y quedaban adentro de la silueta.
+    for lado, fase in ((1, manota), (-1, -manota)):
+        px = 21 + bal + lado * 11.5
+        py = GROUND - 24 - fase
+        d.line([(21 + bal + lado * 4, GROUND - 18), (px, py + 2)],
+               fill=P["base"], width=4)
+        ell(d, px, py, 2.8, 2.5, P["base"])
+        ell(d, px, py + 0.6, 2.0, 1.7, P["light"])
+
+    head(d, 22 + bal, GROUND - 29, P, eyes="open", tilt=0.25, t=t)
+
+
 def pose_stalk(d, t, P):
     """
     Acechando: el cuerpo pegado al piso y las patas avanzando muy despacio,
@@ -777,6 +814,7 @@ ANIMATIONS = [
     ("eat",          pose_eat,        6,     7,    True),
     ("crouch",       pose_crouch,     6,     10,   True),
     ("stalk",        pose_stalk,      8,     7,    True),
+    ("rear",         pose_rear,       6,     9,    True),
     ("startle",      pose_startle,    6,     9,    False),
     ("yawn",         pose_yawn,       6,     5,    False),
     ("pounce",       pose_pounce,     4,     12,   False),

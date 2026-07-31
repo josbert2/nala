@@ -89,6 +89,7 @@ export class Cat {
       case 'inBox': return 'alert'
       case 'watchBird': return 'alert'
       case 'stalkBird': return 'stalk'
+      case 'rear': return 'rear'
       case 'startle': return 'startle'
       case 'goingBird': return 'walk'
       case 'tomaRegalo': return 'walk'
@@ -131,6 +132,7 @@ export class Cat {
       // Mirando un pajaro se queda pegada un buen rato.
       case 'watchBird': return r(7000, 16000)
       case 'stalkBird': return 12000
+      case 'rear': return r(1400, 2600)
       case 'startle': return 1300
       case 'goingBird': return 0
       case 'tomaRegalo': return 0
@@ -423,6 +425,12 @@ export class Cat {
       }
       case 'chaseButterfly': {
         const b = this.props && this.props.butterfly
+        // Con la mariposa alta, cada tanto se para a manotearla.
+        if (b && b.active && this.y - b.y > 110 && Math.random() < dt * 0.08) {
+          this.vx = 0
+          this.setState('rear')
+          break
+        }
         if (!b || !b.active) { this.setState('idle', 1200); break }
         const dx = b.x - this.x
         this.facing = Math.sign(dx) || 1
@@ -484,6 +492,10 @@ export class Cat {
       }
       case 'play': {
         this.vx = 0
+        // Muy de vez en cuando se para en dos patas a manotear el aire. Sale
+        // poco a proposito: es un gesto puntual y seguido dejaria de llamar la
+        // atencion.
+        if (Math.random() < dt * 0.05) { this.setState('rear'); break }
         const ball = this.props && this.props.ball
         if (!ball || !ball.active) { this.setState('idle', 1500); break }
         this.facing = ball.x > this.x ? 1 : -1
