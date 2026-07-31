@@ -870,6 +870,7 @@ function loop (now) {
     // El ritmo del dia empuja lo que tiende a hacer: los gatos son
     // crepusculares, no viven igual a las 4 de la tarde que a las 8.
     cat.activity = routine.activity()
+    cat.tuActividad = trabajo
 
     // Cosas que dice atadas a lo que le acaba de pasar.
     // Los sueños salen espaciados: si soñara seguido dejaria de tener gracia.

@@ -43,6 +43,7 @@ export class Cat {
     this.birdCooldownUntil = 0 // deja de obsesionarse con el mismo pajaro
     this.giftCooldownUntil = 0 // traer un regalo es cada tanto, no seguido
     this.activity = 0.5        // 0 = hora de dormir, 1 = la hora loca
+    this.tuActividad = 0.5     // cuanto venis usando la compu vos
     this.zoomLeft = 0          // vueltas de locura que le quedan
     this.needs = null          // sus necesidades, si estan puestas
     this.asking = null         // 'comida' | 'agua' cuando te esta pidiendo
@@ -631,6 +632,18 @@ export class Cat {
   _decide (ctx) {
     const roll = Math.random()
 
+    // Lo que estas haciendo vos INCLINA la balanza, no la decide: su ritmo de
+    // gato — la curva del dia — sigue mandando. Si no, deja de ser un gato y
+    // pasa a ser un indicador de tu teclado.
+    //
+    // Trabajando vos, ella se queda tranquila cerca: es lo que hacen, y ademas
+    // es lo unico que le permite quedarse abierta todo el dia sin molestar. Y
+    // de paso todo lo lindo que hace — el pan, los prrr, los sueños — pasa
+    // delante tuyo en vez de cuando mirás para otro lado.
+    const conVos = this.tuActividad != null ? this.tuActividad : 0.5
+    const quieta = conVos > 0.6
+    const sola = conVos < 0.2
+
     // Sus necesidades van primero, y se las resuelve sola. Solo cuando llega
     // al plato y esta vacio te pide algo.
     if (this.needs && this.surface && this.surface.isFloor) {
@@ -705,7 +718,7 @@ export class Cat {
     // Cada tanto usa sus cosas: el rascadero, un juguete, el arbol, o se mete
     // en la cueva si ya esta con sueño. Con su propio cooldown, para que no se
     // pase la vida yendo de un mueble al otro.
-    if (this.surface && this.surface.isFloor && roll < 0.34 &&
+    if (this.surface && this.surface.isFloor && roll < (quieta ? 0.10 : 0.42) &&
         performance.now() > this.furnitureCooldownUntil) {
       const p = this.props || {}
       const options = []
@@ -726,7 +739,7 @@ export class Cat {
 
     // Cada tanto se manda a otro monitor. Va al trote y de una: a paso de gata
     // cruzar el escritorio entero le llevaria minutos.
-    if (this.energy > 0.45 && performance.now() > this.tripCooldownUntil &&
+    if (!quieta && this.energy > 0.45 && performance.now() > this.tripCooldownUntil &&
         Math.random() < 0.10) {
       const there = this._otherScreenTarget()
       if (there != null) {
@@ -736,7 +749,7 @@ export class Cat {
       }
     }
 
-    if (roll < 0.42) {
+    if (roll < (quieta ? 0.16 : sola ? 0.52 : 0.42)) {
       const s = this.surface || this.world.floorAt(this.x)
       const min = s.x1 + 20
       const max = s.x2 - 20
@@ -745,9 +758,14 @@ export class Cat {
       return
     }
 
-    const pool = (this.energy < 0.45 || this.activity < 0.4)
-      ? ['sleep', 'sleep', 'loaf', 'idle', 'groom']
-      : ['idle', 'sit', 'loaf', 'groom', 'stretch', 'idle']
+    // Con vos trabajando se echa; sin vos y con energia, se mueve.
+    const pool = quieta
+      ? ['loaf', 'loaf', 'sleep', 'groom', 'sit']
+      : (this.energy < 0.45 || this.activity < 0.4)
+          ? ['sleep', 'sleep', 'loaf', 'idle', 'groom']
+          : sola
+              ? ['idle', 'sit', 'stretch', 'groom', 'loaf']
+              : ['idle', 'sit', 'loaf', 'groom', 'stretch', 'idle']
     this.setState(pool[Math.floor(Math.random() * pool.length)])
   }
 

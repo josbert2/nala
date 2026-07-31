@@ -190,6 +190,27 @@ ahí.
 
 ---
 
+## Trabajás vos, duerme ella
+
+Lo que estás haciendo vos **inclina** lo que ella elige hacer, pero no lo decide:
+su ritmo de gato — la curva del día — sigue mandando. Si lo decidiera, dejaría
+de ser un gato y pasaría a ser un indicador de tu teclado.
+
+- **Mientras venís usando la compu** se queda tranquila cerca: pose de pan,
+  dormir, lamerse. Casi no sale de excursión, no se va a otro monitor y da menos
+  vueltas.
+- **Cuando dejás el teclado un rato** se enciende: camina más, se estira, se mete
+  en sus cosas.
+
+Va así por tres razones. Es lo que hacen de verdad — un gato duerme al lado tuyo
+mientras trabajás y se activa cuando parás. Es lo único que le permite quedarse
+abierta todo el día sin volverse molesta. Y, la que menos se ve venir: si sólo se
+activara cuando no estás, **nunca la verías hacer nada**. Lo mejor que tiene —
+la pose de pan, los prrr, los sueños, el bostezo — pasaría siempre con vos
+mirando para otro lado.
+
+---
+
 ## Que se venga a acompañar
 
 Si venís moviendo el mouse un rato largo — o sea, si estás trabajando — cada
@@ -466,6 +487,27 @@ puede usar `{dias}`:
 Para cambiar la fecha de inicio, editá `desde` en `estado.json`. Si querés que
 cuente desde el día que llegó a tu casa y no desde que instalaste la app, es
 ahí.
+
+---
+
+## Trabajás vos, duerme ella
+
+Lo que estás haciendo vos **inclina** lo que ella elige hacer, pero no lo decide:
+su ritmo de gato — la curva del día — sigue mandando. Si lo decidiera, dejaría
+de ser un gato y pasaría a ser un indicador de tu teclado.
+
+- **Mientras venís usando la compu** se queda tranquila cerca: pose de pan,
+  dormir, lamerse. Casi no sale de excursión, no se va a otro monitor y da menos
+  vueltas.
+- **Cuando dejás el teclado un rato** se enciende: camina más, se estira, se mete
+  en sus cosas.
+
+Va así por tres razones. Es lo que hacen de verdad — un gato duerme al lado tuyo
+mientras trabajás y se activa cuando parás. Es lo único que le permite quedarse
+abierta todo el día sin volverse molesta. Y, la que menos se ve venir: si sólo se
+activara cuando no estás, **nunca la verías hacer nada**. Lo mejor que tiene —
+la pose de pan, los prrr, los sueños, el bostezo — pasaría siempre con vos
+mirando para otro lado.
 
 ---
 
