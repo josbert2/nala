@@ -215,6 +215,34 @@ def tail(d, p0, p1, p2, color, r0=3.6, r1=2.4, plume=True):
         ell(d, x - nx * r * 0.8, y - ny * r * 0.8, 1.5, 1.5, color)
 
 
+def cola(d, t, bx, by, modo, P):
+    """
+    La cola, con humor. Antes casi todas las poses usaban la misma curva y se
+    notaba muchisimo: la cola es lo mas expresivo que tiene un gato y estaba
+    diciendo siempre lo mismo.
+
+      alta       parada y con la punta temblando. Contenta, saludando.
+      baja       apoyada y floja, con un latigazo lento cada tanto.
+      latigazo   barre de lado a lado. Concentrada, o molesta.
+      enroscada  le rodea el cuerpo. Dormida, o hecha un pan.
+    """
+    ph = t * math.tau
+    if modo == "alta":
+        p1 = (bx - 8, by - 13)
+        p2 = (bx - 3 + math.sin(ph * 2) * 2.6, by - 27)
+    elif modo == "baja":
+        p1 = (bx - 10, by - 4)
+        p2 = (bx - 19 + math.sin(ph) * 3.4, by - 1)
+    elif modo == "latigazo":
+        sw = math.sin(ph * 2)
+        p1 = (bx - 5 + sw * 7, by - 10)
+        p2 = (bx - 1 + sw * 14, by - 20)
+    else:  # enroscada
+        p1 = (bx + 8, by - 10)
+        p2 = (bx - 12 + math.sin(ph) * 1.2, by - 7)
+    tail(d, (bx, by), p1, p2, P["dark"])
+
+
 def leg(d, x, y_top, y_bot, color, w=1.6):
     d.rectangle([x - w, y_top, x + w, y_bot], fill=color)
     ell(d, x, y_bot, w + 0.4, 1.4, color)   # patita
@@ -360,7 +388,7 @@ def stripes_body(d, cx, cy, rx, ry, P, n=3):
 def pose_sit(d, t, P):
     """Sentada de 3/4, cola enroscada. t = fase de respiracion."""
     bob = math.sin(t * math.tau) * 0.7
-    tail(d, (14, GROUND - 3), (5, GROUND - 12), (13, GROUND - 18), P["dark"])
+    cola(d, t, 14, GROUND - 3, "baja", P)
     ell(d, 20, GROUND - 8 + bob, 9, 9.5, P["base"])          # cuerpo
     ell(d, 21, GROUND - 4 + bob, 6.5, 5.5, P["light"])       # pecho
     stripes_body(d, 20, GROUND - 11 + bob, 8, 7, P)
@@ -373,8 +401,7 @@ def pose_idle(d, t, P):
     """Igual que sit pero parpadea."""
     frame = int(t * 4) % 4
     bob = math.sin(t * math.tau) * 0.7
-    tail_lift = math.sin(t * math.tau * 2) * 3
-    tail(d, (14, GROUND - 3), (5, GROUND - 12 - tail_lift), (13, GROUND - 18), P["dark"])
+    cola(d, t, 14, GROUND - 3, "alta", P)
     ell(d, 20, GROUND - 8 + bob, 9, 9.5, P["base"])
     ell(d, 21, GROUND - 4 + bob, 6.5, 5.5, P["light"])
     stripes_body(d, 20, GROUND - 11 + bob, 8, 7, P)
@@ -390,7 +417,7 @@ def pose_walk(d, t, P):
     swing_b = math.sin(ph + math.pi) * 3.5
     bob = abs(math.sin(ph)) * 1.2
 
-    tail(d, (10, GROUND - 12 + bob), (3, GROUND - 20), (9, GROUND - 26 - swing_f), P["dark"])
+    cola(d, t, 10, GROUND - 12 + bob, "alta", P)
     # patas traseras
     leg(d, 12 + swing_b, GROUND - 10 + bob, GROUND - 1, P["dark"])
     leg(d, 26 + swing_b, GROUND - 10 + bob, GROUND - 1, P["dark"])
@@ -441,8 +468,7 @@ def pose_loaf(d, t, P):
     frame = int(t * 6) % 6
 
     # la cola le da la vuelta por delante, apoyada en el piso
-    tail(d, (9, GROUND - 3), (3, GROUND - 10), (17, GROUND - 2), P["dark"],
-         r0=3.2, r1=2.3)
+    cola(d, t, 9, GROUND - 3, "enroscada", P)
 
     # el bulto del cuerpo: ancho abajo y redondo arriba, sin patas a la vista
     fluff(d, 22, GROUND - 7 + breath, 12.6, 7.4, P["base"], n=16, amp=1.7)
@@ -460,7 +486,7 @@ def pose_groom(d, t, P):
     """Sentada lamiendose la pata."""
     ph = t * math.tau
     lick = math.sin(ph) * 2
-    tail(d, (14, GROUND - 3), (5, GROUND - 11), (12, GROUND - 17), P["dark"])
+    cola(d, t, 14, GROUND - 3, "baja", P)
     stripes_body(d, 20, GROUND - 11, 8, 7, P)
     ell(d, 20, GROUND - 8, 9, 9.5, P["base"])
     ell(d, 21, GROUND - 4, 6.5, 5.5, P["light"])
@@ -564,7 +590,7 @@ def pose_pounce(d, t, P):
 def pose_play(d, t, P):
     """Sentada manoteando algo con la pata delantera."""
     swat = math.sin(t * math.tau) * 6
-    tail(d, (14, GROUND - 3), (5 + swat * 0.4, GROUND - 11), (13, GROUND - 18), P["dark"])
+    cola(d, t, 14, GROUND - 3, "latigazo", P)
     ell(d, 20, GROUND - 8, 9, 9.5, P["base"])
     ell(d, 21, GROUND - 4, 6.5, 5.5, P["light"])
     stripes_body(d, 20, GROUND - 11, 8, 7, P)
@@ -679,8 +705,7 @@ def pose_stalk(d, t, P):
 
 def pose_sit_alert(d, t, P):
     """Sentada, atenta, mirando al cursor. Orejas paradas, cola inquieta."""
-    swish = math.sin(t * math.tau * 2) * 5
-    tail(d, (14, GROUND - 3), (6 + swish, GROUND - 10), (14 + swish, GROUND - 20), P["dark"])
+    cola(d, t, 14, GROUND - 3, "latigazo", P)
     ell(d, 20, GROUND - 8, 9, 9.5, P["base"])
     ell(d, 21, GROUND - 4, 6.5, 5.5, P["light"])
     stripes_body(d, 20, GROUND - 11, 8, 7, P)

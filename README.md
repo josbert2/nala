@@ -679,6 +679,25 @@ mirada le queda distinta a la del sprite.
 
 ---
 
+## Su cola
+
+La cola es lo más expresivo que tiene un gato, y estaba diciendo siempre lo
+mismo: casi todas las poses usaban la misma curva. Ahora hay cuatro modos, en
+`cola()` en `tools/make_sprites.py`:
+
+| | Qué dice | Dónde |
+|---|---|---|
+| `alta` | contenta, saludando. Parada con la punta temblando | idle, caminando |
+| `baja` | tranquila. Apoyada y floja, con un latigazo lento | sentada, lamiéndose |
+| `latigazo` | concentrada o molesta. Barre de lado a lado | atenta, jugando |
+| `enroscada` | dormida. Le rodea el cuerpo | pose de pan, durmiendo |
+
+Cada modo tiene su propio ritmo, así que dos poses con el mismo modo tampoco se
+mueven igual. Aparte están la cola inflada del sobresalto y la estirada del
+acecho, que van dibujadas dentro de esas poses.
+
+---
+
 ## Cómo mira
 
 Dos cosas que hacen que se lea como un gato y no como un muñeco:
