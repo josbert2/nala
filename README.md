@@ -681,7 +681,7 @@ mirada le queda distinta a la del sprite.
 
 ## Cosas chicas que hacen los gatos
 
-Cuatro más, de las que se reconocen al toque:
+Seis más, de las que se reconocen al toque:
 
 - **El blep.** Se distrae a mitad de lamerse y le queda **la lengua un poco
   afuera**, quieta, unos segundos. Ni se da cuenta. Pasa 1 de cada 4 veces que
@@ -692,6 +692,11 @@ Cuatro más, de las que se reconocen al toque:
 - **Amasar.** Antes de dormirse en su cama aprieta con las patas delanteras
   alternadas, como haciendo pan. Lo hacen cuando están de verdad cómodas, así
   que va justo ahí y en ningún otro lado.
+- **Frotarse contra sus cosas.** Camina hasta el rascadero, el árbol, la caja o
+  la cama y le pasa el cachete con los ojos cerrados, la cabeza yendo y
+  viniendo. Así marcan lo que es suyo.
+- **Olfatear el piso.** Nariz abajo, avanzando a 15 px/s — casi nada. No está
+  yendo a ningún lado: está siguiendo algo que sólo ella percibe.
 - **Quedarse mirando la nada.** Fija la vista en un punto vacío y se queda entre
   18 y 36 segundos sin moverse. Y **deja de seguirte con los ojos** — que no
   reaccione a nada es todo el gesto.

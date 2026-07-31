@@ -839,8 +839,36 @@
         []
       ]
     },
-    "sacudirse": {
+    "frotar": {
       "row": 20,
+      "frames": 6,
+      "fps": 6,
+      "loop": true,
+      "eyes": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "olfatear": {
+      "row": 21,
+      "frames": 6,
+      "fps": 5,
+      "loop": true,
+      "eyes": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "sacudirse": {
+      "row": 22,
       "frames": 8,
       "fps": 16,
       "loop": true,
@@ -856,7 +884,7 @@
       ]
     },
     "amasar": {
-      "row": 21,
+      "row": 23,
       "frames": 6,
       "fps": 6,
       "loop": true,
@@ -870,7 +898,7 @@
       ]
     },
     "startle": {
-      "row": 22,
+      "row": 24,
       "frames": 6,
       "fps": 9,
       "loop": false,
@@ -938,7 +966,7 @@
       ]
     },
     "yawn": {
-      "row": 23,
+      "row": 25,
       "frames": 6,
       "fps": 5,
       "loop": false,
@@ -952,7 +980,7 @@
       ]
     },
     "pounce": {
-      "row": 24,
+      "row": 26,
       "frames": 4,
       "fps": 12,
       "loop": false,
@@ -1000,7 +1028,7 @@
       ]
     },
     "play": {
-      "row": 25,
+      "row": 27,
       "frames": 6,
       "fps": 9,
       "loop": true,
@@ -1059,7 +1087,7 @@
       ]
     },
     "slide": {
-      "row": 26,
+      "row": 28,
       "frames": 4,
       "fps": 12,
       "loop": true,

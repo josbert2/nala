@@ -6,6 +6,7 @@ const TROT_SPEED = 95       // el trote de cuando se va a otro monitor
 const RUN_SPEED = 130
 const SLIDE_SPEED = 320     // el envion del derrape
 const STALK_SPEED = 22      // el acecho: mas rapido y el pajaro se le va
+const SNIFF_SPEED = 15      // olfateando avanza casi nada
 const MAX_FALL = 900
 const HUNT_COOLDOWN = 20000  // cuanto espera antes de volver a cazar el cursor
 
@@ -94,6 +95,9 @@ export class Cat {
       case 'enojada': return 'angry'
       case 'rascarse': return 'rascarse'
       case 'mirandoLaNada': return 'sit'
+      case 'frotarse': return 'frotar'
+      case 'olfatear': return 'olfatear'
+      case 'yendoAFrotar': return 'walk'
       case 'seVa': return 'walk'
       case 'startle': return 'startle'
       case 'goingBird': return 'walk'
@@ -146,6 +150,9 @@ export class Cat {
       case 'amasar': return r(3500, 6000)
       // Mirar la nada es largo a proposito: el gesto ES que no se mueva.
       case 'mirandoLaNada': return r(18000, 36000)
+      case 'frotarse': return r(2600, 4400)
+      case 'olfatear': return r(4000, 8000)
+      case 'yendoAFrotar': return 0
       case 'seVa': return 20000
       case 'startle': return 1300
       case 'goingBird': return 0
@@ -553,6 +560,15 @@ export class Cat {
         }
         break
       }
+      case 'olfatear': {
+        // Avanza casi nada: no va a ningun lado, sigue algo.
+        this.vx = this.facing * SNIFF_SPEED
+        break
+      }
+      case 'frotarse': {
+        this.vx = 0
+        break
+      }
       case 'stalkBird': {
         // Agazapada y muy despacio: es la unica forma de acercarsele. Si va
         // rapido el pajaro levanta vuelo mucho antes.
@@ -770,6 +786,8 @@ export class Cat {
       // La caja tira mas que el resto: es una caja.
       if (p.box) { options.push(() => this.goToBox()); options.push(() => this.goToBox()) }
       if (p.gift && p.toys && p.toys.length) options.push(() => this.traerRegalo())
+      options.push(() => this.frotarse())
+      options.push(() => this.olfatear())
       if (options.length) {
         this.furnitureCooldownUntil = performance.now() + 30000
         options[Math.floor(Math.random() * options.length)]()
@@ -1053,6 +1071,28 @@ export class Cat {
       return
     }
     this.goTo(b.x, 'goingBird', 20000)
+  }
+
+  /** Se frota el cachete contra algo suyo. Asi marcan lo que es de ellos. */
+  frotarse () {
+    const p = this.props || {}
+    const cosas = [p.post, p.tree, p.cave, p.box, p.bed].filter(Boolean)
+    if (!cosas.length) return
+    const c = cosas.find((x) => Math.abs(x.x - this.x) < 40) ||
+              cosas[Math.floor(Math.random() * cosas.length)]
+    if (Math.abs(c.x - this.x) < 40 && this.surface && this.surface.isFloor) {
+      this.facing = c.x >= this.x ? 1 : -1
+      this.setState('frotarse')
+      return
+    }
+    this.goTo(c.x - 26, 'yendoAFrotar', 25000)
+  }
+
+  /** Sigue un olor por el piso, avanzando casi nada. */
+  olfatear () {
+    if (!this.surface || !this.surface.isFloor) return
+    this.facing = Math.random() < 0.5 ? -1 : 1
+    this.setState('olfatear')
   }
 
   /** A tomar agua. Si el bebedero esta vacio, se sienta al lado y te lo pide. */

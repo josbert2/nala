@@ -700,6 +700,48 @@ def pose_startle(d, t, P):
     head(d, 31, GROUND - 25 - k * 2, P, eyes="open", tilt=-1.1 - k * 0.5)
 
 
+def pose_frotar(d, t, P):
+    """
+    Frotando el cachete contra algo. La cabeza va y viene apretada y el cuerpo
+    la acompaña; los ojos van cerrados, que es como lo hacen. Asi marcan lo que
+    es suyo.
+    """
+    ph = t * math.tau
+    ida = math.sin(ph) * 3.6
+    lean = math.sin(ph) * 1.3
+    cola(d, t, 11, GROUND - 4, "alta", P)
+    stripes_body(d, 20 + lean, GROUND - 13, 9, 5, P)
+    ell(d, 20 + lean, GROUND - 11, 10.5, 6.2, P["base"])
+    ell(d, 22 + lean, GROUND - 8, 7.5, 3.2, P["light"])
+    leg(d, 16, GROUND - 8, GROUND - 1, P["dark"])
+    leg(d, 26, GROUND - 8, GROUND - 1, P["base"])
+    head(d, 31 + ida, GROUND - 17, P, eyes="closed", tilt=0.9)
+
+
+def pose_olfatear(d, t, P):
+    """
+    Olfateando el piso: la nariz abajo, avanzando muy despacio. Las patas se
+    mueven poco — no esta yendo a ningun lado, esta siguiendo algo.
+    """
+    ph = t * math.tau
+    sw = math.sin(ph) * 2.0
+    bob = abs(math.sin(ph * 2)) * 0.8
+    cola(d, t, 9, GROUND - 12, "baja", P)
+    leg(d, 12 - sw, GROUND - 10 + bob, GROUND - 1, P["dark"])
+    leg(d, 24 - sw, GROUND - 10 + bob, GROUND - 1, P["dark"])
+    stripes_body(d, 20, GROUND - 16 + bob, 10, 5, P)
+    ell(d, 20, GROUND - 14 + bob, 11, 6, P["base"])
+    ell(d, 21, GROUND - 11 + bob, 8, 3.2, P["light"])
+    leg(d, 16 + sw, GROUND - 10 + bob, GROUND - 1, P["base"])
+    leg(d, 29 + sw, GROUND - 10 + bob, GROUND - 1, P["base"])
+    head(d, 33, GROUND - 10 + bob * 0.6, P, eyes="half", tilt=0.5)
+    # el olfateo: unas rayitas cortas delante de la nariz
+    for i in range(2):
+        x = 40 + i * 2.5
+        y = GROUND - 8 + math.sin(ph * 3 + i) * 1.2
+        d.line([(x, y), (x + 2, y)], fill=P["light"])
+
+
 def pose_blep(d, t, P):
     """
     El blep: se distrajo a mitad de lamerse y le quedo la lengua un poco afuera,
@@ -932,6 +974,8 @@ ANIMATIONS = [
     ("angry",        pose_angry,      6,     11,   True),
     ("rascarse",     pose_rascarse,   8,     14,   True),
     ("blep",         pose_blep,       4,     3,    True),
+    ("frotar",       pose_frotar,     6,     6,    True),
+    ("olfatear",     pose_olfatear,   6,     5,    True),
     ("sacudirse",    pose_sacudirse,  8,     16,   True),
     ("amasar",       pose_amasar,     6,     6,    True),
     ("startle",      pose_startle,    6,     9,    False),
