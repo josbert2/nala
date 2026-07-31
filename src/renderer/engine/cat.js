@@ -181,8 +181,31 @@ export class Cat {
     if (!this.airborne && this.elapsed > this.hold) this._onHoldEnd(ctx)
   }
 
+  /**
+   * Los estados que solo marcan "ya llegue": resuelven llamando al metodo que
+   * corresponda. Si ese metodo se va sin hacer nada — el pajaro desaparecio, el
+   * juguete ya no esta — hay que sacarla igual, o se queda caminando en el
+   * lugar con la animacion puesta y sin avanzar nunca.
+   */
+  LLEGADAS = {
+    goingWater: (c) => c.goToWater(),
+    goingEat: (c) => c.goToEat(),
+    goingBox: (c) => c.goToBox(),
+    goingBird: (c) => c.watchBird(),
+    vaAcompanar: (c, ctx) => c.acompanar(ctx)
+  }
+
   /** Encadenamientos fijos: agazaparse siempre termina en salto. */
   _onHoldEnd (ctx) {
+    const llegada = this.LLEGADAS[this.state]
+    if (llegada) {
+      const antes = this.state
+      llegada(this, ctx)
+      // Red de seguridad: si el metodo no la movio de estado, la sacamos.
+      if (this.state === antes) this.setState('idle', 1200)
+      return
+    }
+
     // Se cansa del pajaro. Sin esto lo miraba, terminaba, y _decide la mandaba
     // a mirar el mismo pajaro otra vez: se quedaba tiesa los dos minutos que
     // dura el pajaro.
@@ -212,10 +235,6 @@ export class Cat {
     if (this.state === 'zoom') { this._zoomNext(); return }
     // Despues del susto se queda mirando hacia donde paso.
     if (this.state === 'startle') { this.setState('watch', 3500); return }
-    if (this.state === 'goingWater') { this.goToWater(); return }
-    if (this.state === 'goingEat') { this.goToEat(); return }
-    if (this.state === 'goingBox') { this.goToBox(); return }
-    if (this.state === 'goingBird') { this.watchBird(); return }
 
     // Levanta el juguete y lo lleva hasta donde tenes el cursor.
     if (this.state === 'tomaRegalo') {
@@ -227,7 +246,6 @@ export class Cat {
       return
     }
     if (this.state === 'ofrece') { this.setState('sit'); return }
-    if (this.state === 'vaAcompanar') { this.acompanar(ctx); return }
     if (this.state === 'play') {
       const ball = this.props && this.props.ball
       if (ball && ball.active && Math.abs(ball.x - this.x) > 40) {
