@@ -791,8 +791,24 @@
         []
       ]
     },
-    "startle": {
+    "rascarse": {
       "row": 18,
+      "frames": 8,
+      "fps": 14,
+      "loop": true,
+      "eyes": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "startle": {
+      "row": 19,
       "frames": 6,
       "fps": 9,
       "loop": false,
@@ -860,7 +876,7 @@
       ]
     },
     "yawn": {
-      "row": 19,
+      "row": 20,
       "frames": 6,
       "fps": 5,
       "loop": false,
@@ -874,7 +890,7 @@
       ]
     },
     "pounce": {
-      "row": 20,
+      "row": 21,
       "frames": 4,
       "fps": 12,
       "loop": false,
@@ -922,7 +938,7 @@
       ]
     },
     "play": {
-      "row": 21,
+      "row": 22,
       "frames": 6,
       "fps": 9,
       "loop": true,
@@ -981,7 +997,7 @@
       ]
     },
     "slide": {
-      "row": 22,
+      "row": 23,
       "frames": 4,
       "fps": 12,
       "loop": true,

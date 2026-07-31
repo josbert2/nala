@@ -92,6 +92,7 @@ export class Cat {
       case 'stalkBird': return 'stalk'
       case 'rear': return 'rear'
       case 'enojada': return 'angry'
+      case 'rascarse': return 'rascarse'
       case 'seVa': return 'walk'
       case 'startle': return 'startle'
       case 'goingBird': return 'walk'
@@ -137,6 +138,8 @@ export class Cat {
       case 'stalkBird': return 12000
       case 'rear': return r(1400, 2600)
       case 'enojada': return r(2400, 3600)
+      // Un rascado dura poco: dos o tres tandas y listo.
+      case 'rascarse': return r(1800, 3200)
       case 'seVa': return 20000
       case 'startle': return 1300
       case 'goingBird': return 0
@@ -785,12 +788,12 @@ export class Cat {
 
     // Con vos trabajando se echa; sin vos y con energia, se mueve.
     const pool = quieta
-      ? ['loaf', 'loaf', 'sleep', 'groom', 'sit']
+      ? ['loaf', 'loaf', 'sleep', 'groom', 'sit', 'rascarse']
       : (this.energy < 0.45 || this.activity < 0.4)
           ? ['sleep', 'sleep', 'loaf', 'idle', 'groom']
           : sola
-              ? ['idle', 'sit', 'stretch', 'groom', 'loaf']
-              : ['idle', 'sit', 'loaf', 'groom', 'stretch', 'idle']
+              ? ['idle', 'sit', 'stretch', 'groom', 'loaf', 'rascarse']
+              : ['idle', 'sit', 'loaf', 'groom', 'stretch', 'rascarse', 'idle']
     this.setState(pool[Math.floor(Math.random() * pool.length)])
   }
 

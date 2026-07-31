@@ -679,6 +679,22 @@ mirada le queda distinta a la del sprite.
 
 ---
 
+## Que se rasque con la pata de atrás
+
+El gesto más gato que hay: levanta la pata trasera hasta la oreja y se rasca a
+toda velocidad, con los ojos cerrados y la cabeza acompañando.
+
+**La pata va rapidísima a propósito** — esa vibración es lo que hace reconocible
+el gesto. Más lenta parece que se está estirando.
+
+Un detalle de dibujo: la pata se dibuja **después** de la cabeza. Si va antes
+queda tapada, porque llega justo a la altura de la oreja.
+
+Entra en la ruleta de las cosas que hace estando tranquila, así que aparece sola
+cada tanto. Dura entre 2 y 3 segundos: dos o tres tandas y listo.
+
+---
+
 ## Cuando se enoja
 
 Acariciala **cinco veces en menos de 25 segundos** y se sobreestimula: orejas

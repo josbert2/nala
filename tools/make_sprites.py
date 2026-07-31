@@ -700,6 +700,35 @@ def pose_startle(d, t, P):
     head(d, 31, GROUND - 25 - k * 2, P, eyes="open", tilt=-1.1 - k * 0.5)
 
 
+def pose_rascarse(d, t, P):
+    """
+    Rascandose la oreja con la pata de atras. La pata va rapidisima a proposito:
+    esa vibracion es lo que hace reconocible el gesto — mas lento parece que se
+    esta estirando.
+
+    La pata se dibuja DESPUES de la cabeza. Si va antes queda tapada, porque
+    llega justo a la altura de la oreja.
+    """
+    ph = t * math.tau
+    vib = math.sin(ph * 5) * 2.4
+    lad = math.sin(ph * 5) * 0.7          # la cabeza acompaña un poco
+
+    tail(d, (14, GROUND - 3), (6, GROUND - 9), (15, GROUND - 14), P["dark"])
+    stripes_body(d, 20, GROUND - 11, 8, 7, P)
+    ell(d, 20, GROUND - 8, 9, 9.5, P["base"])
+    ell(d, 21, GROUND - 4, 6.5, 5.5, P["light"])
+    leg(d, 23, GROUND - 9, GROUND - 1, P["base"])
+
+    head(d, 26, GROUND - 21 + lad, P, eyes="closed", tilt=0.7)
+
+    # La pata trasera, desde la cadera hasta la oreja.
+    px, py = 32.5, GROUND - 20 + vib
+    d.line([(22, GROUND - 7), (px - 1, py + 1)], fill=P["base"], width=5)
+    d.line([(22, GROUND - 7), (px - 1, py + 1)], fill=P["light"], width=2)
+    ell(d, px, py, 2.7, 2.5, P["base"])
+    ell(d, px + 0.3, py + 0.4, 1.9, 1.7, P["light"])
+
+
 def pose_angry(d, t, P):
     """
     Enojada: orejas planas para atras, ojos entrecerrados, la boca abierta del
@@ -843,6 +872,7 @@ ANIMATIONS = [
     ("stalk",        pose_stalk,      8,     7,    True),
     ("rear",         pose_rear,       6,     9,    True),
     ("angry",        pose_angry,      6,     11,   True),
+    ("rascarse",     pose_rascarse,   8,     14,   True),
     ("startle",      pose_startle,    6,     9,    False),
     ("yawn",         pose_yawn,       6,     5,    False),
     ("pounce",       pose_pounce,     4,     12,   False),
