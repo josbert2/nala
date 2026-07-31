@@ -807,8 +807,77 @@
         []
       ]
     },
-    "startle": {
+    "blep": {
       "row": 19,
+      "frames": 4,
+      "fps": 3,
+      "loop": true,
+      "eyes": [
+        [
+          [
+            23.7,
+            19.6
+          ],
+          [
+            30.3,
+            19.6
+          ]
+        ],
+        [
+          [
+            23.7,
+            19.6
+          ],
+          [
+            30.3,
+            19.6
+          ]
+        ],
+        [
+          [
+            23.7,
+            19.6
+          ],
+          [
+            30.3,
+            19.6
+          ]
+        ],
+        []
+      ]
+    },
+    "sacudirse": {
+      "row": 20,
+      "frames": 8,
+      "fps": 16,
+      "loop": true,
+      "eyes": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "amasar": {
+      "row": 21,
+      "frames": 6,
+      "fps": 6,
+      "loop": true,
+      "eyes": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "startle": {
+      "row": 22,
       "frames": 6,
       "fps": 9,
       "loop": false,
@@ -876,7 +945,7 @@
       ]
     },
     "yawn": {
-      "row": 20,
+      "row": 23,
       "frames": 6,
       "fps": 5,
       "loop": false,
@@ -890,7 +959,7 @@
       ]
     },
     "pounce": {
-      "row": 21,
+      "row": 24,
       "frames": 4,
       "fps": 12,
       "loop": false,
@@ -938,7 +1007,7 @@
       ]
     },
     "play": {
-      "row": 22,
+      "row": 25,
       "frames": 6,
       "fps": 9,
       "loop": true,
@@ -997,7 +1066,7 @@
       ]
     },
     "slide": {
-      "row": 23,
+      "row": 26,
       "frames": 4,
       "fps": 12,
       "loop": true,

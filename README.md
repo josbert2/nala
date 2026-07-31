@@ -679,6 +679,25 @@ mirada le queda distinta a la del sprite.
 
 ---
 
+## Cosas chicas que hacen los gatos
+
+Cuatro más, de las que se reconocen al toque:
+
+- **El blep.** Se distrae a mitad de lamerse y le queda **la lengua un poco
+  afuera**, quieta, unos segundos. Ni se da cuenta. Pasa 1 de cada 4 veces que
+  se lame. Que la lengua esté *quieta* es todo el chiste.
+- **La sacudida.** De la cabeza a la cola, rapidísima. Las orejas van al revés
+  que la cabeza, que es lo que le da el latigazo. Va siempre después del
+  bostezo: **dormir → desperezarse → bostezar → sacudirse**.
+- **Amasar.** Antes de dormirse en su cama aprieta con las patas delanteras
+  alternadas, como haciendo pan. Lo hacen cuando están de verdad cómodas, así
+  que va justo ahí y en ningún otro lado.
+- **Quedarse mirando la nada.** Fija la vista en un punto vacío y se queda entre
+  18 y 36 segundos sin moverse. Y **deja de seguirte con los ojos** — que no
+  reaccione a nada es todo el gesto.
+
+---
+
 ## Que se rasque con la pata de atrás
 
 El gesto más gato que hay: levanta la pata trasera hasta la oreja y se rasca a

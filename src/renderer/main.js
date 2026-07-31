@@ -38,6 +38,8 @@ const ACTION_LABELS = {
   eatTreat: 'comiendo',
   chaseButterfly: 'una mariposa',
   yawn: 'recién levantada',
+  amasar: 'amasando',
+  mirandoLaNada: 'mirando la nada',
   enojada: 'dejala',
   seVa: 'se va',
   tomaRegalo: 'te trae algo',
@@ -554,6 +556,14 @@ function updateGaze (dt) {
   const b = cat.bounds
   const hx = b.x + b.w / 2
   const hy = b.y + b.h * 0.26        // la altura de sus ojos, mas o menos
+
+  // Mirando la nada, la mirada se clava en un punto vacio y no te sigue. Que
+  // no reaccione a nada es todo el gesto.
+  if (cat.state === 'mirandoLaNada') {
+    cat.gaze.x += (cat.facing * 0.75 - cat.gaze.x) * Math.min(1, dt * 2)
+    cat.gaze.y += (-0.35 - cat.gaze.y) * Math.min(1, dt * 2)
+    return
+  }
 
   let tx = null
   let ty = null

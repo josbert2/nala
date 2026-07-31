@@ -93,6 +93,7 @@ export class Cat {
       case 'rear': return 'rear'
       case 'enojada': return 'angry'
       case 'rascarse': return 'rascarse'
+      case 'mirandoLaNada': return 'sit'
       case 'seVa': return 'walk'
       case 'startle': return 'startle'
       case 'goingBird': return 'walk'
@@ -140,6 +141,11 @@ export class Cat {
       case 'enojada': return r(2400, 3600)
       // Un rascado dura poco: dos o tres tandas y listo.
       case 'rascarse': return r(1800, 3200)
+      case 'blep': return r(2400, 4200)
+      case 'sacudirse': return 900
+      case 'amasar': return r(3500, 6000)
+      // Mirar la nada es largo a proposito: el gesto ES que no se mueva.
+      case 'mirandoLaNada': return r(18000, 36000)
       case 'seVa': return 20000
       case 'startle': return 1300
       case 'goingBird': return 0
@@ -231,6 +237,12 @@ export class Cat {
     // Al salir de dormir se despereza y bosteza, como corresponde.
     if (this.state === 'sleep') { this.setState('stretch'); return }
     if (this.state === 'stretch') { this.setState('yawn'); return }
+    // Se distrajo a mitad de lamerse y le quedo la lengua afuera.
+    if (this.state === 'groom' && Math.random() < 0.25) { this.setState('blep'); return }
+    if (this.state === 'blep') { this.setState('sit', 2500); return }
+    // Bostezar siempre termina en una sacudida de todo el cuerpo.
+    if (this.state === 'yawn') { this.setState('sacudirse'); return }
+    if (this.state === 'amasar') { this.napNow(); return }
     if (this.state === 'litter') {
       if (this.needs) this.needs.fueAlBano()
       this.setState('groom')
@@ -788,12 +800,12 @@ export class Cat {
 
     // Con vos trabajando se echa; sin vos y con energia, se mueve.
     const pool = quieta
-      ? ['loaf', 'loaf', 'sleep', 'groom', 'sit', 'rascarse']
+      ? ['loaf', 'loaf', 'sleep', 'groom', 'sit', 'rascarse', 'mirandoLaNada']
       : (this.energy < 0.45 || this.activity < 0.4)
           ? ['sleep', 'sleep', 'loaf', 'idle', 'groom']
           : sola
               ? ['idle', 'sit', 'stretch', 'groom', 'loaf', 'rascarse']
-              : ['idle', 'sit', 'loaf', 'groom', 'stretch', 'rascarse', 'idle']
+              : ['idle', 'sit', 'loaf', 'groom', 'stretch', 'rascarse', 'mirandoLaNada', 'idle']
     this.setState(pool[Math.floor(Math.random() * pool.length)])
   }
 

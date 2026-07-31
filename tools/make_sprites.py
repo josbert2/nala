@@ -700,6 +700,64 @@ def pose_startle(d, t, P):
     head(d, 31, GROUND - 25 - k * 2, P, eyes="open", tilt=-1.1 - k * 0.5)
 
 
+def pose_blep(d, t, P):
+    """
+    El blep: se distrajo a mitad de lamerse y le quedo la lengua un poco afuera,
+    quieta. Ni se da cuenta. Despues la mete y sigue como si nada.
+    """
+    bob = math.sin(t * math.tau) * 0.6
+    cola(d, t, 14, GROUND - 3, "baja", P)
+    ell(d, 20, GROUND - 8 + bob, 9, 9.5, P["base"])
+    ell(d, 21, GROUND - 4 + bob, 6.5, 5.5, P["light"])
+    stripes_body(d, 20, GROUND - 11 + bob, 8, 7, P)
+    leg(d, 24, GROUND - 9 + bob, GROUND - 1, P["base"])
+    leg(d, 28, GROUND - 9 + bob, GROUND - 1, P["base"])
+    head(d, 27, GROUND - 22, P, t=t)
+    # La lengüita afuera, quieta. Que este quieta es todo el chiste.
+    tongue = mix(P["pink"], (208, 92, 100, 255), 0.5)
+    ty = GROUND - 22 + 4.4
+    ell(d, 28.6, ty, 1.5, 1.5, tongue)
+    ell(d, 28.6, ty - 0.5, 0.9, 0.8, mix(tongue, (255, 255, 255, 255), 0.28))
+
+
+def pose_sacudirse(d, t, P):
+    """
+    La sacudida de todo el cuerpo, de la cabeza a la cola. Va rapidisima y se
+    dibuja con el cuerpo corrido a un lado y al otro; las orejas van al reves
+    que la cabeza, que es lo que le da el latigazo.
+    """
+    ph = t * math.tau
+    sac = math.sin(ph * 4)
+    cuerpo = sac * 2.6
+    cabeza = math.sin(ph * 4 + 1.1) * 3.4
+    cola(d, t, 14 - cuerpo, GROUND - 3, "baja", P)
+    stripes_body(d, 20 + cuerpo, GROUND - 11, 8, 7, P)
+    ell(d, 20 + cuerpo, GROUND - 8, 9, 9.5, P["base"])
+    ell(d, 21 + cuerpo, GROUND - 4, 6.5, 5.5, P["light"])
+    leg(d, 24, GROUND - 9, GROUND - 1, P["base"])
+    leg(d, 28, GROUND - 9, GROUND - 1, P["base"])
+    head(d, 27 + cabeza, GROUND - 22, P, eyes="closed", tilt=-0.5 - sac * 0.6)
+
+
+def pose_amasar(d, t, P):
+    """
+    Amasando: aprieta con las patas delanteras alternadas, como haciendo pan.
+    Lo hacen cuando estan de verdad comodas, asi que va antes de dormirse.
+    """
+    ph = t * math.tau
+    izq = max(0.0, math.sin(ph)) * 4.5
+    der = max(0.0, math.sin(ph + math.pi)) * 4.5
+    bob = (izq + der) * 0.12
+    cola(d, t, 14, GROUND - 3, "enroscada", P)
+    stripes_body(d, 20, GROUND - 12 + bob, 9, 6, P)
+    ell(d, 20, GROUND - 10 + bob, 10, 6.6, P["base"])
+    ell(d, 22, GROUND - 7 + bob, 7.5, 3.4, P["light"])
+    for px, alto in ((25.5, izq), (30.5, der)):
+        d.rectangle([px - 2, GROUND - 8 - alto, px + 2, GROUND - 1], fill=P["base"])
+        ell(d, px, GROUND - 8 - alto, 2.5, 2.2, P["light"])
+    head(d, 28, GROUND - 20 + bob * 0.5, P, eyes="half", tilt=0.3)
+
+
 def pose_rascarse(d, t, P):
     """
     Rascandose la oreja con la pata de atras. La pata va rapidisima a proposito:
@@ -873,6 +931,9 @@ ANIMATIONS = [
     ("rear",         pose_rear,       6,     9,    True),
     ("angry",        pose_angry,      6,     11,   True),
     ("rascarse",     pose_rascarse,   8,     14,   True),
+    ("blep",         pose_blep,       4,     3,    True),
+    ("sacudirse",    pose_sacudirse,  8,     16,   True),
+    ("amasar",       pose_amasar,     6,     6,    True),
     ("startle",      pose_startle,    6,     9,    False),
     ("yawn",         pose_yawn,       6,     5,    False),
     ("pounce",       pose_pounce,     4,     12,   False),
