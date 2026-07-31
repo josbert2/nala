@@ -215,6 +215,16 @@ def tail(d, p0, p1, p2, color, r0=3.6, r1=2.4, plume=True):
         ell(d, x - nx * r * 0.8, y - ny * r * 0.8, 1.5, 1.5, color)
 
 
+# OJO CON LAS FRECUENCIAS
+# El movimiento se muestrea en N frames: t vale 0, 1/N, 2/N... Si se usa
+# sin(t*tau*k) con k multiplo de N, TODOS los frames caen en la misma fase y la
+# animacion queda congelada. Le paso a `crouch` (k=3, N=6: seis cuadros
+# identicos) y al cuerpo de `sacudirse` (k=4, N=8).
+#
+# Regla: k tiene que ser coprimo con N, y conviene k=1 o 2 salvo que se quiera
+# de verdad algo vibrando. Con k alto ademas se ve mas rapido de lo que uno cree.
+
+
 def cola(d, t, bx, by, modo, P):
     """
     La cola, con humor. Antes casi todas las poses usaban la misma curva y se
@@ -234,7 +244,7 @@ def cola(d, t, bx, by, modo, P):
         p1 = (bx - 10, by - 4)
         p2 = (bx - 19 + math.sin(ph) * 3.4, by - 1)
     elif modo == "latigazo":
-        sw = math.sin(ph * 2)
+        sw = math.sin(ph)
         p1 = (bx - 5 + sw * 7, by - 10)
         p2 = (bx - 1 + sw * 14, by - 20)
     else:  # enroscada
@@ -525,20 +535,38 @@ def pose_groom(d, t, P):
 
 
 def pose_stretch(d, t, P):
-    """Estirandose: adelante abajo, cadera arriba."""
-    k = math.sin(t * math.pi)          # 0 -> 1 -> 0
-    tail(d, (8, GROUND - 16), (2, GROUND - 26 - 4 * k), (12, GROUND - 32 - 6 * k), P["dark"])
-    leg(d, 12, GROUND - 14 - 4 * k, GROUND - 1, P["dark"])
-    leg(d, 24, GROUND - 12 - 2 * k, GROUND - 1, P["dark"])
-    d.polygon(
-        [(10, GROUND - 20 - 5 * k), (30, GROUND - 12), (34, GROUND - 6), (12, GROUND - 10)],
-        fill=P["base"],
-    )
-    stripes_body(d, 20, GROUND - 15 - 2 * k, 9, 4, P)
-    ell(d, 20, GROUND - 13 - 2 * k, 11, 5, P["base"])
-    ell(d, 24, GROUND - 10, 8, 3, P["light"])
-    leg(d, 32, GROUND - 8, GROUND - 1, P["base"])
-    head(d, 34, GROUND - 11 - 1 * k, P, eyes="closed")
+    """
+    El estiron entero, el de la foto: las patas delanteras estiradas al frente,
+    el pecho contra el piso, la cadera bien arriba y la cola parada haciendo un
+    signo de pregunta. Se estira y afloja una vez por vuelta.
+    """
+    k = math.sin(t * math.pi)              # 0 -> 1 -> 0
+    cadera = GROUND - 15 - k * 6
+    hombro = GROUND - 8 - k * 1.5
+    largo = k * 6                          # cuanto estira las manos
+
+    # La cola parada, enroscandose sobre si misma.
+    tail(d, (12, cadera + 3), (4 - k * 2, cadera - 14), (16 + k * 3, cadera - 20 - k * 4),
+         P["dark"])
+
+    # Patas traseras, rectas y verticales.
+    leg(d, 11, cadera + 2, GROUND - 1, P["dark"])
+    leg(d, 16, cadera + 3, GROUND - 1, P["base"])
+
+    # El lomo: baja en diagonal de la cadera alta al hombro bajo.
+    d.polygon([(9, cadera - 4), (24, hombro - 6), (31, hombro + 2), (12, cadera + 7)],
+              fill=P["base"])
+    ell(d, 14, cadera, 7.5, 7, P["base"])         # la cadera, redonda
+    stripes_body(d, 17, cadera - 3, 8, 5, P)
+    ell(d, 25, hombro + 1, 7, 4, P["light"])      # el pecho contra el piso
+
+    # Las patas delanteras, estiradas al frente y planas.
+    for dy, col in ((0, P["dark"]), (3, P["base"])):
+        d.rectangle([26, GROUND - 6 + dy, 37 + largo, GROUND - 4 + dy], fill=col)
+        ell(d, 37 + largo, GROUND - 5 + dy, 2.3, 1.7, P["light"])
+
+    # La cabeza baja, casi tocando el piso.
+    head(d, 30, GROUND - 14, P, eyes="closed", tilt=0.5)
 
 
 def pose_fall(d, t, P):
@@ -557,13 +585,14 @@ def pose_climb(d, t, P):
     """Trepando: cuerpo vertical contra un borde."""
     ph = t * math.tau
     reach = math.sin(ph) * 3
+    sube = abs(math.sin(ph)) * 1.6      # el cuerpo tambien trepa, no solo las manos
     tail(d, (24, GROUND - 4), (32, GROUND - 10), (30, GROUND - 20), P["dark"])
     stripes_body(d, 22, GROUND - 18, 5.5, 9, P)
-    ell(d, 22, GROUND - 16, 6.5, 12, P["base"])
-    ell(d, 24, GROUND - 16, 4, 9, P["light"])
+    ell(d, 22, GROUND - 16 - sube, 6.5, 12, P["base"])
+    ell(d, 24, GROUND - 16 - sube, 4, 9, P["light"])
     d.rectangle([15, GROUND - 30 - reach, 19, GROUND - 20], fill=P["base"])
     d.rectangle([25, GROUND - 26 + reach, 29, GROUND - 18], fill=P["base"])
-    head(d, 22, GROUND - 32, P, eyes="open")
+    head(d, 22, GROUND - 32 - sube, P, eyes="open", t=t)
 
 
 def pose_eat(d, t, P):
@@ -581,7 +610,7 @@ def pose_eat(d, t, P):
 
 def pose_crouch(d, t, P):
     """Agazapada antes de saltar. La cadera se mueve."""
-    wig = math.sin(t * math.tau * 3) * 1.8
+    wig = math.sin(t * math.tau * 2) * 1.8
     tail(d, (9, GROUND - 6), (2, GROUND - 3), (11, GROUND - 2 + wig), P["dark"])
     leg(d, 13 + wig, GROUND - 7, GROUND - 1, P["dark"])
     leg(d, 26, GROUND - 6, GROUND - 1, P["dark"])
@@ -769,9 +798,9 @@ def pose_sacudirse(d, t, P):
     que la cabeza, que es lo que le da el latigazo.
     """
     ph = t * math.tau
-    sac = math.sin(ph * 4)
+    sac = math.sin(ph * 3)
     cuerpo = sac * 2.6
-    cabeza = math.sin(ph * 4 + 1.1) * 3.4
+    cabeza = math.sin(ph * 3 + 1.1) * 3.4
     cola(d, t, 14 - cuerpo, GROUND - 3, "baja", P)
     stripes_body(d, 20 + cuerpo, GROUND - 11, 8, 7, P)
     ell(d, 20 + cuerpo, GROUND - 8, 9, 9.5, P["base"])
@@ -836,7 +865,7 @@ def pose_angry(d, t, P):
     las caricias.
     """
     ph = t * math.tau
-    sw = math.sin(ph * 3)                     # el latigazo va rapido
+    sw = math.sin(ph * 2)                     # el latigazo va rapido
     tenso = abs(math.sin(ph * 2)) * 0.9
     # La cola baja, barriendo el piso de un lado al otro.
     tail(d, (14, GROUND - 4), (4 + sw * 8, GROUND - 6), (17 + sw * 15, GROUND - 2),

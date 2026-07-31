@@ -16,11 +16,11 @@
         },
         {
           "kind": "box",
-          "at": 0.38
+          "at": 0.35
         },
         {
           "kind": "pelotita",
-          "at": 0.56
+          "at": 0.58
         },
         {
           "kind": "tree",
@@ -36,7 +36,7 @@
         },
         {
           "kind": "pelotita2",
-          "at": 0.86
+          "at": 0.87
         },
         {
           "kind": "bed",
@@ -55,15 +55,15 @@
         },
         {
           "kind": "flowers",
-          "at": 0.3
+          "at": 0.27
         },
         {
           "kind": "box",
-          "at": 0.38
+          "at": 0.35
         },
         {
           "kind": "pelotita",
-          "at": 0.57
+          "at": 0.59
         },
         {
           "kind": "garden_tree",
@@ -123,23 +123,23 @@
         },
         {
           "kind": "curtain",
-          "at": 0.4
+          "at": 0.47
         },
         {
           "kind": "window",
-          "at": 0.55
+          "at": 0.62
         },
         {
           "kind": "sill",
-          "at": 0.55
+          "at": 0.62
         },
         {
           "kind": "curtain",
-          "at": 0.7
+          "at": 0.77
         },
         {
           "kind": "potted_plant",
-          "at": 0.84
+          "at": 0.86
         },
         {
           "kind": "bed",
