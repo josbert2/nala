@@ -679,6 +679,22 @@ mirada le queda distinta a la del sprite.
 
 ---
 
+## Los pelitos
+
+Es una gata de pelo largo: va dejando pelo por todos lados.
+
+- **Sacudiéndose** salen volando de a dos, con fuerza. Es cuando de verdad vuela
+  pelo.
+- **Lamiéndose o rascándose** suelta uno cada tanto, sin fuerza.
+- **Durmiendo** se le cae uno cada quince o treinta segundos.
+
+Caen con gravedad, se apoyan en el piso y **se quedan varios minutos** antes de
+desvanecerse. Se dibujan sobre el piso pero debajo de todo lo demás, en su color
+de pelo — algunos claros y otros del gris de la cabeza. Hay un tope de 90 para
+que no se te llene la pantalla.
+
+---
+
 ## Cosas chicas que hacen los gatos
 
 Seis más, de las que se reconocen al toque:

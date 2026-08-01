@@ -159,6 +159,8 @@ function buildHabitat (habitat) {
 let lastHotKey = ''
 let hearts = []
 let purrs = []
+let pelitos = []                   // los que va dejando por ahi
+let nextPelito = 0
 let nextPurr = 0
 let nextSueño = 0
 let trabajo = 0                    // que tan activo venis con el mouse
@@ -750,6 +752,72 @@ function popHearts (x, y) {
   }
 }
 
+/**
+ * Los pelitos que va dejando.
+ *
+ * Se caen solos y se quedan en el piso un buen rato. Salen sobre todo cuando se
+ * sacude — que es cuando de verdad vuela pelo — y de a poco mientras se lame o
+ * duerme. Es una gata de pelo largo: es lo que pasa.
+ */
+function soltarPelitos (n, fuerza) {
+  if (!cat || pelitos.length > 90) return
+  const b = cat.bounds
+  for (let i = 0; i < n; i++) {
+    pelitos.push({
+      x: b.x + b.w * (0.25 + Math.random() * 0.5),
+      y: b.y + b.h * (0.35 + Math.random() * 0.4),
+      vx: (Math.random() - 0.5) * fuerza,
+      vy: -Math.random() * fuerza * 0.5,
+      largo: 2 + Math.floor(Math.random() * 3),
+      claro: Math.random() < 0.45,
+      posado: false,
+      vida: 240 + Math.random() * 300     // se quedan minutos, no segundos
+    })
+  }
+}
+
+function maybePelitos (now, dt) {
+  if (!cat) return
+  // Sacudirse los manda a volar. Lamerse y dormir los suelta de a poco.
+  if (cat.state === 'sacudirse') {
+    if (now > nextPelito) { nextPelito = now + 120; soltarPelitos(2, 90) }
+    return
+  }
+  if (cat.state === 'groom' || cat.state === 'rascarse') {
+    if (now > nextPelito) { nextPelito = now + 900 + Math.random() * 900; soltarPelitos(1, 26) }
+    return
+  }
+  if (cat.state === 'sleep' && now > nextPelito) {
+    nextPelito = now + 12000 + Math.random() * 20000
+    soltarPelitos(1, 10)
+  }
+}
+
+function drawPelitos (dt) {
+  if (!pelitos.length) return
+  const P = sheet.meta.palette
+  const e = Math.max(1, Math.round(cat.scale / 2))
+  pelitos = pelitos.filter((p) => p.vida > 0)
+  for (const p of pelitos) {
+    p.vida -= dt
+    if (!p.posado) {
+      p.vy += 210 * dt
+      p.x += p.vx * dt
+      p.y += p.vy * dt
+      const suelo = world.floorAt(p.x).y
+      if (p.y >= suelo) { p.y = suelo; p.posado = true }
+    }
+    ctx.save()
+    // Los ultimos segundos se van desvaneciendo, no desaparecen de golpe.
+    ctx.globalAlpha = Math.min(1, p.vida / 6) * 0.85
+    ctx.fillStyle = p.claro ? P.light : P.dark
+    for (let i = 0; i < p.largo; i++) {
+      ctx.fillRect(Math.round(p.x + i * e), Math.round(p.y - (p.posado ? 0 : i * 0.4)), e, e)
+    }
+    ctx.restore()
+  }
+}
+
 /** Mientras duerme (o mientras la acaricias) le salen prrr flotando. */
 function maybePurr (now) {
   if (!cat) return
@@ -1003,6 +1071,9 @@ function loop (now) {
     }
   }
 
+  // Los pelitos van sobre el piso pero debajo de todo lo demas.
+  drawPelitos(dt)
+
   // Las piezas del habitat van detras de ella. Las que son de dos partes (la
   // cueva, el tunel, la cama) dejan su frente para despues: solo se dibuja por
   // encima cuando ella esta metida adentro, si no la taparia al pasar.
@@ -1053,6 +1124,7 @@ function loop (now) {
     if (dentro(p)) p.sheet.draw(ctx, p.frontAnim, now, p.x, p.y, cat.scale, false)
   }
   if (inLitter) drawFurn(litter, 'litter_front')
+  maybePelitos(now, dt)
   maybePurr(now)
   drawPurrs(dt)
   drawStats(now)
