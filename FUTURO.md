@@ -117,41 +117,32 @@ vuelve el problema que el filtro venía a resolver. Conviene un camino aparte:
 
 ---
 
-## 5. Un menú de click derecho más trabajado
+## 5. Terminar el panel
 
-**Qué se quiere:** que el menú sea más lindo y esté mejor terminado.
+El menu ya no es un menu: es un panel que entra desde el borde derecho del
+monitor donde le hiciste click, con los grupos plegables de a uno por vez, y se
+queda abierto hasta que lo cerras. Lo que le falta:
 
-**Dónde está:**
+- **Iconitos por opcion.** Los sprites ya existen en
+  `assets/sprites/<version>/props.png` y `furniture.png` (plato, pelota,
+  pescadito, cama, rascadero) y se pueden recortar con la misma grilla que usa
+  `SpriteSheet`, asi el panel queda del mismo mundo que ella.
+- **Sus necesidades ahi adentro.** El panel tiene lugar de sobra y `needs.js` ya
+  tiene los datos: unas barritas al pie lo volverian un panel de verdad. Hoy eso
+  vive aparte, en el overlay de `#stats`.
+- **Teclado.** Hoy no hay `Esc` ni navegacion con flechas, y no es un olvido: la
+  ventana es `focusable: false` (lo necesita para no robarte el foco mientras
+  trabajas), asi que los eventos de teclado no le llegan. Habria que registrar un
+  atajo global en el proceso principal, como los de `SHORTCUTS`.
+- **Que se acuerde de que grupo dejaste abierto** entre sesiones, no solo dentro
+  de una. Iria en `settings.json`, al lado de `look` y `habitat`.
 
-- Estructura y comportamiento: `src/renderer/main.js` → `MENU_ITEMS`,
-  `showMenu()`, `hideMenu()`.
-- Estilo: `src/renderer/style.css` → `.menu` y `.menu button`.
-- El nodo: `<div id="menu">` en `src/renderer/index.html`.
+**Cuidado, lo mismo de siempre:** el panel vive dentro de una ventana que el
+mouse atraviesa. `sendHotRects()` manda su rectangulo y por eso se puede
+clickear. Dos cosas que ya costaron una vuelta:
 
-**Qué es hoy:** una caja oscura redondeada con botones de texto, que aparece con
-un fade + scale de 130ms. Funciona, pero es lo mínimo.
-
-**Se volvió más urgente:** con su casa ya son once opciones en una sola lista
-plana (acariciarla, premio, pelota, comida, rascadero, árbol, cueva, juguete,
-cama, dormir, cambiarle la pinta). Pide separadores o submenús.
-
-**Ideas:**
-
-- Iconitos por opción. Los sprites ya existen en `assets/sprites/<version>/props.png`
-  (plato, pelota, pescadito, cama) — se pueden recortar con la misma grilla que
-  usa `SpriteSheet`, así el menú queda del mismo mundo que ella.
-- Un encabezado chiquito con su nombre y qué está haciendo ahora
-  (`ACTION_LABELS` ya tiene los textos).
-- Separadores entre "cosas que le das" (comida, pelota, premio) y "cosas que le
-  pedís" (a su cama, que duerma).
-- Que se abra hacia arriba o hacia la izquierda cuando está pegada a un borde,
-  en vez de solo recortarse. El recorte por monitor ya está resuelto en
-  `screenEdges()`, sirve de base.
-- Navegación con teclado y `Esc` para cerrar.
-- Que el hover se sienta: hoy es un cambio de fondo y nada más.
-
-**Cuidado:** el menú vive dentro de una ventana que por defecto el mouse
-atraviesa. Mientras está abierto, `sendHotRects()` manda su rectángulo y fuerza
-la ventana sólida. Si le cambiás el tamaño o le agregás submenús, ese rectángulo
-tiene que seguir siendo el correcto o los clicks se van a ir a la ventana de
-atrás.
+- El rectangulo se mide con `getBoundingClientRect()`, **no** con `offsetLeft`:
+  el panel entra con un `transform`, y `offsetLeft` no lo tiene en cuenta.
+- El panel **no** fuerza la ventana solida entera (`force`), a proposito: si lo
+  hiciera, con el panel abierto no podrias clickear nada de lo que tenes atras.
+  Solo su franja agarra el mouse.

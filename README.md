@@ -37,7 +37,24 @@ siempre está instalada. Por eso hay dos caminos que siempre funcionan:
 | `Ctrl+Alt+R` | que vaya a rascar el poste |
 | `Ctrl+Alt+T` | que se suba al árbol |
 
-**Click derecho sobre ella** abre el mismo menú ahí mismo.
+**Click derecho sobre ella** abre su panel.
+
+### Su panel
+
+Entra deslizándose desde el borde derecho del monitor donde le hiciste click
+—no desde el borde del escritorio, así que con varias pantallas sale siempre en
+la tuya— y se queda abierto hasta que lo cerrás con la ✕ o volviéndole a hacer
+click derecho a ella.
+
+Las opciones van en cuatro grupos plegables: **Darle**, **Que juegue**,
+**Pedirle** y **Cambiar**. Se abre uno por vez, porque son dieciocho opciones y
+con todos abiertos vuelve a ser un chorizo. Recuerda cuál dejaste abierto.
+
+Al elegir algo el panel **no** se cierra: parpadea la opción y queda ahí, para
+poder pedirle varias cosas seguidas.
+
+Mientras está abierto, el resto de la pantalla te sigue quedando clickeable:
+sólo la franja del panel agarra el mouse.
 
 ### Que arranque sola con la sesión
 
@@ -60,7 +77,7 @@ Para sacarla: `rm ~/.config/autostart/nala.desktop`.
 | Click en la pelota | Se la pateás. Ella la persigue. |
 | Doble click | Maúlla. |
 | Zarandear el mouse cerca | Sale a cazar el cursor. Pide un zarandeo deliberado, no cualquier movimiento. |
-| Click derecho sobre ella | Menú rápido. |
+| Click derecho sobre ella | Abre y cierra su panel. |
 
 Cuando está jugando, comiendo o ronroneando aparece un tooltip chiquito arriba
 de ella diciendo qué está haciendo.

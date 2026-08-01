@@ -416,12 +416,16 @@ window.addEventListener('mousedown', (e) => {
   // boton haga lo suyo. Cerrarlo en mousedown mataba el handler del boton.
   if (menuOpen && menuEl.contains(e.target)) return
 
-  hideMenu()
-
-  if (e.button === 2) {                       // click derecho sobre ella: menu
-    if (hit(e.clientX, e.clientY)) { showMenu(e.clientX, e.clientY); e.preventDefault() }
+  if (e.button === 2) {                       // click derecho sobre ella: panel
+    if (hit(e.clientX, e.clientY)) { toggleMenu(e.clientX, e.clientY); e.preventDefault() }
     return
   }
+
+  // Un click en cualquier otro lado de SU ventana lo cierra. Ojo: con el panel
+  // abierto la ventana ya no se vuelve solida entera, asi que esto solo llega
+  // cuando el click cae encima de ella o de su pelota, no en el escritorio.
+  hideMenu()
+
   if (e.button !== 0) return
 
   const kind = hitBall(e.clientX, e.clientY) ? 'ball' : hit(e.clientX, e.clientY) ? 'cat' : null
@@ -525,16 +529,22 @@ function sendHotRects () {
   }
 
   if (menuOpen) {
+    // Con getBoundingClientRect, no con offsetLeft: el panel entra con un
+    // `transform`, y offsetLeft no lo tiene en cuenta. Con offsetLeft la zona
+    // sensible quedaba donde el panel TERMINA, no donde se lo ve mientras entra.
+    const m = menuEl.getBoundingClientRect()
     rects.push({
-      x: Math.round(menuEl.offsetLeft + origin.x),
-      y: Math.round(menuEl.offsetTop + origin.y),
-      w: menuEl.offsetWidth,
-      h: menuEl.offsetHeight
+      x: Math.round(m.left + origin.x),
+      y: Math.round(m.top + origin.y),
+      w: Math.round(m.width),
+      h: Math.round(m.height)
     })
   }
 
-  // Mientras arrastras o con el menu abierto no hay que soltarla nunca.
-  const force = menuOpen || !!grip || cat.pinned
+  // Mientras la arrastras no hay que soltarla nunca. El panel NO fuerza la
+  // ventana entera: es un panel que se queda abierto, y si forzara no podrias
+  // hacer click en nada de lo que tenes atras mientras lo tengas ahi.
+  const force = !!grip || cat.pinned
   const key = force + '|' + rects.map((r) => `${r.x},${r.y},${r.w},${r.h}`).join(';')
   if (key === lastHotKey) return
   lastHotKey = key
@@ -642,6 +652,7 @@ function drawStats (now) {
 
 const menuEl = document.getElementById('menu')
 let menuOpen = false
+const PANEL_MARGEN = 14   // aire entre el panel y el borde de arriba
 
 /**
  * El menu, agrupado. Con dieciocho opciones en una lista plana no se encontraba
@@ -688,54 +699,127 @@ const MENU_GROUPS = [
   }
 ]
 
-function showMenu (x, y) {
-  menuEl.innerHTML = ''
+// Que grupo esta desplegado. Uno solo por vez: con dieciocho opciones, dejar
+// varios abiertos devuelve el panel al chorizo que era. Se recuerda entre
+// aperturas, asi el que usas siempre te espera abierto.
+let grupoAbierto = MENU_GROUPS[0].titulo
 
-  // Encabezado: su nombre y que esta haciendo ahora mismo.
+/** El encabezado: su nombre, que esta haciendo, y la cruz. */
+function menuCabecera () {
   const cab = document.createElement('div')
   cab.className = 'cab'
-  const haciendo = ACTION_LABELS[cat.state]
-  cab.innerHTML = `<span class="nom"></span>${haciendo ? '<span class="hac"></span>' : ''}`
-  cab.querySelector('.nom').textContent = nombre
-  if (haciendo) cab.querySelector('.hac').textContent = haciendo
-  menuEl.appendChild(cab)
 
+  const nom = document.createElement('span')
+  nom.className = 'nom'
+  nom.textContent = nombre
+  cab.appendChild(nom)
+
+  const haciendo = ACTION_LABELS[cat.state]
+  if (haciendo) {
+    const hac = document.createElement('span')
+    hac.className = 'hac'
+    hac.textContent = haciendo
+    cab.appendChild(hac)
+  }
+
+  const cerrar = document.createElement('button')
+  cerrar.className = 'cerrar'
+  cerrar.textContent = '✕'
+  cerrar.title = 'Cerrar'
+  cerrar.addEventListener('mouseup', (ev) => { ev.stopPropagation(); hideMenu() })
+  cab.appendChild(cerrar)
+
+  return cab
+}
+
+/** Un grupo: su cabecera desplegable y sus opciones adentro. */
+function menuGrupo (grupo, visibles, cuerpo) {
+  const cab = document.createElement('button')
+  cab.className = 'grupo'
+  cab.setAttribute('aria-expanded', String(grupoAbierto === grupo.titulo))
+  cab.appendChild(document.createTextNode(grupo.titulo))
+
+  const flecha = document.createElement('span')
+  flecha.className = 'flecha'
+  flecha.textContent = '▶'
+  cab.appendChild(flecha)
+
+  cab.addEventListener('mouseup', (ev) => {
+    ev.stopPropagation()
+    // Volver a tocar el que ya esta abierto lo cierra.
+    grupoAbierto = grupoAbierto === grupo.titulo ? null : grupo.titulo
+    for (const otro of cuerpo.querySelectorAll('.grupo')) {
+      otro.setAttribute('aria-expanded', String(otro.firstChild.textContent === grupoAbierto))
+    }
+  })
+  cuerpo.appendChild(cab)
+
+  // El div de adentro es lo que el CSS colapsa con grid-template-rows.
+  const caja = document.createElement('div')
+  caja.className = 'items'
+  const lista = document.createElement('div')
+  caja.appendChild(lista)
+
+  for (const [label, action] of visibles) {
+    const b = document.createElement('button')
+    b.textContent = label
+    b.addEventListener('mouseup', (ev) => {
+      ev.stopPropagation()
+      action()
+      touched()
+      // El panel se queda abierto: es para poder pedirle varias cosas seguidas.
+      // Un parpadeo alcanza para saber que la orden salio.
+      b.classList.add('listo')
+      setTimeout(() => b.classList.remove('listo'), 180)
+    })
+    lista.appendChild(b)
+  }
+  cuerpo.appendChild(caja)
+}
+
+function showMenu (x, y) {
+  menuEl.innerHTML = ''
+  menuEl.appendChild(menuCabecera())
+
+  const cuerpo = document.createElement('div')
+  cuerpo.className = 'cuerpo'
   for (const grupo of MENU_GROUPS) {
     const visibles = grupo.items.filter(([, , when]) => !when || when())
-    if (!visibles.length) continue
-
-    const t = document.createElement('div')
-    t.className = 'grupo'
-    t.textContent = grupo.titulo
-    menuEl.appendChild(t)
-
-    for (const [label, action] of visibles) {
-      const b = document.createElement('button')
-      b.textContent = label
-      b.addEventListener('mouseup', (ev) => {
-        ev.stopPropagation()
-        action()
-        touched()
-        hideMenu()
-      })
-      menuEl.appendChild(b)
-    }
+    if (visibles.length) menuGrupo(grupo, visibles, cuerpo)
   }
+  menuEl.appendChild(cuerpo)
+
+  // Visible primero: de un elemento `hidden` no se puede medir el ancho, da 0.
   menuEl.hidden = false
   menuOpen = true
-  const w = menuEl.offsetWidth
-  const h = menuEl.offsetHeight
+
+  // Pegado al borde derecho del monitor donde le hiciste click, no al borde del
+  // escritorio: con tres pantallas eso lo mandaba a la de la punta.
   const e = screenEdges(x)
-  menuEl.style.left = `${Math.max(e.x1 + 8, Math.min(x, e.x2 - w - 8))}px`
-  menuEl.style.top = `${Math.max(e.y1 + 8, Math.min(y, e.y2 - h - 8))}px`
-  menuEl.dataset.show = '1'
+  menuEl.style.left = `${e.x2 - menuEl.offsetWidth}px`
+  menuEl.style.top = `${e.y1 + PANEL_MARGEN}px`
+  // Alto: el que necesite el contenido. A lo alto del monitor entero quedaba
+  // una columna vacia enorme debajo de las opciones. Solo se topea contra el
+  // pie de la zona util —para no taparle la barra de tareas— y ahi scrollea.
+  const piso = world ? world.floorAt(x).y : e.y2
+  menuEl.style.maxHeight = `${Math.max(220, piso - e.y1 - PANEL_MARGEN * 2)}px`
+  // En el mismo cuadro en que deja de estar `hidden` el navegador no anima:
+  // hay que dejarlo calcular el estado inicial antes de pedirle que entre.
+  requestAnimationFrame(() => { menuEl.dataset.show = '1' })
 }
 
 function hideMenu () {
   if (!menuOpen) return
   menuOpen = false
   menuEl.dataset.show = '0'
-  menuEl.hidden = true
+  // Se esconde recien cuando termino de salir, si no desaparece de golpe.
+  setTimeout(() => { if (!menuOpen) menuEl.hidden = true }, 260)
+}
+
+/** Click derecho sobre ella: si ya esta abierto, lo cierra. */
+function toggleMenu (x, y) {
+  if (menuOpen) hideMenu()
+  else showMenu(x, y)
 }
 
 // ------------------------------------------------------------------ corazones
