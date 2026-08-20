@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "prompt": "\"Sleeping animation: cat is curled up asleep, eyes fully closed, chest and back gently rise and fall with slow breathing, tail tip may twitch occasionally, everything else stays completely still, same pose, same colors, same outline.\"",
+  "width": 256,
+  "height": 171,
+  "frame_w": 256,
+  "frame_h": 171,
+  "frame_count": 8,
+  "fps": 8,
+  "preview": "preview.webp",
+  "spritesheet": "spritesheet.png"
+}

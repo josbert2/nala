@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "prompt": "\"Breathing idle animation: chest and back fluff gently rise and fall, subtle 2-4 pixel vertical movement, same pose, same colors, same outline, head/ears/eyes/legs/tail stay still.\"",
+  "width": 256,
+  "height": 256,
+  "frame_w": 256,
+  "frame_h": 256,
+  "frame_count": 8,
+  "fps": 8,
+  "preview": "preview.webp",
+  "spritesheet": "spritesheet.png"
+}

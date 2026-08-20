@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "prompt": "Typing animation: cat lies down facing forward with both front paws resting on a small keyboard, a notebook and pencil beside it, paws tap gently on the keys one at a time, head tilts slightly down looking at the keyboard, occasional ear twitch, same pose, same colors, same outline, body and tail stay still.",
+  "width": 256,
+  "height": 256,
+  "frame_w": 256,
+  "frame_h": 256,
+  "frame_count": 8,
+  "fps": 8,
+  "preview": "preview.webp",
+  "spritesheet": "spritesheet.png"
+}

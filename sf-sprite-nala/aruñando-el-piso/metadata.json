@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "prompt": "\"Falling asleep animation: front paws knead slowly in a rhythmic pressing motion, eyelids gradually lower and close by the last frame, head lowers slightly, same pose, same colors, same outline, body and tail stay mostly still.\"",
+  "width": 256,
+  "height": 256,
+  "frame_w": 256,
+  "frame_h": 256,
+  "frame_count": 8,
+  "fps": 8,
+  "preview": "preview.webp",
+  "spritesheet": "spritesheet.png"
+}

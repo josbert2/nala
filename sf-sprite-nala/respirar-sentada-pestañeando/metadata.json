@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "prompt": "Alert gaze animation: head raised and still, eyes fixed staring into the distance, ears perked forward, occasional slow blink, subtle 1-2 pixel ear twitch, same pose, same colors, same outline, body and legs stay still",
+  "width": 256,
+  "height": 256,
+  "frame_w": 256,
+  "frame_h": 256,
+  "frame_count": 8,
+  "fps": 8,
+  "preview": "preview.webp",
+  "spritesheet": "spritesheet.png"
+}

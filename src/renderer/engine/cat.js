@@ -686,6 +686,10 @@ export class Cat {
 
   /** Elige que hacer despues. Aca vive la personalidad. */
   _decide (ctx) {
+    // Algunas pintas (v4: solo la gata, sin plato ni cama ni nada) no tienen
+    // adonde ir ni de que vivir, asi que se quedan quietas salvo que las toques.
+    if (this.sheet.meta.autonomous === false) { this.setState('idle', 4000); return }
+
     const roll = Math.random()
 
     // Lo que estas haciendo vos INCLINA la balanza, no la decide: su ritmo de

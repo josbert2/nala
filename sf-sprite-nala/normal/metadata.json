@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "prompt": "\"Crouching before pounce animation: body hunkers down low and tense, back haunches wiggle slightly side to side building momentum, tail low and twitching quickly, eyes locked forward unblinking, same colors, same outline.",
+  "width": 256,
+  "height": 256,
+  "frame_w": 256,
+  "frame_h": 256,
+  "frame_count": 8,
+  "fps": 8,
+  "preview": "preview.webp",
+  "spritesheet": "spritesheet.png"
+}

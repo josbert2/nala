@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "prompt": "\"Slow blink animation: eyes gradually close into a gentle happy squint and slowly open again, ears relaxed and slightly forward, same pose, same colors, same outline, body and legs stay completely still.\"",
+  "width": 256,
+  "height": 256,
+  "frame_w": 256,
+  "frame_h": 256,
+  "frame_count": 8,
+  "fps": 8,
+  "preview": "preview.webp",
+  "spritesheet": "spritesheet.png"
+}

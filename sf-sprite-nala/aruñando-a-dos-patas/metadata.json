@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "prompt": "\"Typing animation: front paws tap gently on a small keyboard in front of the cat, head tilts slightly down toward the screen, occasional ear twitch, same pose, same colors, same outline, body and tail stay still.\"",
+  "width": 256,
+  "height": 256,
+  "frame_w": 256,
+  "frame_h": 256,
+  "frame_count": 8,
+  "fps": 8,
+  "preview": "preview.webp",
+  "spritesheet": "spritesheet.png"
+}

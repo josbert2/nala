@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "prompt": "\"Stalking animation: body lowers into a low crouch, tail raised with the tip twitching, head lowers close to the ground with a focused intense gaze, slow creeping weight shift side to side, same colors, same outline.\"",
+  "width": 256,
+  "height": 256,
+  "frame_w": 256,
+  "frame_h": 256,
+  "frame_count": 8,
+  "fps": 8,
+  "preview": "preview.webp",
+  "spritesheet": "spritesheet.png"
+}

@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "prompt": "Loaf idle animation: cat rests in a loaf position with paws tucked underneath, tail tip flicks gently side to side, eyes blink slowly and gently, everything else stays completely still, same colors, same outline.",
+  "width": 256,
+  "height": 256,
+  "frame_w": 256,
+  "frame_h": 256,
+  "frame_count": 8,
+  "fps": 8,
+  "preview": "preview.webp",
+  "spritesheet": "spritesheet.png"
+}

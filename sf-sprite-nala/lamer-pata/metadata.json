@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "prompt": "\"Grooming animation: cat sits and lifts one front paw to its mouth, tongue licks the paw in a repeated motion, head tilts slightly with each lick, same pose, same colors, same outline, body and back legs stay still.\"",
+  "width": 256,
+  "height": 256,
+  "frame_w": 256,
+  "frame_h": 256,
+  "frame_count": 8,
+  "fps": 8,
+  "preview": "preview.webp",
+  "spritesheet": "spritesheet.png"
+}

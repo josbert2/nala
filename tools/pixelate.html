@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Pixelate — Nala sprites</title>
+<style>
+  :root {
+    --bg: #16181d;
+    --panel: #1e2128;
+    --border: #2c3038;
+    --text: #e8e8ea;
+    --muted: #8b8f98;
+    --accent: #5fb3a3;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  h1 { font-size: 18px; margin: 0; font-weight: 600; }
+  .sub { color: var(--muted); font-size: 13px; margin-top: -12px; }
+
+  #drop {
+    width: 480px;
+    max-width: 90vw;
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color .15s;
+  }
+  #drop.drag { border-color: var(--accent); color: var(--text); }
+  #file { display: none; }
+
+  .controls {
+    width: 480px;
+    max-width: 90vw;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    font-size: 13px;
+  }
+  .controls label { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+  .controls input[type=number] {
+    width: 60px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    padding: 4px 6px;
+  }
+  .controls input[type=checkbox] { accent-color: var(--accent); }
+
+  .previews {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .box h2 { font-size: 12px; color: var(--muted); font-weight: 500; margin: 0 0 12px; text-transform: uppercase; letter-spacing: .04em; }
+  .checker {
+    background-image:
+      linear-gradient(45deg, #2a2d34 25%, transparent 25%),
+      linear-gradient(-45deg, #2a2d34 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #2a2d34 75%),
+      linear-gradient(-45deg, transparent 75%, #2a2d34 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+    display: inline-block;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
+  #srcCanvas { image-rendering: auto; max-width: 260px; max-height: 260px; }
+
+  button {
+    background: var(--accent);
+    color: #10231f;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  button.ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .prompts {
+    width: 720px;
+    max-width: 90vw;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .prompts h2 {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  .prompts .sub { margin: 0 0 14px; font-size: 12px; }
+  .prompts table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .prompts th, .prompts td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .prompts th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+  .prompts td.frame { width: 32px; color: var(--muted); }
+  .prompts td.check { width: 28px; }
+  .prompts td.check input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+  .prompts td.action { width: 90px; }
+  .prompts tr.done td { color: var(--muted); }
+  .prompts tr.done td.desc { text-decoration: line-through; }
+  .prompts button.copy {
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .prompts button.copy.copied { background: var(--text); color: var(--bg); }
+  .template {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .template b { color: var(--text); }
+
+  #srcCanvas.precise { cursor: crosshair; }
+  #calibStatus {
+    width: 480px;
+    max-width: 90vw;
+    font-size: 13px;
+    color: var(--accent);
+    text-align: center;
+    min-height: 18px;
+  }
+
+  .inspector {
+    width: 900px;
+    max-width: 95vw;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .inspector-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .inspector-head select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+  .inspector-preview {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  #inspectorAnim {
+    background-image:
+      linear-gradient(45deg, #2a2d34 25%, transparent 25%),
+      linear-gradient(-45deg, #2a2d34 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #2a2d34 75%),
+      linear-gradient(-45deg, transparent 75%, #2a2d34 75%);
+    background-size: 12px 12px;
+    background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+    border-radius: 8px;
+    image-rendering: pixelated;
+  }
+  .frames-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .frame-card {
+    width: 96px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .frame-card canvas {
+    background-image:
+      linear-gradient(45deg, #2a2d34 25%, transparent 25%),
+      linear-gradient(-45deg, #2a2d34 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #2a2d34 75%),
+      linear-gradient(-45deg, transparent 75%, #2a2d34 75%);
+    background-size: 10px 10px;
+    background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    image-rendering: pixelated;
+  }
+  .frame-card.off { opacity: .35; }
+  .frame-card label { display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 4px; cursor: pointer; }
+  .frame-card input { accent-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<h1>Pixelate</h1>
+<div class="sub">Recorta el margen transparente y baja la imagen a la grilla real de píxeles.</div>
+
+<div id="drop">Arrastrá una imagen acá, o hacé click para elegirla<br>(PNG con fondo transparente)</div>
+<input type="file" id="file" accept="image/*">
+
+<div class="controls">
+  <label>Ancho <input type="number" id="w" value="48" min="8" max="256"></label>
+  <label>Alto <input type="number" id="h" value="48" min="8" max="256"></label>
+  <label><input type="checkbox" id="link" checked> mantener proporción</label>
+  <label><input type="checkbox" id="trim" checked> recortar transparencia</label>
+  <label><input type="checkbox" id="precise"> modo preciso (calibrar tamaño a mano)</label>
+</div>
+
+<div id="calibStatus"></div>
+
+<div class="previews">
+  <div class="box">
+    <h2>Original</h2>
+    <div class="checker"><canvas id="srcCanvas"></canvas></div>
+  </div>
+  <div class="box">
+    <h2>Pixelado (real)</h2>
+    <div class="checker"><canvas id="outCanvas"></canvas></div>
+  </div>
+  <div class="box">
+    <h2>Vista ×8</h2>
+    <div class="checker"><canvas id="zoomCanvas"></canvas></div>
+  </div>
+</div>
+
+<div style="display:flex; gap:10px;">
+  <button id="download" disabled>Descargar PNG</button>
+  <button class="ghost" id="reset" disabled>Otra imagen</button>
+</div>
+
+<div class="inspector">
+  <h2 style="font-size:13px; font-weight:600; margin:0 0 4px;">Inspector — v4/cat.png</h2>
+  <p class="sub" style="margin:0 0 14px;">Vé los frames de cada animación, su tamaño real, y desactivá los que no sirvan para probar el loop sin ellos.</p>
+  <div class="inspector-head">
+    <label style="color:var(--muted); font-size:13px;">Animación
+      <select id="animSelect"></select>
+    </label>
+    <button class="ghost" id="reloadSheet" style="padding:8px 14px;">Recargar sheet</button>
+  </div>
+  <div class="inspector-preview">
+    <canvas id="inspectorAnim"></canvas>
+    <span id="inspectorStatus" style="font-size:12px; color:var(--muted);"></span>
+  </div>
+  <div class="frames-grid" id="framesGrid"></div>
+</div>
+
+<div class="prompts">
+  <h2>Prompts — acciones para PixelLab (Custom Animation, texto)</h2>
+  <p class="sub">Un prompt por animación. Se generan desde el personaje base ya creado, así que salen consistentes solas — no hace falta pedir frame por frame como con ChatGPT.</p>
+  <table>
+    <thead>
+      <tr><th></th><th>Acción</th><th>Prompt</th><th></th></tr>
+    </thead>
+    <tbody id="promptRows"></tbody>
+  </table>
+</div>
+
+<script>
+const ACTIONS = [
+  {
+    key: 'respirar',
+    label: 'Respirar (idle)',
+    prompt: '"Breathing idle animation: chest and back fluff gently rise and fall, subtle 2-4 pixel vertical movement, same pose, same colors, same outline, head/ears/eyes/legs/tail stay still."'
+  },
+  {
+    key: 'lejos',
+    label: 'Ver a lo lejos (alert)',
+    prompt: '"Alert gaze animation: head raised and still, eyes fixed staring into the distance, ears perked forward, occasional slow blink, subtle 1-2 pixel ear twitch, same pose, same colors, same outline, body and legs stay still."'
+  },
+  {
+    key: 'dormida',
+    label: 'Quedarse dormida',
+    prompt: '"Falling asleep animation: front paws knead slowly in a rhythmic pressing motion, eyelids gradually lower and close by the last frame, head lowers slightly, same pose, same colors, same outline, body and tail stay mostly still."'
+  },
+  {
+    key: 'trabajar',
+    label: 'Trabajar (pendiente en el motor)',
+    prompt: '"Typing animation: cat lies down facing forward with both front paws resting on a small keyboard, a notebook and pencil beside it, paws tap gently on the keys one at a time, head tilts slightly down looking at the keyboard, occasional ear twitch, same pose, same colors, same outline, body and tail stay still."'
+  },
+  {
+    key: 'jugando',
+    label: 'Jugando (play)',
+    prompt: '"Playful batting animation: one front paw lifts and swats forward repeatedly at something in front of the cat, head and eyes follow the paw, tail flicks side to side with excitement, same pose, same colors, same outline, back legs stay still."'
+  },
+  {
+    key: 'beso',
+    label: 'Beso de gato (pendiente en el motor)',
+    prompt: '"Slow blink animation: eyes gradually close into a gentle happy squint and slowly open again, ears relaxed and slightly forward, same pose, same colors, same outline, body and legs stay completely still."'
+  },
+  {
+    key: 'panza',
+    label: 'Panza arriba (pendiente en el motor)',
+    prompt: '"Rolling over animation: cat rolls from a sitting side view onto its back, exposing its white belly fluff, paws relaxed in the air, tail curls loosely on the ground, playful and relaxed pose, same colors, same outline."'
+  },
+  {
+    key: 'acechando',
+    label: 'Acechando (stalk)',
+    prompt: '"Stalking animation: body lowers into a low crouch, tail raised with the tip twitching, head lowers close to the ground with a focused intense gaze, slow creeping weight shift side to side, same colors, same outline."'
+  },
+  {
+    key: 'agazapada',
+    label: 'Agazapada, lista para saltar (crouch)',
+    prompt: '"Crouching before pounce animation: body hunkers down low and tense, back haunches wiggle slightly side to side building momentum, tail low and twitching quickly, eyes locked forward unblinking, same colors, same outline."'
+  },
+  {
+    key: 'salto',
+    label: 'Salto de ataque (pounce)',
+    prompt: '"Pounce attack animation: cat leaps forward explosively, front paws reaching out with claws extended, body stretched fully in mid-air, back legs pushing off the ground, intense focused eyes, same colors, same outline."'
+  },
+  {
+    key: 'manotazo',
+    label: 'Se para y manotea (rear, para pajaros)',
+    prompt: '"Rearing swat animation: cat rises up on its back legs reaching upward, one front paw swats quickly at something above, tail extends out for balance, same colors, same outline."'
+  },
+  {
+    key: 'lamer',
+    label: 'Lamer su patita (groom)',
+    prompt: '"Grooming animation: cat sits and lifts one front paw to its mouth, tongue licks the paw in a repeated motion, head tilts slightly with each lick, same pose, same colors, same outline, body and back legs stay still."'
+  },
+  {
+    key: 'echada',
+    label: 'Echada como pan, pestañea (loaf)',
+    prompt: '"Loaf idle animation: cat rests in a loaf position with paws tucked underneath, occasional slow blink, tail tip flicks gently side to side, head and body stay otherwise completely still, same colors, same outline."'
+  },
+  {
+    key: 'agarrada',
+    label: 'Agarrada con el mouse (fall)',
+    prompt: '"Being held up animation: cat is suspended by both front paws held up, back legs and body dangle down loosely, tail swings gently side to side, slightly startled wide-eyed expression, same pose, same colors, same outline, front paws and head stay still."'
+  },
+  {
+    key: 'dormida-sleep',
+    label: 'Dormida (sleep)',
+    prompt: '"Sleeping animation: cat is curled up asleep, eyes fully closed, chest and back gently rise and fall with slow breathing, tail tip may twitch occasionally, everything else stays completely still, same pose, same colors, same outline."'
+  }
+];
+
+const STORAGE_KEY = 'nala-action-checks';
+const savedChecks = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+function saveCheck(key, checked) {
+  savedChecks[key] = checked;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(savedChecks));
+}
+
+const promptRows = document.getElementById('promptRows');
+ACTIONS.forEach((a) => {
+  const tr = document.createElement('tr');
+  const checked = !!savedChecks[a.key];
+  if (checked) tr.classList.add('done');
+  tr.innerHTML = `
+    <td class="check"><input type="checkbox" ${checked ? 'checked' : ''}></td>
+    <td class="frame">${a.label}</td>
+    <td class="desc">${a.prompt}</td>
+    <td class="action"><button class="copy">Copiar</button></td>
+  `;
+  tr.querySelector('input').addEventListener('change', (e) => {
+    tr.classList.toggle('done', e.target.checked);
+    saveCheck(a.key, e.target.checked);
+  });
+  tr.querySelector('.copy').addEventListener('click', (e) => {
+    navigator.clipboard.writeText(a.prompt);
+    const btn = e.target;
+    btn.textContent = 'Copiado';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 1200);
+  });
+  promptRows.appendChild(tr);
+});
+</script>
+
+<script>
+const drop = document.getElementById('drop');
+const fileInput = document.getElementById('file');
+const srcCanvas = document.getElementById('srcCanvas');
+const outCanvas = document.getElementById('outCanvas');
+const zoomCanvas = document.getElementById('zoomCanvas');
+const wInput = document.getElementById('w');
+const hInput = document.getElementById('h');
+const linkInput = document.getElementById('link');
+const trimInput = document.getElementById('trim');
+const downloadBtn = document.getElementById('download');
+const resetBtn = document.getElementById('reset');
+const preciseInput = document.getElementById('precise');
+const calibStatus = document.getElementById('calibStatus');
+
+let currentImg = null;
+let aspect = 1;
+let calibPoints = []; // clicks en coordenadas naturales de la imagen: [head, paws]
+
+drop.addEventListener('click', () => fileInput.click());
+drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag'); });
+drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
+drop.addEventListener('drop', e => {
+  e.preventDefault();
+  drop.classList.remove('drag');
+  if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', () => {
+  if (fileInput.files[0]) loadFile(fileInput.files[0]);
+});
+
+function loadFile(file) {
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+    currentImg = img;
+    calibPoints = [];
+    URL.revokeObjectURL(url);
+    render();
+  };
+  img.src = url;
+}
+
+srcCanvas.addEventListener('click', (e) => {
+  if (!preciseInput.checked || !currentImg || calibPoints.length >= 2) return;
+  const rect = srcCanvas.getBoundingClientRect();
+  const scaleX = srcCanvas.width / rect.width;
+  const scaleY = srcCanvas.height / rect.height;
+  const x = (e.clientX - rect.left) * scaleX;
+  const y = (e.clientY - rect.top) * scaleY;
+  calibPoints.push({ x, y });
+  render();
+});
+
+preciseInput.addEventListener('change', () => {
+  calibPoints = [];
+  render();
+});
+
+function trimTransparent(ctx, w, h) {
+  const data = ctx.getImageData(0, 0, w, h).data;
+  let minX = w, minY = h, maxX = 0, maxY = 0;
+  let found = false;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const a = data[(y * w + x) * 4 + 3];
+      if (a > 40) {
+        found = true;
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (!found) return { x: 0, y: 0, w, h };
+  return { x: minX, y: minY, w: maxX - minX + 1, h: maxY - minY + 1 };
+}
+
+function render() {
+  if (!currentImg) return;
+
+  srcCanvas.classList.toggle('precise', preciseInput.checked);
+
+  // draw source at natural size (capped) just for preview + to read pixels
+  const full = document.createElement('canvas');
+  full.width = currentImg.naturalWidth;
+  full.height = currentImg.naturalHeight;
+  const fctx = full.getContext('2d');
+  fctx.drawImage(currentImg, 0, 0);
+
+  let box = { x: 0, y: 0, w: full.width, h: full.height };
+  if (trimInput.checked) box = trimTransparent(fctx, full.width, full.height);
+
+  aspect = box.w / box.h;
+
+  srcCanvas.width = full.width;
+  srcCanvas.height = full.height;
+  const sctx = srcCanvas.getContext('2d');
+  sctx.drawImage(full, 0, 0);
+  sctx.strokeStyle = '#5fb3a3';
+  sctx.lineWidth = Math.max(1, full.width / 200);
+  sctx.strokeRect(box.x, box.y, box.w, box.h);
+
+  const targetW = parseInt(wInput.value, 10) || 48;
+  const targetH = parseInt(hInput.value, 10) || 48;
+
+  // puntos de calibracion, dibujados encima de la vista original
+  calibPoints.forEach((p, i) => {
+    sctx.strokeStyle = i === 0 ? '#ffb84d' : '#ff5f7e';
+    sctx.lineWidth = Math.max(1.5, full.width / 150);
+    const r = full.width / 40;
+    sctx.beginPath();
+    sctx.moveTo(p.x - r, p.y); sctx.lineTo(p.x + r, p.y);
+    sctx.moveTo(p.x, p.y - r); sctx.lineTo(p.x, p.y + r);
+    sctx.stroke();
+  });
+
+  outCanvas.width = targetW;
+  outCanvas.height = targetH;
+  const octx = outCanvas.getContext('2d');
+  octx.imageSmoothingEnabled = false;
+  octx.clearRect(0, 0, targetW, targetH);
+
+  if (preciseInput.checked) {
+    renderPrecise(octx, full, box, targetW, targetH);
+  } else {
+    octx.drawImage(full, box.x, box.y, box.w, box.h, 0, 0, targetW, targetH);
+  }
+
+  outCanvas.style.width = (targetW * 4) + 'px';
+  outCanvas.style.height = (targetH * 4) + 'px';
+
+  const zoom = 8;
+  zoomCanvas.width = targetW * zoom;
+  zoomCanvas.height = targetH * zoom;
+  const zctx = zoomCanvas.getContext('2d');
+  zctx.imageSmoothingEnabled = false;
+  zctx.clearRect(0, 0, zoomCanvas.width, zoomCanvas.height);
+  zctx.drawImage(outCanvas, 0, 0, targetW, targetH, 0, 0, zoomCanvas.width, zoomCanvas.height);
+
+  downloadBtn.disabled = false;
+  resetBtn.disabled = false;
+}
+
+/**
+ * Escala la imagen para que la distancia cabeza-patas que marcaste a mano
+ * quede siempre del mismo tamaño en píxeles de salida, sin importar cuanto
+ * haya encuadrado distinto el generador cada vez. Las patas quedan siempre
+ * apoyadas en la misma línea (la de "ground" del sprite, 42/48 de alto).
+ */
+function renderPrecise(octx, full, box, targetW, targetH) {
+  const groundY = Math.round(targetH * 0.875);
+  const topMargin = Math.round(targetH * 0.04);
+
+  if (calibPoints.length < 2) {
+    calibStatus.textContent = calibPoints.length === 0
+      ? 'Click en la punta de la cabeza'
+      : 'Ahora click en donde tocan el piso las patas';
+    // mientras no calibraste, mostra el recorte simple para no dejar el preview vacio
+    octx.drawImage(full, box.x, box.y, box.w, box.h, 0, 0, targetW, targetH);
+    return;
+  }
+
+  calibStatus.textContent = '';
+  const [a, b] = calibPoints;
+  const headY = Math.min(a.y, b.y);
+  const pawY = Math.max(a.y, b.y);
+  const measured = Math.max(1, pawY - headY);
+
+  // La distancia que marcaste siempre se estira/encoge a este mismo alto de
+  // salida, sea cual sea el encuadre que le haya salido al generador esta vez.
+  // Eso es lo que garantiza que todos los frames queden del mismo tamaño real.
+  const targetPx = groundY - topMargin;
+  const scale = targetPx / measured;
+
+  const centerX = box.x + box.w / 2;
+  const dx = targetW / 2 - centerX * scale;
+  const dy = topMargin - headY * scale;
+
+  octx.drawImage(full, 0, 0, full.width, full.height,
+                 dx, dy, full.width * scale, full.height * scale);
+}
+
+wInput.addEventListener('input', () => {
+  if (linkInput.checked) hInput.value = Math.round(parseInt(wInput.value, 10) / aspect);
+  render();
+});
+hInput.addEventListener('input', () => {
+  if (linkInput.checked) wInput.value = Math.round(parseInt(hInput.value, 10) * aspect);
+  render();
+});
+trimInput.addEventListener('change', render);
+
+downloadBtn.addEventListener('click', () => {
+  const link = document.createElement('a');
+  link.download = 'sprite.png';
+  link.href = outCanvas.toDataURL('image/png');
+  link.click();
+});
+
+resetBtn.addEventListener('click', () => {
+  currentImg = null;
+  calibPoints = [];
+  calibStatus.textContent = '';
+  fileInput.value = '';
+  [srcCanvas, outCanvas, zoomCanvas].forEach(c => { c.width = 0; c.height = 0; });
+  downloadBtn.disabled = true;
+  resetBtn.disabled = true;
+});
+</script>
+
+<script>
+const SHEET_PNG = '/assets/sprites/v4/cat.png';
+const SHEET_JSON = '/assets/sprites/v4/cat.json';
+const ACTIVE_KEY = 'nala-inspector-active';
+
+const animSelect = document.getElementById('animSelect');
+const reloadBtn = document.getElementById('reloadSheet');
+const framesGrid = document.getElementById('framesGrid');
+const inspectorAnim = document.getElementById('inspectorAnim');
+const inspectorStatus = document.getElementById('inspectorStatus');
+
+let sheetImg = null;
+let sheetMeta = null;
+let sheetImgVersion = 0;
+let playTimer = null;
+const activeMap = JSON.parse(localStorage.getItem(ACTIVE_KEY) || '{}');
+
+function trimmedSize(ctx, cw, ch) {
+  const data = ctx.getImageData(0, 0, cw, ch).data;
+  let minX = cw, minY = ch, maxX = 0, maxY = 0, found = false;
+  for (let y = 0; y < ch; y++) {
+    for (let x = 0; x < cw; x++) {
+      if (data[(y * cw + x) * 4 + 3] > 8) {
+        found = true;
+        if (x < minX) minX = x; if (x > maxX) maxX = x;
+        if (y < minY) minY = y; if (y > maxY) maxY = y;
+      }
+    }
+  }
+  return found ? { w: maxX - minX + 1, h: maxY - minY + 1 } : { w: 0, h: 0 };
+}
+
+async function loadSheet() {
+  inspectorStatus.textContent = 'Cargando...';
+  const [meta, img] = await Promise.all([
+    fetch(SHEET_JSON + '?t=' + Date.now()).then(r => r.json()),
+    new Promise((res, rej) => {
+      const im = new Image();
+      im.onload = () => res(im);
+      im.onerror = rej;
+      im.src = SHEET_PNG + '?t=' + Date.now();
+    })
+  ]);
+  sheetMeta = meta;
+  sheetImg = img;
+  sheetImgVersion++;
+
+  const prevSelected = animSelect.value;
+  animSelect.innerHTML = '';
+  Object.keys(meta.animations).forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = name;
+    animSelect.appendChild(opt);
+  });
+  if (prevSelected && meta.animations[prevSelected]) animSelect.value = prevSelected;
+  else animSelect.value = 'idle';
+
+  inspectorStatus.textContent = `sheet ${img.naturalWidth}x${img.naturalHeight}`;
+  renderInspector();
+}
+
+function renderInspector() {
+  if (!sheetMeta || !sheetImg) return;
+  const animName = animSelect.value;
+  const anim = sheetMeta.animations[animName];
+  if (!anim) return;
+
+  const cw = sheetMeta.cell[0], ch = sheetMeta.cell[1];
+  const key = animName;
+  if (!activeMap[key]) activeMap[key] = {};
+
+  framesGrid.innerHTML = '';
+  const zoom = 2;
+  const activeIndexes = [];
+
+  for (let i = 0; i < anim.frames; i++) {
+    const cell = document.createElement('canvas');
+    cell.width = cw; cell.height = ch;
+    const cctx = cell.getContext('2d');
+    cctx.imageSmoothingEnabled = false;
+    cctx.drawImage(sheetImg, i * cw, anim.row * ch, cw, ch, 0, 0, cw, ch);
+    const size = trimmedSize(cctx, cw, ch);
+
+    const isActive = activeMap[key][i] !== false; // por defecto activo
+    if (isActive) activeIndexes.push(i);
+
+    const card = document.createElement('div');
+    card.className = 'frame-card' + (isActive ? '' : ' off');
+
+    const view = document.createElement('canvas');
+    view.width = cw * zoom; view.height = ch * zoom;
+    const vctx = view.getContext('2d');
+    vctx.imageSmoothingEnabled = false;
+    vctx.drawImage(cell, 0, 0, cw * zoom, ch * zoom);
+
+    card.appendChild(view);
+    const info = document.createElement('div');
+    info.textContent = `#${i + 1} · ${size.w}x${size.h}px`;
+    card.appendChild(info);
+
+    const label = document.createElement('label');
+    const chk = document.createElement('input');
+    chk.type = 'checkbox';
+    chk.checked = isActive;
+    chk.addEventListener('change', () => {
+      activeMap[key][i] = chk.checked;
+      localStorage.setItem(ACTIVE_KEY, JSON.stringify(activeMap));
+      card.classList.toggle('off', !chk.checked);
+      startPreview();
+    });
+    label.appendChild(chk);
+    label.append(' activo');
+    card.appendChild(label);
+
+    framesGrid.appendChild(card);
+  }
+
+  inspectorAnim.width = cw * 4;
+  inspectorAnim.height = ch * 4;
+  startPreview();
+}
+
+function startPreview() {
+  if (playTimer) clearInterval(playTimer);
+  const animName = animSelect.value;
+  const anim = sheetMeta.animations[animName];
+  const cw = sheetMeta.cell[0], ch = sheetMeta.cell[1];
+  const key = animName;
+  const active = [];
+  for (let i = 0; i < anim.frames; i++) {
+    if (activeMap[key][i] !== false) active.push(i);
+  }
+
+  const ictx = inspectorAnim.getContext('2d');
+  ictx.imageSmoothingEnabled = false;
+
+  if (!active.length) {
+    ictx.clearRect(0, 0, inspectorAnim.width, inspectorAnim.height);
+    return;
+  }
+
+  let idx = 0;
+  const draw = () => {
+    ictx.clearRect(0, 0, inspectorAnim.width, inspectorAnim.height);
+    const frame = active[idx % active.length];
+    ictx.drawImage(sheetImg, frame * cw, anim.row * ch, cw, ch, 0, 0, inspectorAnim.width, inspectorAnim.height);
+    idx++;
+  };
+  draw();
+  playTimer = setInterval(draw, 1000 / anim.fps);
+}
+
+animSelect.addEventListener('change', renderInspector);
+reloadBtn.addEventListener('click', loadSheet);
+loadSheet().catch(e => { inspectorStatus.textContent = 'Error: ' + e.message; });
+</script>
+
+</body>
+</html>

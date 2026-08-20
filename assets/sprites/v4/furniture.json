@@ -1,0 +1,238 @@
+{
+  "cell": [
+    80,
+    112
+  ],
+  "ground": 108,
+  "animations": {
+    "litter_back": {
+      "row": 0,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "litter_front": {
+      "row": 1,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "post": {
+      "row": 2,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": [
+        [
+          24,
+          56,
+          44
+        ]
+      ]
+    },
+    "tree": {
+      "row": 3,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": [
+        [
+          6,
+          46,
+          76
+        ],
+        [
+          42,
+          78,
+          56
+        ],
+        [
+          12,
+          60,
+          24
+        ]
+      ]
+    },
+    "cave_back": {
+      "row": 4,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "cave_front": {
+      "row": 5,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "mouse": {
+      "row": 6,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "pelotita": {
+      "row": 7,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "pelotita2": {
+      "row": 8,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "wand": {
+      "row": 9,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "grass": {
+      "row": 10,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "garden_tree": {
+      "row": 11,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": [
+        [
+          22,
+          40,
+          56
+        ]
+      ]
+    },
+    "bush": {
+      "row": 12,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "flowers": {
+      "row": 13,
+      "frames": 6,
+      "fps": 3,
+      "loop": true,
+      "ledges": []
+    },
+    "watering_can": {
+      "row": 14,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "tunnel_back": {
+      "row": 15,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "tunnel_front": {
+      "row": 16,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "slide": {
+      "row": 17,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": [
+        [
+          6,
+          42,
+          44
+        ]
+      ]
+    },
+    "ballpit_back": {
+      "row": 18,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "ballpit_front": {
+      "row": 19,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "rope": {
+      "row": 20,
+      "frames": 6,
+      "fps": 4,
+      "loop": true,
+      "ledges": []
+    },
+    "box_back": {
+      "row": 21,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "box_front": {
+      "row": 22,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "window": {
+      "row": 23,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "sill": {
+      "row": 24,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": [
+        [
+          2,
+          78,
+          58
+        ]
+      ]
+    },
+    "potted_plant": {
+      "row": 25,
+      "frames": 1,
+      "fps": 1,
+      "loop": false,
+      "ledges": []
+    },
+    "curtain": {
+      "row": 26,
+      "frames": 6,
+      "fps": 3,
+      "loop": true,
+      "ledges": []
+    }
+  }
+}
