@@ -841,6 +841,7 @@ document.getElementById('shareForm').addEventListener('submit', async (e) => {
 document.getElementById('shares').addEventListener('click', async (e) => {
   const btn = e.target.closest('.share-delete')
   if (!btn) return
+  if (!confirm('¿Borrar esto? Si tiene un archivo, se borra tambien de R2.')) return
   try {
     await window.diary.deleteShare(btn.dataset.id)
     loadShares()
@@ -936,6 +937,7 @@ document.getElementById('taskDescripcion').addEventListener('change', (e) => sav
 
 document.getElementById('taskDelete').addEventListener('click', async () => {
   if (!selectedTaskId) return
+  if (!confirm('¿Borrar esta tarea? No se puede deshacer.')) return
   try {
     await window.diary.deleteTask(selectedTaskId)
     closeTaskDetail()
