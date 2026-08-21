@@ -11,5 +11,6 @@ contextBridge.exposeInMainWorld('nala', {
   onPointer: (cb) => ipcRenderer.on('pointer', (_e, p) => cb(p)),
   setHotRects: (rects, force) => ipcRenderer.send('hot-rects', { rects, force }),
   getConfig: () => ipcRenderer.invoke('get-config'),
-  cycleLook: () => ipcRenderer.send('cycle-look')
+  cycleLook: () => ipcRenderer.send('cycle-look'),
+  toggleDiary: () => ipcRenderer.send('toggle-diary')
 })

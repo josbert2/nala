@@ -416,8 +416,8 @@ window.addEventListener('mousedown', (e) => {
   // boton haga lo suyo. Cerrarlo en mousedown mataba el handler del boton.
   if (menuOpen && menuEl.contains(e.target)) return
 
-  if (e.button === 2) {                       // click derecho sobre ella: panel
-    if (hit(e.clientX, e.clientY)) { toggleMenu(e.clientX, e.clientY); e.preventDefault() }
+  if (e.button === 2) {                         // click derecho sobre ella: diario
+    if (hit(e.clientX, e.clientY)) { window.nala.toggleDiary(); e.preventDefault() }
     return
   }
 
@@ -429,6 +429,7 @@ window.addEventListener('mousedown', (e) => {
   if (e.button !== 0) return
 
   const kind = hitBall(e.clientX, e.clientY) ? 'ball' : hit(e.clientX, e.clientY) ? 'cat' : null
+  console.log('[drag-debug] mousedown', e.clientX, e.clientY, 'catBounds', JSON.stringify(cat.bounds), 'kind', kind)
   if (!kind) return
   grip = { kind, downX: e.clientX, downY: e.clientY, downAt: performance.now(), moved: false }
   touched()
