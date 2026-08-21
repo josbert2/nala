@@ -1,4 +1,6 @@
 'use strict'
+const fs = require('fs')
+const path = require('path')
 
 async function apiFetch (config, urlPath, options = {}) {
   if (!config.apiUrl) throw new Error('servidor no configurado (config/servidor.json)')
@@ -66,4 +68,101 @@ async function deleteCard (config, id) {
   await apiFetch(config, `/api/cards/${id}`, { method: 'DELETE' })
 }
 
-module.exports = { fetchDiaryData, bulkInsert, addNote, getCards, createCard, updateCard, deleteCard }
+async function getShares (config) {
+  const { shares } = await apiFetch(config, '/api/shares')
+  return shares
+}
+
+async function createShare (config, { texto }) {
+  const { share } = await apiFetch(config, '/api/shares', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ texto })
+  })
+  return share
+}
+
+/** `filePath` es una ruta local real (del dialogo nativo o de un drag and drop). */
+async function createShareFile (config, { filePath, texto }) {
+  if (!config.apiUrl) throw new Error('servidor no configurado (config/servidor.json)')
+  const buffer = fs.readFileSync(filePath)
+  const form = new FormData()
+  if (texto) form.append('texto', texto)
+  form.append('file', new Blob([buffer]), path.basename(filePath))
+
+  const res = await fetch(`${config.apiUrl}/api/shares`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${config.apiToken}` },
+    body: form
+  })
+  if (!res.ok) throw new Error(`server respondio ${res.status}`)
+  return (await res.json()).share
+}
+
+async function deleteShare (config, id) {
+  await apiFetch(config, `/api/shares/${id}`, { method: 'DELETE' })
+}
+
+/** Trae el archivo de un share y lo devuelve como base64 para mostrarlo en el renderer. */
+async function getShareFile (config, id) {
+  if (!config.apiUrl) throw new Error('servidor no configurado (config/servidor.json)')
+  const res = await fetch(`${config.apiUrl}/api/shares/${id}/file`, {
+    headers: { Authorization: `Bearer ${config.apiToken}` }
+  })
+  if (!res.ok) throw new Error(`server respondio ${res.status}`)
+  const mime = res.headers.get('content-type') || 'application/octet-stream'
+  const buffer = Buffer.from(await res.arrayBuffer())
+  return { mime, base64: buffer.toString('base64') }
+}
+
+async function getTasks (config) {
+  const { tasks } = await apiFetch(config, '/api/tasks')
+  return tasks
+}
+
+async function getTask (config, id) {
+  const { task } = await apiFetch(config, `/api/tasks/${id}`)
+  return task
+}
+
+async function createTask (config, task) {
+  const { task: created } = await apiFetch(config, '/api/tasks', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(task)
+  })
+  return created
+}
+
+async function updateTask (config, id, changes) {
+  const { task: updated } = await apiFetch(config, `/api/tasks/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(changes)
+  })
+  return updated
+}
+
+async function deleteTask (config, id) {
+  await apiFetch(config, `/api/tasks/${id}`, { method: 'DELETE' })
+}
+
+module.exports = {
+  fetchDiaryData,
+  bulkInsert,
+  addNote,
+  getCards,
+  createCard,
+  updateCard,
+  deleteCard,
+  getShares,
+  createShare,
+  createShareFile,
+  deleteShare,
+  getShareFile,
+  getTasks,
+  getTask,
+  createTask,
+  updateTask,
+  deleteTask
+}

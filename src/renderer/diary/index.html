@@ -18,6 +18,8 @@
         <div class="nav-item" data-view="tablero">TABLERO</div>
         <div class="nav-item" data-view="reportes">REPORTES</div>
         <div class="nav-item" data-view="sprites">SPRITES</div>
+        <div class="nav-item" data-view="compartir">COMPARTIR</div>
+        <div class="nav-item" data-view="proyectos">PROYECTOS</div>
         <div class="nav-item disabled">LOGROS</div>
         <div class="nav-item disabled">AMIGOS</div>
       </nav>
@@ -104,6 +106,70 @@
           <div class="sprite-path" id="spriteSourcesPath"></div>
           <div class="empty" id="spriteSourcesStatus">Cargando…</div>
           <div class="sprite-grid" id="spriteSourcesGrid"></div>
+        </div>
+      </section>
+
+      <section id="viewCompartir" class="hidden">
+        <div id="dropZone" class="drop-zone">
+          <div>Arrastra un archivo aca, o</div>
+          <button type="button" id="pickFileBtn">elegir archivo</button>
+          <div class="empty" id="pickedFileName"></div>
+        </div>
+
+        <form class="note-form" id="shareForm">
+          <input type="text" id="shareInput" placeholder="+ texto o comentario del archivo..." maxlength="500">
+          <button type="submit">Compartir</button>
+        </form>
+
+        <div id="shares"></div>
+      </section>
+
+      <section id="viewProyectos" class="hidden">
+        <div class="tasks-layout">
+          <div class="tasks-list-col">
+            <div class="task-group">
+              <div class="section-label">POR HACER <span id="countTodo"></span></div>
+              <div class="task-rows" data-estado="todo"></div>
+              <form class="card-form task-form" data-estado="todo">
+                <input type="text" placeholder="+ nueva tarea..." maxlength="255">
+              </form>
+            </div>
+            <div class="task-group">
+              <div class="section-label">HACIENDO <span id="countDoing"></span></div>
+              <div class="task-rows" data-estado="doing"></div>
+              <form class="card-form task-form" data-estado="doing">
+                <input type="text" placeholder="+ nueva tarea..." maxlength="255">
+              </form>
+            </div>
+            <div class="task-group">
+              <div class="section-label">HECHO <span id="countDone"></span></div>
+              <div class="task-rows" data-estado="done"></div>
+              <form class="card-form task-form" data-estado="done">
+                <input type="text" placeholder="+ nueva tarea..." maxlength="255">
+              </form>
+            </div>
+          </div>
+
+          <div class="task-detail hidden" id="taskDetail">
+            <button class="task-detail-close" id="taskDetailClose" title="Cerrar">×</button>
+            <input type="text" id="taskTitulo" class="task-detail-title" maxlength="255">
+            <div class="task-detail-meta">
+              <select id="taskPrioridad">
+                <option value="urgente">Urgente</option>
+                <option value="alta">Alta</option>
+                <option value="media">Media</option>
+                <option value="baja">Baja</option>
+              </select>
+              <select id="taskEstado">
+                <option value="todo">Por hacer</option>
+                <option value="doing">Haciendo</option>
+                <option value="done">Hecho</option>
+              </select>
+              <input type="date" id="taskFecha">
+            </div>
+            <textarea id="taskDescripcion" placeholder="Descripcion..."></textarea>
+            <button class="task-detail-delete" id="taskDelete">Borrar tarea</button>
+          </div>
         </div>
       </section>
     </main>

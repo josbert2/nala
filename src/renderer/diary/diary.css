@@ -318,6 +318,145 @@ main {
   background: var(--bg);
 }
 .tab.active { color: var(--text); background: var(--panel); border-bottom: 3px solid var(--accent); margin-bottom: -3px; }
+.drop-zone {
+  border: 3px dashed var(--border);
+  background: var(--panel);
+  padding: 24px;
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: 15px;
+}
+.drop-zone.drag-over { outline: 2px dashed var(--accent); outline-offset: 2px; }
+.drop-zone button {
+  margin-top: 10px;
+  background: var(--accent);
+  border: 3px solid var(--border);
+  color: var(--header-text);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 6px 14px;
+}
+.share {
+  background: var(--panel);
+  border: 3px solid var(--border);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.share-meta { font-size: 12px; color: var(--accent); font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.share-delete {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.share-delete:hover { color: var(--text); }
+.share-texto { font-size: 15px; margin: 6px 0; white-space: pre-wrap; word-break: break-word; }
+.share-media img, .share-media video { max-width: 100%; max-height: 320px; margin-top: 8px; display: block; }
+.share-media audio { width: 100%; margin-top: 8px; }
+.share-file-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--muted);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 13px;
+}
+.tasks-layout { display: flex; gap: 20px; align-items: flex-start; }
+.tasks-list-col { flex: 1; min-width: 0; }
+.task-group { margin-bottom: 20px; }
+.task-form input { font-size: 13px; padding: 7px; }
+.task-rows { margin-bottom: 8px; }
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 3px solid var(--border);
+  background: var(--panel);
+  margin-bottom: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.task-row:hover { border-color: var(--accent); }
+.task-row.selected { border-color: var(--accent); background: var(--bg); }
+.prio-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.prio-urgente { background: #c0392b; }
+.prio-alta { background: #d98a3d; }
+.prio-media { background: #5b8fb9; }
+.prio-baja { background: var(--muted); }
+.task-row-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.task-row-due { font-size: 12px; color: var(--muted); flex: none; }
+.task-row-due.overdue { color: #c0392b; font-weight: 700; }
+
+.task-detail {
+  width: 360px;
+  flex: none;
+  background: var(--panel);
+  border: 3px solid var(--border);
+  padding: 18px;
+  position: relative;
+}
+.task-detail-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 18px;
+  cursor: pointer;
+}
+.task-detail-close:hover { color: var(--text); }
+.task-detail-title {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid var(--border);
+  color: var(--text);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 18px;
+  padding: 4px 0 10px;
+  margin-bottom: 14px;
+}
+.task-detail-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.task-detail-meta select, .task-detail-meta input {
+  background: var(--bg);
+  border: 3px solid var(--border);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 7px;
+}
+.task-detail textarea {
+  width: 100%;
+  min-height: 140px;
+  background: var(--bg);
+  border: 3px solid var(--border);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 8px;
+  resize: vertical;
+  margin-bottom: 14px;
+}
+.task-detail-delete {
+  background: none;
+  border: 2px solid #c0392b;
+  color: #c0392b;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.task-detail-delete:hover { background: #c0392b; color: var(--light, #fff); }
 .mascot {
   position: fixed;
   right: 18px;

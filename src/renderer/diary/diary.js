@@ -238,6 +238,84 @@ async function reloadBoard () {
   }
 }
 
+let selectedTaskId = null
+
+function fmtDueDate (fechaLimite) {
+  if (!fechaLimite) return null
+  const hoy = todayUTC()
+  const d = new Date(`${fechaLimite}T00:00:00Z`)
+  const diffDays = Math.round((d - hoy) / 86400000)
+  if (diffDays < 0) return { text: 'vencida', overdue: true }
+  if (diffDays === 0) return { text: 'hoy', overdue: false }
+  if (diffDays === 1) return { text: 'mañana', overdue: false }
+  if (diffDays <= 6) return { text: `en ${diffDays} dias`, overdue: false }
+  return { text: fechaLimite, overdue: false }
+}
+
+function renderTasks (tasks) {
+  for (const estado of ['todo', 'doing', 'done']) {
+    const delEstado = tasks.filter((t) => t.estado === estado).sort((a, b) => a.posicion - b.posicion)
+    const el = document.querySelector(`.task-rows[data-estado="${estado}"]`)
+    el.innerHTML = ''
+    for (const t of delEstado) {
+      const row = document.createElement('div')
+      row.className = 'task-row' + (t.id === selectedTaskId ? ' selected' : '')
+      row.dataset.id = t.id
+      const due = fmtDueDate(t.fechaLimite)
+      row.innerHTML = `
+        <span class="prio-dot prio-${t.prioridad}"></span>
+        <span class="task-row-title">${escapeHtml(t.titulo)}</span>
+        ${due ? `<span class="task-row-due${due.overdue ? ' overdue' : ''}">${due.text}</span>` : ''}
+      `
+      el.appendChild(row)
+    }
+  }
+  document.getElementById('countTodo').textContent = tasks.filter((t) => t.estado === 'todo').length
+  document.getElementById('countDoing').textContent = tasks.filter((t) => t.estado === 'doing').length
+  document.getElementById('countDone').textContent = tasks.filter((t) => t.estado === 'done').length
+}
+
+async function loadTasks () {
+  try {
+    const tasks = await window.diary.getTasks()
+    renderTasks(tasks)
+  } catch (err) {
+    console.error('[diary] no pude cargar las tareas:', err)
+  }
+}
+
+async function openTaskDetail (id) {
+  try {
+    const task = await window.diary.getTask(id)
+    selectedTaskId = task.id
+    document.getElementById('taskTitulo').value = task.titulo
+    document.getElementById('taskPrioridad').value = task.prioridad
+    document.getElementById('taskEstado').value = task.estado
+    document.getElementById('taskFecha').value = task.fechaLimite || ''
+    document.getElementById('taskDescripcion').value = task.descripcion || ''
+    document.getElementById('taskDetail').classList.remove('hidden')
+    document.querySelectorAll('.task-row').forEach((r) => r.classList.toggle('selected', Number(r.dataset.id) === id))
+  } catch (err) {
+    console.error('[diary] no pude abrir la tarea:', err)
+  }
+}
+
+function closeTaskDetail () {
+  selectedTaskId = null
+  document.getElementById('taskDetail').classList.add('hidden')
+  document.querySelectorAll('.task-row').forEach((r) => r.classList.remove('selected'))
+}
+
+async function saveSelectedTask (changes) {
+  if (!selectedTaskId) return
+  try {
+    await window.diary.updateTask(selectedTaskId, changes)
+    loadTasks()
+  } catch (err) {
+    console.error('[diary] no pude guardar la tarea:', err)
+  }
+}
+
 function isSpriteRowBlank (image, row, frames, cw, ch) {
   const off = document.createElement('canvas')
   off.width = frames * cw
@@ -383,6 +461,82 @@ async function loadSpriteSources () {
   }
 }
 
+let pickedFilePath = null
+
+function fmtShareDate (createdAt) {
+  // createdAt viene 'YYYY-MM-DD HH:MM:SS' de MySQL.
+  return createdAt.replace(' ', ' · ').slice(0, 19)
+}
+
+async function renderShares (shares) {
+  const el = document.getElementById('shares')
+  el.innerHTML = ''
+  if (!shares.length) {
+    el.innerHTML = '<div class="empty">Todavia no compartiste nada.</div>'
+    return
+  }
+
+  for (const s of shares) {
+    const div = document.createElement('div')
+    div.className = 'share'
+
+    const meta = document.createElement('div')
+    meta.className = 'share-meta'
+    meta.innerHTML = `<span>${fmtShareDate(s.createdAt)} · ${s.tipo.toUpperCase()}</span>
+      <button class="share-delete" data-id="${s.id}" title="Borrar">×</button>`
+    div.appendChild(meta)
+
+    if (s.texto) {
+      const texto = document.createElement('div')
+      texto.className = 'share-texto'
+      texto.textContent = s.texto
+      div.appendChild(texto)
+    }
+
+    if (s.filename) {
+      const media = document.createElement('div')
+      media.className = 'share-media'
+      if (s.tipo === 'imagen') {
+        const img = document.createElement('img')
+        window.diary.getShareFile(s.id).then(({ mime, base64 }) => { img.src = `data:${mime};base64,${base64}` })
+        media.appendChild(img)
+      } else if (s.tipo === 'audio' || s.tipo === 'video') {
+        const player = document.createElement(s.tipo === 'audio' ? 'audio' : 'video')
+        player.controls = true
+        const btn = document.createElement('button')
+        btn.className = 'share-file-link'
+        btn.textContent = `▶ cargar ${s.filename}`
+        btn.addEventListener('click', async () => {
+          const { mime, base64 } = await window.diary.getShareFile(s.id)
+          player.src = `data:${mime};base64,${base64}`
+          btn.remove()
+          media.insertBefore(player, media.firstChild)
+          player.play()
+        })
+        media.appendChild(btn)
+      } else {
+        const link = document.createElement('span')
+        link.className = 'share-file-link'
+        link.textContent = `⬇ descargar ${s.filename}`
+        link.addEventListener('click', () => window.diary.saveShareFile(s.id, s.filename))
+        media.appendChild(link)
+      }
+      div.appendChild(media)
+    }
+
+    el.appendChild(div)
+  }
+}
+
+async function loadShares () {
+  try {
+    const shares = await window.diary.getShares()
+    renderShares(shares)
+  } catch (err) {
+    console.error('[diary] no pude cargar lo compartido:', err)
+  }
+}
+
 function showConnError (show) {
   document.getElementById('connError').classList.toggle('hidden', !show)
 }
@@ -417,7 +571,7 @@ document.getElementById('themeToggle').addEventListener('click', () => {
   applyTheme(document.body.dataset.theme === 'dark' ? 'light' : 'dark')
 })
 
-const VIEWS = ['diario', 'tablero', 'reportes', 'sprites']
+const VIEWS = ['diario', 'tablero', 'reportes', 'sprites', 'compartir', 'proyectos']
 document.querySelectorAll('.nav-item[data-view]').forEach((item) => {
   item.addEventListener('click', () => {
     document.querySelectorAll('.nav-item[data-view]').forEach((n) => n.classList.remove('active'))
@@ -426,6 +580,8 @@ document.querySelectorAll('.nav-item[data-view]').forEach((item) => {
       document.getElementById(`view${v[0].toUpperCase()}${v.slice(1)}`).classList.toggle('hidden', item.dataset.view !== v)
     }
     if (item.dataset.view === 'sprites') { loadSpriteViewer(); loadSpriteSources() }
+    if (item.dataset.view === 'compartir') loadShares()
+    if (item.dataset.view === 'proyectos') loadTasks()
   })
 })
 
@@ -518,6 +674,96 @@ document.querySelectorAll('.cards').forEach((col) => {
       console.error('[diary] no pude borrar la tarjeta:', err)
     }
   })
+})
+
+function setPickedFile (filePath) {
+  pickedFilePath = filePath
+  document.getElementById('pickedFileName').textContent = filePath ? `Elegido: ${filePath.split('/').pop()}` : ''
+}
+
+const dropZone = document.getElementById('dropZone')
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over') })
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'))
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault()
+  dropZone.classList.remove('drag-over')
+  const file = e.dataTransfer.files[0]
+  if (!file) return
+  setPickedFile(window.diary.pathForFile(file))
+})
+
+document.getElementById('pickFileBtn').addEventListener('click', async () => {
+  const filePath = await window.diary.pickShareFile()
+  if (filePath) setPickedFile(filePath)
+})
+
+document.getElementById('shareForm').addEventListener('submit', async (e) => {
+  e.preventDefault()
+  const input = document.getElementById('shareInput')
+  const texto = input.value.trim()
+  if (!texto && !pickedFilePath) return
+  try {
+    if (pickedFilePath) await window.diary.createShareFile(pickedFilePath, texto || null)
+    else await window.diary.createShare(texto)
+    input.value = ''
+    setPickedFile(null)
+    loadShares()
+  } catch (err) {
+    console.error('[diary] no pude compartir:', err)
+  }
+})
+
+document.getElementById('shares').addEventListener('click', async (e) => {
+  const btn = e.target.closest('.share-delete')
+  if (!btn) return
+  try {
+    await window.diary.deleteShare(btn.dataset.id)
+    loadShares()
+  } catch (err) {
+    console.error('[diary] no pude borrar lo compartido:', err)
+  }
+})
+
+document.querySelectorAll('.task-form').forEach((form) => {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const input = form.querySelector('input')
+    const titulo = input.value.trim()
+    if (!titulo) return
+    try {
+      await window.diary.createTask({ titulo, estado: form.dataset.estado })
+      input.value = ''
+      loadTasks()
+    } catch (err) {
+      console.error('[diary] no pude crear la tarea:', err)
+    }
+  })
+})
+
+document.querySelectorAll('.task-rows').forEach((col) => {
+  col.addEventListener('click', (e) => {
+    const row = e.target.closest('.task-row')
+    if (row) openTaskDetail(Number(row.dataset.id))
+  })
+})
+
+document.getElementById('taskDetailClose').addEventListener('click', closeTaskDetail)
+
+document.getElementById('taskTitulo').addEventListener('change', (e) => saveSelectedTask({ titulo: e.target.value.trim() }))
+document.getElementById('taskPrioridad').addEventListener('change', (e) => saveSelectedTask({ prioridad: e.target.value }))
+document.getElementById('taskEstado').addEventListener('change', (e) => saveSelectedTask({ estado: e.target.value }))
+document.getElementById('taskFecha').addEventListener('change', (e) => saveSelectedTask({ fechaLimite: e.target.value || null }))
+document.getElementById('taskDescripcion').addEventListener('change', (e) => saveSelectedTask({ descripcion: e.target.value }))
+
+document.getElementById('taskDelete').addEventListener('click', async () => {
+  if (!selectedTaskId) return
+  try {
+    await window.diary.deleteTask(selectedTaskId)
+    closeTaskDetail()
+    loadTasks()
+  } catch (err) {
+    console.error('[diary] no pude borrar la tarea:', err)
+  }
 })
 
 applyTheme(localStorage.getItem(THEME_KEY) || 'light')

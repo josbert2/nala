@@ -1,5 +1,5 @@
 'use strict'
-const { contextBridge, ipcRenderer } = require('electron')
+const { contextBridge, ipcRenderer, webUtils } = require('electron')
 
 contextBridge.exposeInMainWorld('diary', {
   getData: () => ipcRenderer.invoke('diary:get-data'),
@@ -10,5 +10,18 @@ contextBridge.exposeInMainWorld('diary', {
   getCards: () => ipcRenderer.invoke('diary:get-cards'),
   createCard: (card) => ipcRenderer.invoke('diary:create-card', card),
   updateCard: (id, changes) => ipcRenderer.invoke('diary:update-card', id, changes),
-  deleteCard: (id) => ipcRenderer.invoke('diary:delete-card', id)
+  deleteCard: (id) => ipcRenderer.invoke('diary:delete-card', id),
+  getShares: () => ipcRenderer.invoke('diary:get-shares'),
+  createShare: (texto) => ipcRenderer.invoke('diary:create-share', texto),
+  createShareFile: (filePath, texto) => ipcRenderer.invoke('diary:create-share-file', filePath, texto),
+  deleteShare: (id) => ipcRenderer.invoke('diary:delete-share', id),
+  getShareFile: (id) => ipcRenderer.invoke('diary:get-share-file', id),
+  pickShareFile: () => ipcRenderer.invoke('diary:pick-share-file'),
+  saveShareFile: (id, suggestedName) => ipcRenderer.invoke('diary:save-share-file', id, suggestedName),
+  getTasks: () => ipcRenderer.invoke('diary:get-tasks'),
+  getTask: (id) => ipcRenderer.invoke('diary:get-task', id),
+  createTask: (task) => ipcRenderer.invoke('diary:create-task', task),
+  updateTask: (id, changes) => ipcRenderer.invoke('diary:update-task', id, changes),
+  deleteTask: (id) => ipcRenderer.invoke('diary:delete-task', id),
+  pathForFile: (file) => webUtils.getPathForFile(file)
 })

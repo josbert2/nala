@@ -1,7 +1,7 @@
 'use strict'
 
 const {
-  app, BrowserWindow, screen, ipcMain, Tray, Menu, nativeImage, shell, globalShortcut
+  app, BrowserWindow, screen, ipcMain, Tray, Menu, nativeImage, shell, globalShortcut, dialog
 } = require('electron')
 const path = require('path')
 const fs = require('fs')
@@ -167,6 +167,110 @@ async function deleteCard (id) {
     await apiClient.deleteCard(loadServidorConfig(), id)
   } catch (err) {
     console.error('[nala] diario: no pude borrar la tarjeta:', err.message)
+    throw err
+  }
+}
+
+async function getShares () {
+  try {
+    return await apiClient.getShares(loadServidorConfig())
+  } catch (err) {
+    console.error('[nala] diario: no pude obtener lo compartido:', err.message)
+    throw err
+  }
+}
+
+async function createShare (texto) {
+  try {
+    return await apiClient.createShare(loadServidorConfig(), { texto })
+  } catch (err) {
+    console.error('[nala] diario: no pude compartir el texto:', err.message)
+    throw err
+  }
+}
+
+async function createShareFile (filePath, texto) {
+  try {
+    return await apiClient.createShareFile(loadServidorConfig(), { filePath, texto })
+  } catch (err) {
+    console.error('[nala] diario: no pude compartir el archivo:', err.message)
+    throw err
+  }
+}
+
+async function deleteShare (id) {
+  try {
+    await apiClient.deleteShare(loadServidorConfig(), id)
+  } catch (err) {
+    console.error('[nala] diario: no pude borrar lo compartido:', err.message)
+    throw err
+  }
+}
+
+async function getShareFile (id) {
+  try {
+    return await apiClient.getShareFile(loadServidorConfig(), id)
+  } catch (err) {
+    console.error('[nala] diario: no pude traer el archivo compartido:', err.message)
+    throw err
+  }
+}
+
+async function pickShareFile () {
+  const result = await dialog.showOpenDialog({ properties: ['openFile'] })
+  if (result.canceled || !result.filePaths.length) return null
+  return result.filePaths[0]
+}
+
+async function saveShareFile (id, suggestedName) {
+  const { base64 } = await getShareFile(id)
+  const result = await dialog.showSaveDialog({ defaultPath: suggestedName })
+  if (result.canceled || !result.filePath) return false
+  fs.writeFileSync(result.filePath, Buffer.from(base64, 'base64'))
+  return true
+}
+
+async function getTasks () {
+  try {
+    return await apiClient.getTasks(loadServidorConfig())
+  } catch (err) {
+    console.error('[nala] proyectos: no pude obtener las tareas:', err.message)
+    throw err
+  }
+}
+
+async function getTask (id) {
+  try {
+    return await apiClient.getTask(loadServidorConfig(), id)
+  } catch (err) {
+    console.error('[nala] proyectos: no pude obtener la tarea:', err.message)
+    throw err
+  }
+}
+
+async function createTask (task) {
+  try {
+    return await apiClient.createTask(loadServidorConfig(), task)
+  } catch (err) {
+    console.error('[nala] proyectos: no pude crear la tarea:', err.message)
+    throw err
+  }
+}
+
+async function updateTask (id, changes) {
+  try {
+    return await apiClient.updateTask(loadServidorConfig(), id, changes)
+  } catch (err) {
+    console.error('[nala] proyectos: no pude actualizar la tarea:', err.message)
+    throw err
+  }
+}
+
+async function deleteTask (id) {
+  try {
+    await apiClient.deleteTask(loadServidorConfig(), id)
+  } catch (err) {
+    console.error('[nala] proyectos: no pude borrar la tarea:', err.message)
     throw err
   }
 }
@@ -710,6 +814,18 @@ ipcMain.handle('diary:get-cards', () => getCards())
 ipcMain.handle('diary:create-card', (_e, card) => createCard(card))
 ipcMain.handle('diary:update-card', (_e, id, changes) => updateCard(id, changes))
 ipcMain.handle('diary:delete-card', (_e, id) => deleteCard(id))
+ipcMain.handle('diary:get-shares', () => getShares())
+ipcMain.handle('diary:create-share', (_e, texto) => createShare(texto))
+ipcMain.handle('diary:create-share-file', (_e, filePath, texto) => createShareFile(filePath, texto))
+ipcMain.handle('diary:delete-share', (_e, id) => deleteShare(id))
+ipcMain.handle('diary:get-share-file', (_e, id) => getShareFile(id))
+ipcMain.handle('diary:pick-share-file', () => pickShareFile())
+ipcMain.handle('diary:save-share-file', (_e, id, suggestedName) => saveShareFile(id, suggestedName))
+ipcMain.handle('diary:get-tasks', () => getTasks())
+ipcMain.handle('diary:get-task', (_e, id) => getTask(id))
+ipcMain.handle('diary:create-task', (_e, task) => createTask(task))
+ipcMain.handle('diary:update-task', (_e, id, changes) => updateTask(id, changes))
+ipcMain.handle('diary:delete-task', (_e, id) => deleteTask(id))
 ipcMain.on('diary:open-external', (_e, url) => {
   if (typeof url === 'string' && url.startsWith('https://github.com/')) shell.openExternal(url)
 })
