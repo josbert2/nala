@@ -349,8 +349,12 @@ function renderProjects (projects) {
       <span class="project-pill-icon">${icon('folder', 14)}</span>
       <span class="project-pill-name">${escapeHtml(p.nombre)}</span>
       <span class="project-pill-count">${p.taskCount}</span>
+      ${projects.length > 1 ? `<button type="button" class="project-pill-delete" data-id="${p.id}" title="Borrar proyecto">${icon('trash', 12)}</button>` : ''}
     `
-    pill.addEventListener('click', () => selectProject(p.id))
+    pill.addEventListener('click', (e) => {
+      if (e.target.closest('.project-pill-delete')) return
+      selectProject(p.id)
+    })
     el.appendChild(pill)
   }
   updateBreadcrumb()
@@ -882,6 +886,22 @@ document.getElementById('topAddTaskBtn').addEventListener('click', () => {
 })
 
 document.getElementById('taskSearchInput').addEventListener('input', renderFilteredTasks)
+
+document.getElementById('projectSwitcher').addEventListener('click', async (e) => {
+  const btn = e.target.closest('.project-pill-delete')
+  if (!btn) return
+  const id = Number(btn.dataset.id)
+  const project = loadedProjects.find((p) => p.id === id)
+  if (!project) return
+  if (!confirm(`¿Borrar el proyecto "${project.nombre}" y sus ${project.taskCount} tareas?`)) return
+  try {
+    await window.diary.deleteProject(id)
+    if (currentProjectId === id) currentProjectId = null
+    loadProjects()
+  } catch (err) {
+    console.error('[diary] no pude borrar el proyecto:', err)
+  }
+})
 
 document.querySelectorAll('.task-rows').forEach((col) => {
   col.addEventListener('click', (e) => {

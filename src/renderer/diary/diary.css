@@ -402,6 +402,18 @@ main {
 .project-pill-icon { flex: none; }
 .project-pill-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .project-pill-count { font-size: 11px; opacity: .7; }
+.project-pill-delete {
+  display: none;
+  background: none;
+  border: none;
+  color: inherit;
+  opacity: .7;
+  cursor: pointer;
+  padding: 2px;
+  flex: none;
+}
+.project-pill-delete:hover { opacity: 1; }
+.project-pill:hover .project-pill-delete { display: inline-flex; }
 .add-project-form { display: flex; align-items: center; gap: 8px; padding: 7px 8px; margin-top: 6px; }
 .add-project-icon { color: #a1a1aa; font-size: 13px; }
 .add-project-form input {
