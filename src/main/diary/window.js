@@ -1,8 +1,8 @@
 'use strict'
 const { BrowserWindow, screen } = require('electron')
 
-const WIDTH = 1100
-const HEIGHT = 750
+const WIDTH = 1480
+const HEIGHT = 920
 
 let diaryWin = null
 
