@@ -9,6 +9,39 @@ const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
 let allEntries = []
 let currentDate = null
 let repoLinks = {}
+let spritesLoaded = false
+
+const NOMBRES_SPRITE = {
+  idle: 'respirando',
+  sit: 'sentada',
+  alert: 'alerta',
+  walk: 'caminando',
+  run: 'corriendo',
+  sleep: 'dormida',
+  loaf: 'echada (pan)',
+  dig: 'escarbando',
+  scratch: 'rascando el poste',
+  groom: 'acicalandose',
+  stretch: 'estirandose',
+  fall: 'cayendo',
+  climb: 'trepando',
+  eat: 'comiendo',
+  crouch: 'agazapada',
+  stalk: 'acechando',
+  rear: 'parada en dos patas',
+  angry: 'enojada',
+  rascarse: 'rascarse',
+  blep: 'lengua afuera',
+  frotar: 'frotar',
+  olfatear: 'olfatear',
+  sacudirse: 'sacudirse',
+  amasar: 'amasar',
+  startle: 'sobresaltada',
+  yawn: 'bostezando',
+  pounce: 'saltando (ataque)',
+  play: 'jugando',
+  slide: 'derrape'
+}
 
 function applyTheme (theme) {
   document.body.dataset.theme = theme
@@ -204,6 +237,90 @@ async function reloadBoard () {
   }
 }
 
+function isSpriteRowBlank (image, row, frames, cw, ch) {
+  const off = document.createElement('canvas')
+  off.width = frames * cw
+  off.height = ch
+  const octx = off.getContext('2d')
+  octx.drawImage(image, 0, row * ch, frames * cw, ch, 0, 0, frames * cw, ch)
+  const data = octx.getImageData(0, 0, frames * cw, ch).data
+  for (let i = 3; i < data.length; i += 4) {
+    if (data[i] > 10) return false
+  }
+  return true
+}
+
+function animateSprite (canvas, image, a, cw, ch) {
+  const ctx = canvas.getContext('2d')
+  ctx.imageSmoothingEnabled = false
+  const start = performance.now()
+
+  function frame (now) {
+    const elapsed = now - start
+    let idx = Math.floor((elapsed / 1000) * a.fps)
+    idx = a.loop
+      ? ((idx % a.frames) + a.frames) % a.frames
+      : Math.max(0, Math.min(idx, a.frames - 1))
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.drawImage(image, idx * cw, a.row * ch, cw, ch, 0, 0, canvas.width, canvas.height)
+    requestAnimationFrame(frame)
+  }
+  requestAnimationFrame(frame)
+}
+
+async function loadSpriteViewer () {
+  if (spritesLoaded) return
+  spritesLoaded = true
+  const status = document.getElementById('spriteStatus')
+  try {
+    const [meta, image] = await Promise.all([
+      fetch('../../../assets/sprites/v4/cat.json').then((r) => r.json()),
+      new Promise((resolve, reject) => {
+        const img = new Image()
+        img.onload = () => resolve(img)
+        img.onerror = reject
+        img.src = '../../../assets/sprites/v4/cat.png'
+      })
+    ])
+
+    const cw = meta.cell[0]
+    const ch = meta.cell[1]
+    const grid = document.getElementById('spriteGrid')
+    let mostradas = 0
+
+    for (const [name, a] of Object.entries(meta.animations)) {
+      if (isSpriteRowBlank(image, a.row, a.frames, cw, ch)) continue
+      mostradas++
+
+      const cell = document.createElement('div')
+      cell.className = 'sprite-cell'
+
+      const canvas = document.createElement('canvas')
+      canvas.width = cw * 2
+      canvas.height = ch * 2
+      cell.appendChild(canvas)
+
+      const label = document.createElement('div')
+      label.className = 'sprite-name'
+      label.textContent = NOMBRES_SPRITE[name] || name
+      cell.appendChild(label)
+
+      const info = document.createElement('div')
+      info.className = 'sprite-meta'
+      info.textContent = `${name} · ${a.frames} frames · ${a.fps}fps`
+      cell.appendChild(info)
+
+      grid.appendChild(cell)
+      animateSprite(canvas, image, a, cw, ch)
+    }
+
+    status.textContent = `${mostradas} de ${Object.keys(meta.animations).length} animaciones tienen arte real`
+  } catch (err) {
+    console.error('[diary] no pude cargar los sprites:', err)
+    status.textContent = 'No pude cargar los sprites.'
+  }
+}
+
 function showConnError (show) {
   document.getElementById('connError').classList.toggle('hidden', !show)
 }
@@ -238,7 +355,7 @@ document.getElementById('themeToggle').addEventListener('click', () => {
   applyTheme(document.body.dataset.theme === 'dark' ? 'light' : 'dark')
 })
 
-const VIEWS = ['diario', 'tablero', 'reportes']
+const VIEWS = ['diario', 'tablero', 'reportes', 'sprites']
 document.querySelectorAll('.nav-item[data-view]').forEach((item) => {
   item.addEventListener('click', () => {
     document.querySelectorAll('.nav-item[data-view]').forEach((n) => n.classList.remove('active'))
@@ -246,6 +363,7 @@ document.querySelectorAll('.nav-item[data-view]').forEach((item) => {
     for (const v of VIEWS) {
       document.getElementById(`view${v[0].toUpperCase()}${v.slice(1)}`).classList.toggle('hidden', item.dataset.view !== v)
     }
+    if (item.dataset.view === 'sprites') loadSpriteViewer()
   })
 })
 

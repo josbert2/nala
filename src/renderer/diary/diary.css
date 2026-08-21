@@ -283,6 +283,24 @@ main {
   text-align: center;
   margin-bottom: 18px;
 }
+.sprite-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+}
+.sprite-cell {
+  background: var(--panel);
+  border: 3px solid var(--border);
+  padding: 10px;
+  text-align: center;
+}
+.sprite-cell canvas {
+  image-rendering: pixelated;
+  background: repeating-conic-gradient(#00000022 0% 25%, transparent 0% 50%) 50% / 16px 16px;
+  border: 2px solid var(--border);
+}
+.sprite-cell .sprite-name { font-weight: 700; font-size: 14px; margin-top: 8px; letter-spacing: .03em; }
+.sprite-cell .sprite-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
 .mascot {
   position: fixed;
   right: 18px;
