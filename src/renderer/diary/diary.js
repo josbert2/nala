@@ -252,20 +252,32 @@ function fmtDueDate (fechaLimite) {
   return { text: fechaLimite, overdue: false }
 }
 
+const PRIO_FLAG = { urgente: '⚑', alta: '⚑', media: '⚑', baja: '⚑' }
+const ESTADO_PILL = {
+  todo: '<span class="status-pill status-todo">PENDIENTE</span>',
+  doing: '<span class="status-pill status-doing">EN CURSO</span>',
+  done: '<span class="status-pill status-done">COMPLETADO</span>'
+}
+
 function renderTasks (tasks) {
   for (const estado of ['todo', 'doing', 'done']) {
     const delEstado = tasks.filter((t) => t.estado === estado).sort((a, b) => a.posicion - b.posicion)
     const el = document.querySelector(`.task-rows[data-estado="${estado}"]`)
     el.innerHTML = ''
     for (const t of delEstado) {
-      const row = document.createElement('div')
-      row.className = 'task-row' + (t.id === selectedTaskId ? ' selected' : '')
+      const row = document.createElement('tr')
+      row.className = t.id === selectedTaskId ? 'selected' : ''
       row.dataset.id = t.id
       const due = fmtDueDate(t.fechaLimite)
       row.innerHTML = `
-        <span class="prio-dot prio-${t.prioridad}"></span>
-        <span class="task-row-title">${escapeHtml(t.titulo)}</span>
-        ${due ? `<span class="task-row-due${due.overdue ? ' overdue' : ''}">${due.text}</span>` : ''}
+        <td class="task-name-cell">
+          <span class="task-name-icon${estado === 'done' ? ' estado-done' : ''}"></span>
+          ${escapeHtml(t.titulo)}
+        </td>
+        <td class="task-due-cell${due && due.overdue ? ' overdue' : ''}">${due ? due.text : '—'}</td>
+        <td><span class="prio-flag prio-${t.prioridad}">${PRIO_FLAG[t.prioridad]}</span></td>
+        <td>${ESTADO_PILL[estado]}</td>
+        <td class="comment-count-cell">💬</td>
       `
       el.appendChild(row)
     }
@@ -323,7 +335,7 @@ async function openTaskDetail (id) {
     document.getElementById('taskFecha').value = task.fechaLimite || ''
     document.getElementById('taskDescripcion').value = task.descripcion || ''
     document.getElementById('taskDetail').classList.remove('hidden')
-    document.querySelectorAll('.task-row').forEach((r) => r.classList.toggle('selected', Number(r.dataset.id) === id))
+    document.querySelectorAll('.task-rows tr').forEach((r) => r.classList.toggle('selected', Number(r.dataset.id) === id))
     loadComments(id)
   } catch (err) {
     console.error('[diary] no pude abrir la tarea:', err)
@@ -333,7 +345,7 @@ async function openTaskDetail (id) {
 function closeTaskDetail () {
   selectedTaskId = null
   document.getElementById('taskDetail').classList.add('hidden')
-  document.querySelectorAll('.task-row').forEach((r) => r.classList.remove('selected'))
+  document.querySelectorAll('.task-rows tr').forEach((r) => r.classList.remove('selected'))
 }
 
 async function saveSelectedTask (changes) {
@@ -772,8 +784,14 @@ document.querySelectorAll('.task-form').forEach((form) => {
 
 document.querySelectorAll('.task-rows').forEach((col) => {
   col.addEventListener('click', (e) => {
-    const row = e.target.closest('.task-row')
+    const row = e.target.closest('tr')
     if (row) openTaskDetail(Number(row.dataset.id))
+  })
+})
+
+document.querySelectorAll('.task-group-header').forEach((header) => {
+  header.addEventListener('click', () => {
+    header.closest('.task-group').classList.toggle('collapsed')
   })
 })
 

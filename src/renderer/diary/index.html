@@ -127,26 +127,66 @@
       <section id="viewProyectos" class="hidden">
         <div class="tasks-layout">
           <div class="tasks-list-col">
-            <div class="task-group">
-              <div class="section-label">POR HACER <span id="countTodo"></span></div>
-              <div class="task-rows" data-estado="todo"></div>
-              <form class="card-form task-form" data-estado="todo">
-                <input type="text" placeholder="+ nueva tarea..." maxlength="255">
-              </form>
-            </div>
-            <div class="task-group">
-              <div class="section-label">HACIENDO <span id="countDoing"></span></div>
-              <div class="task-rows" data-estado="doing"></div>
-              <form class="card-form task-form" data-estado="doing">
-                <input type="text" placeholder="+ nueva tarea..." maxlength="255">
-              </form>
-            </div>
-            <div class="task-group">
-              <div class="section-label">HECHO <span id="countDone"></span></div>
-              <div class="task-rows" data-estado="done"></div>
-              <form class="card-form task-form" data-estado="done">
-                <input type="text" placeholder="+ nueva tarea..." maxlength="255">
-              </form>
+            <div class="tasks-table-wrap">
+              <div class="task-group" data-estado="doing">
+                <div class="task-group-header" data-estado="doing">
+                  <span class="chevron">▾</span>
+                  <span class="status-pill status-doing">EN CURSO</span>
+                  <span class="group-count" id="countDoing">0</span>
+                </div>
+                <div class="task-group-body" data-estado="doing">
+                  <table class="tasks-table">
+                    <thead>
+                      <tr><th class="th-nombre">Nombre</th><th>Fecha límite</th><th>Prioridad</th><th>Estado</th><th class="th-comments">💬</th></tr>
+                    </thead>
+                    <tbody class="task-rows" data-estado="doing"></tbody>
+                  </table>
+                  <form class="add-task-row task-form" data-estado="doing">
+                    <span class="add-task-icon">+</span>
+                    <input type="text" placeholder="Añadir Tarea" maxlength="255">
+                  </form>
+                </div>
+              </div>
+
+              <div class="task-group" data-estado="todo">
+                <div class="task-group-header" data-estado="todo">
+                  <span class="chevron">▾</span>
+                  <span class="status-pill status-todo">PENDIENTE</span>
+                  <span class="group-count" id="countTodo">0</span>
+                </div>
+                <div class="task-group-body" data-estado="todo">
+                  <table class="tasks-table">
+                    <thead>
+                      <tr><th class="th-nombre">Nombre</th><th>Fecha límite</th><th>Prioridad</th><th>Estado</th><th class="th-comments">💬</th></tr>
+                    </thead>
+                    <tbody class="task-rows" data-estado="todo"></tbody>
+                  </table>
+                  <form class="add-task-row task-form" data-estado="todo">
+                    <span class="add-task-icon">+</span>
+                    <input type="text" placeholder="Añadir Tarea" maxlength="255">
+                  </form>
+                </div>
+              </div>
+
+              <div class="task-group" data-estado="done">
+                <div class="task-group-header" data-estado="done">
+                  <span class="chevron">▾</span>
+                  <span class="status-pill status-done">COMPLETADO</span>
+                  <span class="group-count" id="countDone">0</span>
+                </div>
+                <div class="task-group-body" data-estado="done">
+                  <table class="tasks-table">
+                    <thead>
+                      <tr><th class="th-nombre">Nombre</th><th>Fecha límite</th><th>Prioridad</th><th>Estado</th><th class="th-comments">💬</th></tr>
+                    </thead>
+                    <tbody class="task-rows" data-estado="done"></tbody>
+                  </table>
+                  <form class="add-task-row task-form" data-estado="done">
+                    <span class="add-task-icon">+</span>
+                    <input type="text" placeholder="Añadir Tarea" maxlength="255">
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
 
