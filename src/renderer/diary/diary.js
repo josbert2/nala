@@ -232,5 +232,5 @@ document.getElementById('noteForm').addEventListener('submit', async (e) => {
   loadAndRender()
 })
 
-applyTheme(localStorage.getItem(THEME_KEY) || 'dark')
+applyTheme(localStorage.getItem(THEME_KEY) || 'light')
 loadAndRender()

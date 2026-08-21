@@ -38,6 +38,7 @@ if (process.platform === 'linux') {
 }
 
 let win = null
+let quitting = false
 let tray = null
 let geometryTimer = null
 let windowProvider = null
@@ -685,9 +686,18 @@ if (!singleInstance) {
 
   app.whenReady().then(() => {
     createWindow()
-    createDiaryWindow({
+    const diaryWin = createDiaryWindow({
       preloadPath: path.join(__dirname, 'diary-preload.js'),
       htmlPath: path.join(ROOT, 'src', 'renderer', 'diary', 'index.html')
+    })
+    // El panel tapa a la gata mientras esta abierto: no tiene sentido verla
+    // flotando encima de su propio dashboard. Se esconde una y aparece la otra.
+    diaryWin.on('show', () => win.hide())
+    diaryWin.on('hide', () => win.show())
+    diaryWin.on('close', (e) => {
+      if (quitting) return
+      e.preventDefault()
+      diaryWin.hide()
     })
     buildTray()
     startGeometryPolling()
@@ -714,6 +724,7 @@ if (!singleInstance) {
 
   app.on('window-all-closed', (e) => e.preventDefault())  // vive en el tray
   app.on('before-quit', () => {
+    quitting = true
     saveState()
     clearInterval(geometryTimer)
     clearInterval(pointerTimer)
