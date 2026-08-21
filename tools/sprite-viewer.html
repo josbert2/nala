@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Nala — visor de sprites v4</title>
+<style>
+  :root {
+    --bg: #241d17;
+    --panel: #33291f;
+    --border: #5d5149;
+    --text: #ece5d8;
+    --muted: #c9b896;
+    --accent: #dd9b88;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Courier New', monospace;
+    padding: 24px;
+  }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+  }
+  .cell {
+    background: var(--panel);
+    border: 3px solid var(--border);
+    padding: 10px;
+    text-align: center;
+  }
+  canvas {
+    image-rendering: pixelated;
+    background: repeating-conic-gradient(#00000022 0% 25%, transparent 0% 50%) 50% / 16px 16px;
+    border: 2px solid var(--border);
+  }
+  .name { font-weight: 700; font-size: 14px; margin-top: 8px; letter-spacing: .03em; }
+  .meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .missing { border-color: #b85c5c; }
+  .missing .name { color: #e59a9a; }
+  #status { color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+  <h1>🐾 Nala — sprites v4</h1>
+  <div class="sub">Cada animacion del cat.json actual, en loop, con su nombre. Sirve para chequear que esten todas.</div>
+  <div id="status">Cargando…</div>
+  <div class="grid" id="grid"></div>
+
+<script>
+const SCALE = 2
+
+async function main () {
+  const [meta, image] = await Promise.all([
+    fetch('../assets/sprites/v4/cat.json').then(r => r.json()),
+    loadImage('../assets/sprites/v4/cat.png')
+  ])
+
+  const cw = meta.cell[0]
+  const ch = meta.cell[1]
+  const names = Object.keys(meta.animations)
+  document.getElementById('status').textContent = `${names.length} animaciones — sheet ${image.naturalWidth}x${image.naturalHeight}`
+
+  const grid = document.getElementById('grid')
+  for (const name of names) {
+    const a = meta.animations[name]
+    const cell = document.createElement('div')
+    cell.className = 'cell'
+
+    const canvas = document.createElement('canvas')
+    canvas.width = cw * SCALE
+    canvas.height = ch * SCALE
+    cell.appendChild(canvas)
+
+    const label = document.createElement('div')
+    label.className = 'name'
+    label.textContent = name
+    cell.appendChild(label)
+
+    const info = document.createElement('div')
+    info.className = 'meta'
+    info.textContent = `fila ${a.row} · ${a.frames} frames · ${a.fps}fps${a.loop ? '' : ' · sin loop'}`
+    cell.appendChild(info)
+
+    grid.appendChild(cell)
+
+    const rowEmpty = isRowBlank(image, a.row, a.frames, cw, ch)
+    if (rowEmpty) cell.classList.add('missing')
+
+    animate(canvas, image, a, cw, ch)
+  }
+}
+
+function loadImage (src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => resolve(img)
+    img.onerror = reject
+    img.src = src
+  })
+}
+
+// Chequeo rapido: si la fila entera de la animacion es transparente, asumimos
+// que todavia no tiene arte real (quedo con el placeholder vacio).
+function isRowBlank (image, row, frames, cw, ch) {
+  const off = document.createElement('canvas')
+  off.width = frames * cw
+  off.height = ch
+  const octx = off.getContext('2d')
+  octx.drawImage(image, 0, row * ch, frames * cw, ch, 0, 0, frames * cw, ch)
+  const data = octx.getImageData(0, 0, frames * cw, ch).data
+  for (let i = 3; i < data.length; i += 4) {
+    if (data[i] > 10) return false
+  }
+  return true
+}
+
+function animate (canvas, image, a, cw, ch) {
+  const ctx = canvas.getContext('2d')
+  ctx.imageSmoothingEnabled = false
+  const start = performance.now()
+
+  function frame (now) {
+    const elapsed = now - start
+    let idx = Math.floor((elapsed / 1000) * a.fps)
+    idx = a.loop
+      ? ((idx % a.frames) + a.frames) % a.frames
+      : Math.max(0, Math.min(idx, a.frames - 1))
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.drawImage(
+      image,
+      idx * cw, a.row * ch, cw, ch,
+      0, 0, canvas.width, canvas.height
+    )
+    requestAnimationFrame(frame)
+  }
+  requestAnimationFrame(frame)
+}
+
+main().catch((err) => {
+  document.getElementById('status').textContent = 'Error: ' + err.message
+})
+</script>
+</body>
+</html>
