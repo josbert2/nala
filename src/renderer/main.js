@@ -429,7 +429,6 @@ window.addEventListener('mousedown', (e) => {
   if (e.button !== 0) return
 
   const kind = hitBall(e.clientX, e.clientY) ? 'ball' : hit(e.clientX, e.clientY) ? 'cat' : null
-  console.log('[drag-debug] mousedown', e.clientX, e.clientY, 'catBounds', JSON.stringify(cat.bounds), 'kind', kind)
   if (!kind) return
   grip = { kind, downX: e.clientX, downY: e.clientY, downAt: performance.now(), moved: false }
   touched()
