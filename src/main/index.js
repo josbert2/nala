@@ -685,6 +685,7 @@ if (!singleInstance) {
   app.on('second-instance', () => win && win.show())
 
   app.whenReady().then(() => {
+    Menu.setApplicationMenu(null)  // sin File/Edit/View/Window/Help, no lo usamos
     createWindow()
     const diaryWin = createDiaryWindow({
       preloadPath: path.join(__dirname, 'diary-preload.js'),

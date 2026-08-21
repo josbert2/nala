@@ -17,11 +17,12 @@ function createDiaryWindow ({ preloadPath, htmlPath }) {
     width: w,
     height: h,
     show: false,
-    frame: true,
+    frame: false,
     resizable: true,
     minWidth: 700,
     minHeight: 500,
     title: 'Nala Dev Diary',
+    backgroundColor: '#ece5d8',
     webPreferences: {
       preload: preloadPath,
       contextIsolation: true,

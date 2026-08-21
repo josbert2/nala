@@ -194,6 +194,8 @@ async function loadAndRender () {
   }
 }
 
+document.getElementById('closeBtn').addEventListener('click', () => window.close())
+
 document.getElementById('themeToggle').addEventListener('click', () => {
   applyTheme(document.body.dataset.theme === 'dark' ? 'light' : 'dark')
 })

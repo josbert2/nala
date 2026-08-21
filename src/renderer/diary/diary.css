@@ -26,8 +26,40 @@ body {
   font-family: 'Courier New', monospace;
   background: var(--bg);
   color: var(--text);
+  display: flex;
+  flex-direction: column;
 }
-.app { display: flex; height: 100vh; }
+.titlebar {
+  flex: none;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: var(--sidebar-bg);
+  border-bottom: 3px solid var(--border);
+  -webkit-app-region: drag;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.titlebar-close {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-app-region: no-drag;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+.titlebar-close:hover { color: var(--text); }
+.app { display: flex; flex: 1; min-height: 0; }
 
 .sidebar {
   width: 190px;
