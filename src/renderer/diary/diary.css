@@ -8,27 +8,30 @@
   --sidebar-bg: #1b1610;
   --header-bg: #ece5d8;
   --header-text: #241d17;
+  --font: 'Courier New', monospace;
 }
 [data-theme="light"] {
-  --bg: #ece5d8;
-  --panel: #fbf8f2;
-  --border: #8d8178;
-  --text: #463a30;
-  --muted: #8a7f6a;
-  --accent: #dd9b88;
-  --sidebar-bg: #dcd2bf;
-  --header-bg: #463a30;
-  --header-text: #ece5d8;
+  /* Tema claro = look tipo ClickUp: blanco de verdad, no crema. */
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --border: #e4e4e7;
+  --text: #27272a;
+  --muted: #71717a;
+  --accent: #7b68ee;
+  --sidebar-bg: #fafafa;
+  --header-bg: #ffffff;
+  --header-text: #27272a;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
 body {
-  font-family: 'Courier New', monospace;
+  font-family: var(--font);
   background: var(--bg);
   color: var(--text);
   display: flex;
   flex-direction: column;
-  font-size: 18px;
+  font-size: 15px;
 }
 .titlebar {
   flex: none;
