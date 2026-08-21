@@ -514,6 +514,7 @@ function refreshTrayMenu () {
 
   tray.setContextMenu(Menu.buildFromTemplate([
     { label: cfg.name || 'Nala', enabled: false },
+    { label: 'Dev Diary', click: () => toggleDiaryWindow() },
     { type: 'separator' },
     { label: 'Servirle la comida', click: send('command', { type: 'feed' }) },
     { label: 'Sacar la pelota', click: send('command', { type: 'play' }) },

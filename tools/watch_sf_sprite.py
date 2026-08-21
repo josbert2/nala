@@ -34,6 +34,9 @@ KEYWORDS = {
     "loaf idle": "loaf",
     "being held up": "fall",
     "sleeping animation": "sleep",
+    "walking cycle": "walk",
+    "angry hissing": "angry",
+    "scratching animation": "rascarse",
     "typing": None,       # "trabajar": no existe fila todavia, se deja pendiente
     "slow blink": None,   # "beso de gato": no existe fila todavia, se deja pendiente
     "rolling over": None, # "panza arriba": no existe fila todavia, se deja pendiente

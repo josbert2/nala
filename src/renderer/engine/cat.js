@@ -621,7 +621,8 @@ export class Cat {
       if (this.state === 'dragged') return
 
       const wasPounce = this.state === 'pounce'
-      const landing = this.world.landingBelow(this.x, this.y - this.vy * dt)
+      const restringida = this.sheet.meta.autonomous === 'limited' || this.sheet.meta.autonomous === false
+      const landing = this.world.landingBelow(this.x, this.y - this.vy * dt, restringida)
       if (this.y >= landing.y) {
         this.y = landing.y
         this.vy = 0
@@ -684,11 +685,48 @@ export class Cat {
     this.setState('fall', 0)
   }
 
+  /**
+   * Ciclo reducido para pintas sin plato/cama/juguetes (v4): no tienen adonde
+   * ir, asi que en vez del arbol completo eligen entre las animaciones que si
+   * tienen arte real, quietas en el lugar. Dormir tiene enfriamiento propio
+   * para que no se repita cada dos por tres.
+   *
+   * Los pesos estan pensados en tiempo en pantalla, no en cuantas veces se
+   * elige: 'loaf' dura 9-26s (contra 4-6s del resto), asi que con el mismo
+   * peso que las demas terminaba ocupando la pantalla la mayor parte del
+   * tiempo. Por eso su numero es mucho mas chico.
+   */
+  _decideLimited () {
+    const now = performance.now()
+    if (this._lastSleepAt == null) this._lastSleepAt = 0
+    const sleepReady = now - this._lastSleepAt > 5 * 60 * 1000
+
+    const options = [
+      ['idle', 40], ['alert', 8], ['loaf', 6], ['groom', 8],
+      ['stalk', 6], ['play', 5], ['crouch', 6]
+    ]
+    if (sleepReady) options.push(['sleep', 4])
+
+    let roll = Math.random() * options.reduce((s, [, w]) => s + w, 0)
+    for (const [state, w] of options) {
+      if (roll < w) {
+        if (state === 'sleep') this._lastSleepAt = now
+        // 'idle' es la base tranquila: la estira bastante mas que el default
+        // (3-9s) para que no este cambiando de pose cada rato.
+        this.setState(state, state === 'idle' ? 8000 + Math.random() * 17000 : undefined)
+        return
+      }
+      roll -= w
+    }
+    this.setState('idle')
+  }
+
   /** Elige que hacer despues. Aca vive la personalidad. */
   _decide (ctx) {
     // Algunas pintas (v4: solo la gata, sin plato ni cama ni nada) no tienen
     // adonde ir ni de que vivir, asi que se quedan quietas salvo que las toques.
     if (this.sheet.meta.autonomous === false) { this.setState('idle', 4000); return }
+    if (this.sheet.meta.autonomous === 'limited') { this._decideLimited(); return }
 
     const roll = Math.random()
 

@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "prompt": "Scratching animation: cat lifts one back leg and scratches quickly behind its ear with the paw, head tilts into the scratch, repeated rhythmic motion, same pose, same colors, same outline, body stays mostly still.",
+  "width": 256,
+  "height": 256,
+  "frame_w": 256,
+  "frame_h": 256,
+  "frame_count": 8,
+  "fps": 8,
+  "preview": "preview.webp",
+  "spritesheet": "spritesheet.png"
+}

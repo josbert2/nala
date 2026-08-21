@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "prompt": "\"Walking cycle animation: cat walks forward at a steady pace, legs move in a natural alternating gait, body bobs slightly up and down with each step, tail sways gently for balance, head stays level, same colors, same outline, side view.\"",
+  "width": 256,
+  "height": 256,
+  "frame_w": 256,
+  "frame_h": 256,
+  "frame_count": 8,
+  "fps": 8,
+  "preview": "preview.webp",
+  "spritesheet": "spritesheet.png"
+}

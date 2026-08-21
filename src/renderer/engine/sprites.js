@@ -47,6 +47,11 @@ export class SpriteSheet {
       ? ((idx % a.frames) + a.frames) % a.frames        // tolera elapsed negativo
       : Math.max(0, Math.min(idx, a.frames - 1))
 
+    // Algunas animaciones (dormir echada, por ejemplo) se ven mas chicas que
+    // el resto en la vida real: "scale" en el json de la animacion la ajusta
+    // sin tocar el tamaño general del bicho.
+    scale = scale * (a.scale || 1)
+
     const sx = idx * this.cw
     const sy = a.row * this.ch
     const dw = this.cw * scale

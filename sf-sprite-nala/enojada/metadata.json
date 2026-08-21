@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "prompt": "\"Angry hissing animation: ears flatten back against the head, back arches slightly, mouth opens in a hiss with teeth showing, tail puffs up and lashes quickly side to side, intense narrowed eyes, same colors, same outline.\"",
+  "width": 256,
+  "height": 256,
+  "frame_w": 256,
+  "frame_h": 256,
+  "frame_count": 8,
+  "fps": 8,
+  "preview": "preview.webp",
+  "spritesheet": "spritesheet.png"
+}

@@ -6,7 +6,7 @@
   "ground": 112,
   "look": "v4",
   "label": "v4",
-  "autonomous": false,
+  "autonomous": "limited",
   "marks": {
     "tabby": true,
     "eyeRing": true,
@@ -289,6 +289,7 @@
       "frames": 8,
       "fps": 3,
       "loop": true,
+      "scale": 0.35,
       "eyes": [
         [],
         [],
@@ -751,7 +752,7 @@
     },
     "angry": {
       "row": 17,
-      "frames": 6,
+      "frames": 8,
       "fps": 11,
       "loop": true,
       "eyes": [

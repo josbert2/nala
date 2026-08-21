@@ -179,8 +179,9 @@ export class World {
   }
 
   /** Superficie mas alta que esta por debajo de (x, y). Siempre existe: el piso. */
-  landingBelow (x, y) {
+  landingBelow (x, y, floorOnly = false) {
     let best = this.floorAt(x)
+    if (floorOnly) return best
     for (const s of this.climbables) {
       if (x < s.x1 + 4 || x > s.x2 - 4) continue
       if (s.y < y + 2) continue                          // esta arriba, no sirve
