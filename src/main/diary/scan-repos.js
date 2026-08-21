@@ -10,7 +10,7 @@ function run (repoPath, args) {
 
 function gitUserFor (repoPath) {
   try {
-    const name = run(repoPath, ['config', '--local', 'user.name']).trim()
+    const name = run(repoPath, ['config', 'user.name']).trim()
     return name || null
   } catch (err) {
     return null

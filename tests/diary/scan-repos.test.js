@@ -30,6 +30,64 @@ test('gitUserFor: returns null when there is no user configured and no global fa
   assert.equal(gitUserFor(dir), null)
 })
 
+test('gitUserFor: returns null when the repo has no local user.name and the (scoped) global config has none either', () => {
+  // repo git real, sin `user.name` local
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'diary-repo-noconfig-'))
+  execFileSync('git', ['init', '-q'], { cwd: dir })
+
+  // HOME apuntando a un directorio sin .gitconfig, para que git tampoco encuentre un global
+  const emptyFakeHome = fs.mkdtempSync(path.join(os.tmpdir(), 'diary-fakehome-empty-'))
+
+  const originalHome = process.env.HOME
+  const originalNoSystem = process.env.GIT_CONFIG_NOSYSTEM
+  process.env.HOME = emptyFakeHome
+  process.env.GIT_CONFIG_NOSYSTEM = '1' // ignora /etc/gitconfig para que el test no dependa de la maquina
+  try {
+    assert.equal(gitUserFor(dir), null)
+  } finally {
+    process.env.HOME = originalHome
+    if (originalNoSystem === undefined) delete process.env.GIT_CONFIG_NOSYSTEM
+    else process.env.GIT_CONFIG_NOSYSTEM = originalNoSystem
+  }
+})
+
+test('gitUserFor: falls back to the global git config when the repo has no local user.name', () => {
+  // repo git real, sin `user.name` local
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'diary-repo-globalfallback-'))
+  execFileSync('git', ['init', '-q'], { cwd: dir })
+
+  // HOME apuntando a un directorio con un .gitconfig propio (no el del developer real)
+  const fakeHome = fs.mkdtempSync(path.join(os.tmpdir(), 'diary-fakehome-'))
+  fs.writeFileSync(path.join(fakeHome, '.gitconfig'), '[user]\n\tname = Global Fallback User\n')
+
+  const originalHome = process.env.HOME
+  const originalNoSystem = process.env.GIT_CONFIG_NOSYSTEM
+  process.env.HOME = fakeHome
+  process.env.GIT_CONFIG_NOSYSTEM = '1'
+  try {
+    assert.equal(gitUserFor(dir), 'Global Fallback User')
+  } finally {
+    process.env.HOME = originalHome
+    if (originalNoSystem === undefined) delete process.env.GIT_CONFIG_NOSYSTEM
+    else process.env.GIT_CONFIG_NOSYSTEM = originalNoSystem
+  }
+})
+
+test('gitUserFor: prefers the local user.name over the global fallback when both are set', () => {
+  const dir = makeTempRepo() // ya tiene user.name local = 'Test User'
+
+  const fakeHome = fs.mkdtempSync(path.join(os.tmpdir(), 'diary-fakehome-prefer-'))
+  fs.writeFileSync(path.join(fakeHome, '.gitconfig'), '[user]\n\tname = Global Fallback User\n')
+
+  const originalHome = process.env.HOME
+  process.env.HOME = fakeHome
+  try {
+    assert.equal(gitUserFor(dir), 'Test User')
+  } finally {
+    process.env.HOME = originalHome
+  }
+})
+
 test('scanRepo: first scan (no lastHash) returns the existing commit(s) and the current HEAD hash', () => {
   const dir = makeTempRepo()
   const result = scanRepo(dir, null)
