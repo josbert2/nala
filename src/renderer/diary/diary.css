@@ -508,8 +508,8 @@ main {
 .tasks-table tbody tr.selected { background: #f0eefd; }
 .tasks-table td { padding: 8px 14px; font-size: 13px; color: #27272a; }
 .task-name-cell { display: flex; align-items: center; gap: 8px; }
-.task-name-icon { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #d4d4d8; flex: none; }
-.task-name-icon.estado-done { background: #2fb344; border-color: #2fb344; }
+.task-name-icon { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #d4d4d8; flex: none; display: inline-flex; }
+.task-name-icon.estado-done { border: none; color: #2fb344; }
 .task-due-cell { color: #71717a; font-size: 12px; }
 .task-due-cell.overdue { color: #e5484d; font-weight: 700; }
 .prio-flag { font-size: 12px; }
