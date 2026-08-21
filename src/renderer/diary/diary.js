@@ -54,8 +54,6 @@ function renderHeatmap (heatmap) {
   const monthsEl = document.getElementById('heatmapMonths')
   el.innerHTML = ''
   monthsEl.innerHTML = ''
-  el.style.gridTemplateColumns = `repeat(${HEATMAP_WEEKS}, 1fr)`
-  monthsEl.style.gridTemplateColumns = `repeat(${HEATMAP_WEEKS}, 1fr)`
 
   const today = todayUTC()
   const start = new Date(today)
