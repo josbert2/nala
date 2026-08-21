@@ -6,36 +6,56 @@
   <link rel="stylesheet" href="diary.css">
 </head>
 <body data-theme="dark">
-  <div class="header">
-    <span>🐾 NALA · DEV DIARY</span>
-    <button class="theme-toggle" id="themeToggle">☀/☾</button>
-  </div>
-  <div class="conn-error hidden" id="connError">No se pudo conectar al server del diario.</div>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">🐾 NALA</div>
+      <nav>
+        <div class="nav-item active" data-view="diario">DIARIO</div>
+        <div class="nav-item" data-view="reportes">REPORTES</div>
+        <div class="nav-item disabled">LOGROS</div>
+        <div class="nav-item disabled">AMIGOS</div>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="theme-toggle" id="themeToggle">☀/☾</button>
+      </div>
+    </aside>
 
-  <div class="stats" id="stats"></div>
+    <main>
+      <div class="conn-error hidden" id="connError">No se pudo conectar al server del diario.</div>
+      <div class="stats" id="stats"></div>
 
-  <div class="board">
-    <div class="col">
-      <div class="section-label">ACTIVIDAD</div>
-      <div class="heatmap" id="heatmap"></div>
-      <form class="note-form" id="noteForm">
-        <input type="text" id="noteInput" placeholder="+ nota..." maxlength="140">
-        <button type="submit">+</button>
-      </form>
-      <div class="section-label">ENTRADAS RECIENTES</div>
-      <div id="entries"></div>
-    </div>
+      <section id="viewDiario">
+        <div class="section-label">ACTIVIDAD</div>
+        <div class="heatmap-months" id="heatmapMonths"></div>
+        <div class="heatmap" id="heatmap"></div>
 
-    <div class="col">
-      <div class="section-label">RESUMEN SEMANAL</div>
-      <div class="summary-box" id="weeklySummary"></div>
-      <div class="section-label">COMMITS POR PROYECTO</div>
-      <div id="byProject"></div>
-      <div class="section-label">POR DÍA (7 DÍAS)</div>
-      <div class="day-bars" id="byDay"></div>
-      <div class="section-label">HORARIOS MÁS ACTIVOS</div>
-      <div id="byHour"></div>
-    </div>
+        <div class="day-nav">
+          <button id="prevDay" title="Dia anterior">‹</button>
+          <span id="dayLabel"></span>
+          <button id="nextDay" title="Dia siguiente">›</button>
+          <button id="todayBtn" class="today-btn hidden">HOY</button>
+          <select id="projectFilter"><option value="">Todos los proyectos</option></select>
+        </div>
+
+        <form class="note-form" id="noteForm">
+          <input type="text" id="noteInput" placeholder="+ nota..." maxlength="140">
+          <button type="submit">+</button>
+        </form>
+
+        <div id="entries"></div>
+      </section>
+
+      <section id="viewReportes" class="hidden">
+        <div class="section-label">RESUMEN SEMANAL</div>
+        <div class="summary-box" id="weeklySummary"></div>
+        <div class="section-label">COMMITS POR PROYECTO</div>
+        <div id="byProject"></div>
+        <div class="section-label">POR DÍA (7 DÍAS)</div>
+        <div class="day-bars" id="byDay"></div>
+        <div class="section-label">HORARIOS MÁS ACTIVOS</div>
+        <div id="byHour"></div>
+      </section>
+    </main>
   </div>
 
   <script src="diary.js"></script>
