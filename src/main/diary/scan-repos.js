@@ -11,7 +11,13 @@ function run (repoPath, args) {
 function gitUserFor (repoPath) {
   try {
     const name = run(repoPath, ['config', 'user.name']).trim()
-    return name || null
+    if (name) return name
+  } catch (err) {
+    // sigue al fallback de abajo
+  }
+  try {
+    const email = run(repoPath, ['config', 'user.email']).trim()
+    return email || null
   } catch (err) {
     return null
   }
