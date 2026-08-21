@@ -54,6 +54,38 @@
 <script>
 const SCALE = 2
 
+const NOMBRES = {
+  idle: 'respirando',
+  sit: 'sentada',
+  alert: 'alerta',
+  walk: 'caminando',
+  run: 'corriendo',
+  sleep: 'dormida',
+  loaf: 'echada (pan)',
+  dig: 'escarbando',
+  scratch: 'rascando el poste',
+  groom: 'acicalandose',
+  stretch: 'estirandose',
+  fall: 'cayendo',
+  climb: 'trepando',
+  eat: 'comiendo',
+  crouch: 'agazapada',
+  stalk: 'acechando',
+  rear: 'parada en dos patas',
+  angry: 'enojada',
+  rascarse: 'rascarse',
+  blep: 'lengua afuera',
+  frotar: 'frotar',
+  olfatear: 'olfatear',
+  sacudirse: 'sacudirse',
+  amasar: 'amasar',
+  startle: 'sobresaltada',
+  yawn: 'bostezando',
+  pounce: 'saltando (ataque)',
+  play: 'jugando',
+  slide: 'derrape'
+}
+
 async function main () {
   const [meta, image] = await Promise.all([
     fetch('../assets/sprites/v4/cat.json').then(r => r.json()),
@@ -66,8 +98,12 @@ async function main () {
   document.getElementById('status').textContent = `${names.length} animaciones — sheet ${image.naturalWidth}x${image.naturalHeight}`
 
   const grid = document.getElementById('grid')
+  let mostradas = 0
   for (const name of names) {
     const a = meta.animations[name]
+    if (isRowBlank(image, a.row, a.frames, cw, ch)) continue
+    mostradas++
+
     const cell = document.createElement('div')
     cell.className = 'cell'
 
@@ -78,21 +114,19 @@ async function main () {
 
     const label = document.createElement('div')
     label.className = 'name'
-    label.textContent = name
+    label.textContent = NOMBRES[name] || name
     cell.appendChild(label)
 
     const info = document.createElement('div')
     info.className = 'meta'
-    info.textContent = `fila ${a.row} · ${a.frames} frames · ${a.fps}fps${a.loop ? '' : ' · sin loop'}`
+    info.textContent = `${name} · fila ${a.row} · ${a.frames} frames · ${a.fps}fps${a.loop ? '' : ' · sin loop'}`
     cell.appendChild(info)
 
     grid.appendChild(cell)
-
-    const rowEmpty = isRowBlank(image, a.row, a.frames, cw, ch)
-    if (rowEmpty) cell.classList.add('missing')
-
     animate(canvas, image, a, cw, ch)
   }
+  document.getElementById('status').textContent =
+    `${mostradas} de ${names.length} animaciones tienen arte real — sheet ${image.naturalWidth}x${image.naturalHeight}`
 }
 
 function loadImage (src) {
