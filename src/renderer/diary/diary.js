@@ -176,6 +176,34 @@ function renderReports (reports) {
   `
 }
 
+function renderBoard (cards) {
+  for (const columna of ['todo', 'doing', 'done']) {
+    const el = document.querySelector(`.cards[data-columna="${columna}"]`)
+    el.innerHTML = ''
+    const delaColumna = cards.filter((c) => c.columna === columna).sort((a, b) => a.posicion - b.posicion)
+    for (const c of delaColumna) {
+      const div = document.createElement('div')
+      div.className = 'card'
+      div.draggable = true
+      div.dataset.id = c.id
+      div.innerHTML = `
+        <span class="card-text">${escapeHtml(c.texto)}</span>
+        <button class="card-delete" data-id="${c.id}" title="Borrar">×</button>
+      `
+      el.appendChild(div)
+    }
+  }
+}
+
+async function reloadBoard () {
+  try {
+    const cards = await window.diary.getCards()
+    renderBoard(cards)
+  } catch (err) {
+    console.error('[diary] no pude cargar el tablero:', err)
+  }
+}
+
 function showConnError (show) {
   document.getElementById('connError').classList.toggle('hidden', !show)
 }
@@ -192,6 +220,7 @@ async function loadAndRender () {
     populateProjectFilter()
     renderEntries()
     renderReports(data.reports)
+    reloadBoard()
   } catch (err) {
     console.error('[diary] no pude cargar los datos:', err)
     showConnError(true)
@@ -209,12 +238,14 @@ document.getElementById('themeToggle').addEventListener('click', () => {
   applyTheme(document.body.dataset.theme === 'dark' ? 'light' : 'dark')
 })
 
+const VIEWS = ['diario', 'tablero', 'reportes']
 document.querySelectorAll('.nav-item[data-view]').forEach((item) => {
   item.addEventListener('click', () => {
     document.querySelectorAll('.nav-item[data-view]').forEach((n) => n.classList.remove('active'))
     item.classList.add('active')
-    document.getElementById('viewDiario').classList.toggle('hidden', item.dataset.view !== 'diario')
-    document.getElementById('viewReportes').classList.toggle('hidden', item.dataset.view !== 'reportes')
+    for (const v of VIEWS) {
+      document.getElementById(`view${v[0].toUpperCase()}${v.slice(1)}`).classList.toggle('hidden', item.dataset.view !== v)
+    }
   })
 })
 
@@ -241,6 +272,63 @@ document.getElementById('noteForm').addEventListener('submit', async (e) => {
   }
   currentDate = isoDate(todayUTC())
   loadAndRender()
+})
+
+document.querySelectorAll('.card-form').forEach((form) => {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const input = form.querySelector('input')
+    const texto = input.value.trim()
+    if (!texto) return
+    try {
+      await window.diary.createCard({ texto, columna: form.dataset.columna })
+      input.value = ''
+      reloadBoard()
+    } catch (err) {
+      console.error('[diary] no pude crear la tarjeta:', err)
+    }
+  })
+})
+
+document.querySelectorAll('.cards').forEach((col) => {
+  col.addEventListener('dragstart', (e) => {
+    const card = e.target.closest('.card')
+    if (!card) return
+    e.dataTransfer.setData('text/plain', card.dataset.id)
+    card.classList.add('dragging')
+  })
+  col.addEventListener('dragend', (e) => {
+    const card = e.target.closest('.card')
+    if (card) card.classList.remove('dragging')
+  })
+  col.addEventListener('dragover', (e) => {
+    e.preventDefault()
+    col.classList.add('drag-over')
+  })
+  col.addEventListener('dragleave', () => col.classList.remove('drag-over'))
+  col.addEventListener('drop', async (e) => {
+    e.preventDefault()
+    col.classList.remove('drag-over')
+    const id = e.dataTransfer.getData('text/plain')
+    if (!id) return
+    const posicion = col.querySelectorAll('.card').length
+    try {
+      await window.diary.updateCard(id, { columna: col.dataset.columna, posicion })
+      reloadBoard()
+    } catch (err) {
+      console.error('[diary] no pude mover la tarjeta:', err)
+    }
+  })
+  col.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.card-delete')
+    if (!btn) return
+    try {
+      await window.diary.deleteCard(btn.dataset.id)
+      reloadBoard()
+    } catch (err) {
+      console.error('[diary] no pude borrar la tarjeta:', err)
+    }
+  })
 })
 
 applyTheme(localStorage.getItem(THEME_KEY) || 'light')

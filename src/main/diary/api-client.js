@@ -10,6 +10,7 @@ async function apiFetch (config, urlPath, options = {}) {
     }
   })
   if (!res.ok) throw new Error(`server respondio ${res.status}`)
+  if (res.status === 204) return null
   return res.json()
 }
 
@@ -38,4 +39,31 @@ async function addNote (config, note) {
   })
 }
 
-module.exports = { fetchDiaryData, bulkInsert, addNote }
+async function getCards (config) {
+  const { cards } = await apiFetch(config, '/api/cards')
+  return cards
+}
+
+async function createCard (config, card) {
+  const { card: created } = await apiFetch(config, '/api/cards', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(card)
+  })
+  return created
+}
+
+async function updateCard (config, id, changes) {
+  const { card: updated } = await apiFetch(config, `/api/cards/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(changes)
+  })
+  return updated
+}
+
+async function deleteCard (config, id) {
+  await apiFetch(config, `/api/cards/${id}`, { method: 'DELETE' })
+}
+
+module.exports = { fetchDiaryData, bulkInsert, addNote, getCards, createCard, updateCard, deleteCard }

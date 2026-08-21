@@ -221,6 +221,42 @@ main {
 .gh-link:hover { color: var(--text); border-color: var(--text); }
 .entry-title { font-weight: 700; margin: 3px 0; font-size: 12px; }
 .empty { font-size: 11px; color: var(--muted); padding: 10px 0; }
+.board-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
+.board-col { min-width: 0; }
+.cards { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; min-height: 8px; }
+.cards.drag-over { background: var(--panel); outline: 2px dashed var(--accent); outline-offset: 2px; }
+.card {
+  background: var(--panel);
+  border: 3px solid var(--border);
+  padding: 8px 10px;
+  font-size: 12px;
+  cursor: grab;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+.card.dragging { opacity: .4; }
+.card-text { flex: 1; word-break: break-word; }
+.card-delete {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+}
+.card-delete:hover { color: var(--text); }
+.card-form input {
+  width: 100%;
+  background: var(--bg);
+  border: 3px dashed var(--border);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 11px;
+  padding: 6px;
+}
 .summary-box {
   background: var(--panel);
   border: 3px solid var(--border);

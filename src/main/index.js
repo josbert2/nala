@@ -133,6 +133,42 @@ async function addDiaryNote (note) {
   }
 }
 
+async function getCards () {
+  try {
+    return await apiClient.getCards(loadServidorConfig())
+  } catch (err) {
+    console.error('[nala] diario: no pude obtener las tarjetas:', err.message)
+    throw err
+  }
+}
+
+async function createCard (card) {
+  try {
+    return await apiClient.createCard(loadServidorConfig(), card)
+  } catch (err) {
+    console.error('[nala] diario: no pude crear la tarjeta:', err.message)
+    throw err
+  }
+}
+
+async function updateCard (id, changes) {
+  try {
+    return await apiClient.updateCard(loadServidorConfig(), id, changes)
+  } catch (err) {
+    console.error('[nala] diario: no pude actualizar la tarjeta:', err.message)
+    throw err
+  }
+}
+
+async function deleteCard (id) {
+  try {
+    await apiClient.deleteCard(loadServidorConfig(), id)
+  } catch (err) {
+    console.error('[nala] diario: no pude borrar la tarjeta:', err.message)
+    throw err
+  }
+}
+
 // ------------------------------------------------------- versiones de su pinta
 //
 // Cada version vive en assets/sprites/<id>/ con su hoja, sus objetos y su
@@ -667,6 +703,10 @@ ipcMain.on('toggle-diary', () => toggleDiaryWindow())
 ipcMain.handle('diary:get-data', () => getDiaryData())
 ipcMain.handle('diary:add-note', (_e, note) => addDiaryNote(note))
 ipcMain.handle('diary:get-repo-links', () => githubUrlsByProject(loadProyectos()))
+ipcMain.handle('diary:get-cards', () => getCards())
+ipcMain.handle('diary:create-card', (_e, card) => createCard(card))
+ipcMain.handle('diary:update-card', (_e, id, changes) => updateCard(id, changes))
+ipcMain.handle('diary:delete-card', (_e, id) => deleteCard(id))
 ipcMain.on('diary:open-external', (_e, url) => {
   if (typeof url === 'string' && url.startsWith('https://github.com/')) shell.openExternal(url)
 })

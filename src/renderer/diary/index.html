@@ -15,6 +15,7 @@
       <div class="brand">🐾 NALA</div>
       <nav>
         <div class="nav-item active" data-view="diario">DIARIO</div>
+        <div class="nav-item" data-view="tablero">TABLERO</div>
         <div class="nav-item" data-view="reportes">REPORTES</div>
         <div class="nav-item disabled">LOGROS</div>
         <div class="nav-item disabled">AMIGOS</div>
@@ -47,6 +48,32 @@
         </form>
 
         <div id="entries"></div>
+      </section>
+
+      <section id="viewTablero" class="hidden">
+        <div class="board-cols">
+          <div class="board-col" data-columna="todo">
+            <div class="section-label">POR HACER</div>
+            <div class="cards" data-columna="todo"></div>
+            <form class="card-form" data-columna="todo">
+              <input type="text" placeholder="+ tarjeta..." maxlength="140">
+            </form>
+          </div>
+          <div class="board-col" data-columna="doing">
+            <div class="section-label">HACIENDO</div>
+            <div class="cards" data-columna="doing"></div>
+            <form class="card-form" data-columna="doing">
+              <input type="text" placeholder="+ tarjeta..." maxlength="140">
+            </form>
+          </div>
+          <div class="board-col" data-columna="done">
+            <div class="section-label">HECHO</div>
+            <div class="cards" data-columna="done"></div>
+            <form class="card-form" data-columna="done">
+              <input type="text" placeholder="+ tarjeta..." maxlength="140">
+            </form>
+          </div>
+        </div>
       </section>
 
       <section id="viewReportes" class="hidden">
