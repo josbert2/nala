@@ -272,14 +272,20 @@ async function loadSpriteViewer () {
   if (spritesLoaded) return
   spritesLoaded = true
   const status = document.getElementById('spriteStatus')
+
+  const jsonUrl = '../../../assets/sprites/v4/cat.json'
+  const pngUrl = '../../../assets/sprites/v4/cat.png'
+  const resolvedPath = new URL(pngUrl, document.baseURI).pathname
+  document.getElementById('spritePath').textContent = `Leyendo de: ${resolvedPath}`
+
   try {
     const [meta, image] = await Promise.all([
-      fetch('../../../assets/sprites/v4/cat.json').then((r) => r.json()),
+      fetch(jsonUrl).then((r) => r.json()),
       new Promise((resolve, reject) => {
         const img = new Image()
         img.onload = () => resolve(img)
         img.onerror = reject
-        img.src = '../../../assets/sprites/v4/cat.png'
+        img.src = pngUrl
       })
     ])
 

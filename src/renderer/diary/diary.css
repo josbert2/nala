@@ -283,9 +283,15 @@ main {
   text-align: center;
   margin-bottom: 18px;
 }
+.sprite-path {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 10px;
+  word-break: break-all;
+}
 .sprite-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 14px;
 }
 .sprite-cell {
