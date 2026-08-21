@@ -275,6 +275,33 @@ async function deleteTask (id) {
   }
 }
 
+async function getComments (taskId) {
+  try {
+    return await apiClient.getComments(loadServidorConfig(), taskId)
+  } catch (err) {
+    console.error('[nala] proyectos: no pude obtener los comentarios:', err.message)
+    throw err
+  }
+}
+
+async function addComment (taskId, texto) {
+  try {
+    return await apiClient.addComment(loadServidorConfig(), taskId, texto)
+  } catch (err) {
+    console.error('[nala] proyectos: no pude agregar el comentario:', err.message)
+    throw err
+  }
+}
+
+async function deleteComment (taskId, commentId) {
+  try {
+    await apiClient.deleteComment(loadServidorConfig(), taskId, commentId)
+  } catch (err) {
+    console.error('[nala] proyectos: no pude borrar el comentario:', err.message)
+    throw err
+  }
+}
+
 // ------------------------------------------------------- versiones de su pinta
 //
 // Cada version vive en assets/sprites/<id>/ con su hoja, sus objetos y su
@@ -826,6 +853,9 @@ ipcMain.handle('diary:get-task', (_e, id) => getTask(id))
 ipcMain.handle('diary:create-task', (_e, task) => createTask(task))
 ipcMain.handle('diary:update-task', (_e, id, changes) => updateTask(id, changes))
 ipcMain.handle('diary:delete-task', (_e, id) => deleteTask(id))
+ipcMain.handle('diary:get-comments', (_e, taskId) => getComments(taskId))
+ipcMain.handle('diary:add-comment', (_e, taskId, texto) => addComment(taskId, texto))
+ipcMain.handle('diary:delete-comment', (_e, taskId, commentId) => deleteComment(taskId, commentId))
 ipcMain.on('diary:open-external', (_e, url) => {
   if (typeof url === 'string' && url.startsWith('https://github.com/')) shell.openExternal(url)
 })

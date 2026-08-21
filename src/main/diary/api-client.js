@@ -147,6 +147,24 @@ async function deleteTask (config, id) {
   await apiFetch(config, `/api/tasks/${id}`, { method: 'DELETE' })
 }
 
+async function getComments (config, taskId) {
+  const { comments } = await apiFetch(config, `/api/tasks/${taskId}/comments`)
+  return comments
+}
+
+async function addComment (config, taskId, texto) {
+  const { comment } = await apiFetch(config, `/api/tasks/${taskId}/comments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ texto })
+  })
+  return comment
+}
+
+async function deleteComment (config, taskId, commentId) {
+  await apiFetch(config, `/api/tasks/${taskId}/comments/${commentId}`, { method: 'DELETE' })
+}
+
 module.exports = {
   fetchDiaryData,
   bulkInsert,
@@ -164,5 +182,8 @@ module.exports = {
   getTask,
   createTask,
   updateTask,
-  deleteTask
+  deleteTask,
+  getComments,
+  addComment,
+  deleteComment
 }

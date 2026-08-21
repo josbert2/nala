@@ -457,6 +457,17 @@ main {
   cursor: pointer;
 }
 .task-detail-delete:hover { background: #c0392b; color: var(--light, #fff); }
+.comment {
+  background: var(--bg);
+  border: 3px solid var(--border);
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.comment-meta { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.comment-delete { margin-left: auto; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; }
+.comment-delete:hover { color: var(--text); }
+.comment-texto { white-space: pre-wrap; word-break: break-word; }
 .mascot {
   position: fixed;
   right: 18px;

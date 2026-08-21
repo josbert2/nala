@@ -8,7 +8,8 @@ const path = require('path')
 const {
   fetchDiaryData, bulkInsert, addNote, getCards, createCard, updateCard, deleteCard,
   getShares, createShare, createShareFile, deleteShare, getShareFile,
-  getTasks, getTask, createTask, updateTask, deleteTask
+  getTasks, getTask, createTask, updateTask, deleteTask,
+  getComments, addComment, deleteComment
 } = require('../../src/main/diary/api-client')
 
 function startFakeServer (handler) {
@@ -324,6 +325,51 @@ test('deleteTask: DELETEs /api/tasks/:id', async () => {
   const { port } = server.address()
   await deleteTask({ apiUrl: `http://localhost:${server.address().port}`, apiToken: 't' }, 8)
   assert.equal(received.url, '/api/tasks/8')
+  assert.equal(received.method, 'DELETE')
+  await closeServer(server)
+})
+
+test('getComments: GETs /api/tasks/:id/comments', async () => {
+  const server = await startFakeServer((req, res) => {
+    res.setHeader('Content-Type', 'application/json')
+    res.end(JSON.stringify({ comments: [{ id: 1, texto: 'hola' }] }))
+  })
+  const { port } = server.address()
+  const comments = await getComments({ apiUrl: `http://localhost:${port}`, apiToken: 't' }, 5)
+  assert.deepEqual(comments, [{ id: 1, texto: 'hola' }])
+  await closeServer(server)
+})
+
+test('addComment: POSTs to /api/tasks/:id/comments', async () => {
+  let received = null
+  const server = await startFakeServer((req, res) => {
+    let body = ''
+    req.on('data', (c) => { body += c })
+    req.on('end', () => {
+      received = { url: req.url, body: JSON.parse(body) }
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify({ comment: { id: 1, texto: 'hola' } }))
+    })
+  })
+  const { port } = server.address()
+  const config = { apiUrl: `http://localhost:${port}`, apiToken: 't' }
+  const comment = await addComment(config, 5, 'hola')
+  assert.equal(comment.texto, 'hola')
+  assert.equal(received.url, '/api/tasks/5/comments')
+  assert.deepEqual(received.body, { texto: 'hola' })
+  await closeServer(server)
+})
+
+test('deleteComment: DELETEs /api/tasks/:id/comments/:commentId', async () => {
+  let received = null
+  const server = await startFakeServer((req, res) => {
+    received = { url: req.url, method: req.method }
+    res.statusCode = 204
+    res.end()
+  })
+  const { port } = server.address()
+  await deleteComment({ apiUrl: `http://localhost:${port}`, apiToken: 't' }, 5, 9)
+  assert.equal(received.url, '/api/tasks/5/comments/9')
   assert.equal(received.method, 'DELETE')
   await closeServer(server)
 })

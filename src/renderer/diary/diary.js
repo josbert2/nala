@@ -284,6 +284,35 @@ async function loadTasks () {
   }
 }
 
+function renderComments (comments) {
+  const el = document.getElementById('taskComments')
+  el.innerHTML = ''
+  if (!comments.length) {
+    el.innerHTML = '<div class="empty">Sin comentarios todavia.</div>'
+    return
+  }
+  for (const c of comments) {
+    const div = document.createElement('div')
+    div.className = 'comment'
+    div.innerHTML = `
+      <div class="comment-meta">
+        <span>${fmtShareDate(c.createdAt)}</span>
+        <button class="comment-delete" data-id="${c.id}" title="Borrar">×</button>
+      </div>
+      <div class="comment-texto">${escapeHtml(c.texto)}</div>
+    `
+    el.appendChild(div)
+  }
+}
+
+async function loadComments (taskId) {
+  try {
+    renderComments(await window.diary.getComments(taskId))
+  } catch (err) {
+    console.error('[diary] no pude cargar los comentarios:', err)
+  }
+}
+
 async function openTaskDetail (id) {
   try {
     const task = await window.diary.getTask(id)
@@ -295,6 +324,7 @@ async function openTaskDetail (id) {
     document.getElementById('taskDescripcion').value = task.descripcion || ''
     document.getElementById('taskDetail').classList.remove('hidden')
     document.querySelectorAll('.task-row').forEach((r) => r.classList.toggle('selected', Number(r.dataset.id) === id))
+    loadComments(id)
   } catch (err) {
     console.error('[diary] no pude abrir la tarea:', err)
   }
@@ -763,6 +793,32 @@ document.getElementById('taskDelete').addEventListener('click', async () => {
     loadTasks()
   } catch (err) {
     console.error('[diary] no pude borrar la tarea:', err)
+  }
+})
+
+document.getElementById('commentForm').addEventListener('submit', async (e) => {
+  e.preventDefault()
+  if (!selectedTaskId) return
+  const input = document.getElementById('commentInput')
+  const texto = input.value.trim()
+  if (!texto) return
+  try {
+    await window.diary.addComment(selectedTaskId, texto)
+    input.value = ''
+    loadComments(selectedTaskId)
+  } catch (err) {
+    console.error('[diary] no pude agregar el comentario:', err)
+  }
+})
+
+document.getElementById('taskComments').addEventListener('click', async (e) => {
+  const btn = e.target.closest('.comment-delete')
+  if (!btn || !selectedTaskId) return
+  try {
+    await window.diary.deleteComment(selectedTaskId, btn.dataset.id)
+    loadComments(selectedTaskId)
+  } catch (err) {
+    console.error('[diary] no pude borrar el comentario:', err)
   }
 })
 
