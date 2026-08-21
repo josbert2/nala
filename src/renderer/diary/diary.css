@@ -109,6 +109,9 @@ main {
   font-size: 14px;
   padding: 6px 12px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 .stats { display: flex; gap: 10px; margin-bottom: 26px; flex-wrap: wrap; }
 .stat {
@@ -214,6 +217,9 @@ main {
 .entry-meta { font-size: 14px; color: var(--accent); font-weight: 700; display: flex; align-items: center; gap: 10px; }
 .gh-link {
   margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   background: none;
   border: 2px solid var(--border);
   color: var(--muted);
@@ -427,6 +433,9 @@ main {
 .btn-nueva-tarea:hover { background: #3f3f46; }
 .view-tabs { display: flex; gap: 4px; margin-bottom: 14px; border-bottom: 1px solid #e4e4e7; }
 .view-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 12px;
   font-weight: 600;
   color: #71717a;
@@ -572,6 +581,9 @@ main {
   margin-bottom: 14px;
 }
 .task-detail-delete {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: none;
   border: 2px solid #c0392b;
   color: #c0392b;
@@ -593,6 +605,7 @@ main {
 .comment-delete { margin-left: auto; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; }
 .comment-delete:hover { color: var(--text); }
 .comment-texto { white-space: pre-wrap; word-break: break-word; }
+.hgi { flex: none; vertical-align: middle; display: inline-block; }
 .mascot {
   position: fixed;
   right: 18px;
