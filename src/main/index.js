@@ -6,9 +6,16 @@ const {
 const path = require('path')
 const fs = require('fs')
 
+const diaryStore = require('./diary/store')
+const { scanAllRepos } = require('./diary/scan-repos')
+const { computeStats } = require('./diary/stats')
+const { commitsByProject, commitsByDay, activeHours, weeklySummary } = require('./diary/reports')
+const { createDiaryWindow, toggleDiaryWindow } = require('./diary/window')
+
 const ROOT = path.join(__dirname, '..', '..')
 const BUNDLED_CONFIG = path.join(ROOT, 'config', 'cat.json')
 const SPRITES_DIR = path.join(ROOT, 'assets', 'sprites')
+const BUNDLED_PROYECTOS = path.join(ROOT, 'config', 'proyectos.json')
 
 // Ya instalada, ROOT vive dentro de app.asar y es de solo lectura. Su config y
 // sus ajustes van a la carpeta de datos del usuario; la primera vez copiamos
@@ -17,6 +24,8 @@ const USER_DIR = app.getPath('userData')
 const CONFIG_PATH = path.join(USER_DIR, 'cat.json')
 const SETTINGS_PATH = path.join(USER_DIR, 'settings.json')
 const STATE_PATH = path.join(USER_DIR, 'estado.json')
+const PROYECTOS_PATH = path.join(USER_DIR, 'proyectos.json')
+const DIARY_PATH = path.join(USER_DIR, 'diario.json')
 
 // Wayland no le permite a una app posicionarse sola en pantalla, y sin eso la
 // gata no puede caminar por el escritorio. Forzamos XWayland, que si lo permite.
@@ -48,6 +57,52 @@ function loadConfig () {
       return { name: 'Nala', scale: 2, moments: [], notes: [] }
     }
   }
+}
+
+// ------------------------------------------------------------------- diario
+
+function loadProyectos () {
+  try {
+    if (!fs.existsSync(PROYECTOS_PATH)) {
+      fs.mkdirSync(USER_DIR, { recursive: true })
+      fs.copyFileSync(BUNDLED_PROYECTOS, PROYECTOS_PATH)
+    }
+    const data = JSON.parse(fs.readFileSync(PROYECTOS_PATH, 'utf8'))
+    return data.repos || []
+  } catch (err) {
+    console.error('[nala] no pude leer proyectos.json:', err.message)
+    return []
+  }
+}
+
+function runDiaryScan () {
+  const repos = loadProyectos()
+  if (!repos.length) return
+  let diary = diaryStore.loadDiary(DIARY_PATH)
+  const { entries, lastHashes, errors } = scanAllRepos(repos, diary.lastHashes)
+  diary = diaryStore.appendEntries({ ...diary, lastHashes }, entries)
+  diaryStore.saveDiary(DIARY_PATH, diary)
+  for (const e of errors) console.error(`[nala] diario: ${e.repoPath} -> ${e.error}`)
+}
+
+function getDiaryData () {
+  const diary = diaryStore.loadDiary(DIARY_PATH)
+  return {
+    entries: diary.entries,
+    stats: computeStats(diary.entries),
+    reports: {
+      weeklySummary: weeklySummary(diary.entries),
+      byProject: commitsByProject(diary.entries),
+      byDay: commitsByDay(diary.entries),
+      byHour: activeHours(diary.entries)
+    }
+  }
+}
+
+function addDiaryNote (note) {
+  let diary = diaryStore.loadDiary(DIARY_PATH)
+  diary = diaryStore.addManualNote(diary, note)
+  diaryStore.saveDiary(DIARY_PATH, diary)
 }
 
 // ------------------------------------------------------- versiones de su pinta
@@ -573,6 +628,10 @@ ipcMain.on('hot-rects', (_e, payload) => {
 
 ipcMain.handle('get-config', () => loadConfig())
 
+ipcMain.on('toggle-diary', () => toggleDiaryWindow())
+ipcMain.handle('diary:get-data', () => getDiaryData())
+ipcMain.handle('diary:add-note', (_e, note) => addDiaryNote(note))
+
 // El menu de click derecho sobre ella tambien puede cambiarle la pinta.
 ipcMain.on('cycle-look', () => cycleLook())
 ipcMain.on('estado', (_e, parcial) => {
@@ -593,10 +652,17 @@ if (!singleInstance) {
 
   app.whenReady().then(() => {
     createWindow()
+    createDiaryWindow({
+      preloadPath: path.join(__dirname, 'diary-preload.js'),
+      htmlPath: path.join(ROOT, 'src', 'renderer', 'diary', 'index.html')
+    })
     buildTray()
     startGeometryPolling()
     startPointerPolling()
     registerShortcuts()
+
+    runDiaryScan()
+    setInterval(runDiaryScan, 15 * 60 * 1000)
 
     // El dia que empezaron. Se graba una sola vez, la primera.
     if (!estado.desde) {
