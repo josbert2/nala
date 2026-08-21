@@ -11,12 +11,14 @@ const apiClient = require('./diary/api-client')
 const { loadScanState, saveScanState } = require('./diary/scan-state')
 const { createDiaryWindow, toggleDiaryWindow } = require('./diary/window')
 const { githubUrlsByProject } = require('./diary/repo-links')
+const { listSpriteSources } = require('./diary/sprite-sources')
 
 const ROOT = path.join(__dirname, '..', '..')
 const BUNDLED_CONFIG = path.join(ROOT, 'config', 'cat.json')
 const SPRITES_DIR = path.join(ROOT, 'assets', 'sprites')
 const BUNDLED_PROYECTOS = path.join(ROOT, 'config', 'proyectos.json')
 const BUNDLED_SERVIDOR = path.join(ROOT, 'config', 'servidor.json')
+const SF_SPRITE_DIR = path.join(ROOT, 'sf-sprite-nala')
 
 // Ya instalada, ROOT vive dentro de app.asar y es de solo lectura. Su config y
 // sus ajustes van a la carpeta de datos del usuario; la primera vez copiamos
@@ -703,6 +705,7 @@ ipcMain.on('toggle-diary', () => toggleDiaryWindow())
 ipcMain.handle('diary:get-data', () => getDiaryData())
 ipcMain.handle('diary:add-note', (_e, note) => addDiaryNote(note))
 ipcMain.handle('diary:get-repo-links', () => githubUrlsByProject(loadProyectos()))
+ipcMain.handle('diary:get-sprite-sources', () => listSpriteSources(SF_SPRITE_DIR))
 ipcMain.handle('diary:get-cards', () => getCards())
 ipcMain.handle('diary:create-card', (_e, card) => createCard(card))
 ipcMain.handle('diary:update-card', (_e, id, changes) => updateCard(id, changes))

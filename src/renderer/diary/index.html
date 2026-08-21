@@ -89,10 +89,22 @@
       </section>
 
       <section id="viewSprites" class="hidden">
-        <div class="section-label">ANIMACIONES CON ARTE REAL (V4)</div>
-        <div class="sprite-path" id="spritePath"></div>
-        <div class="empty" id="spriteStatus">Cargando…</div>
-        <div class="sprite-grid" id="spriteGrid"></div>
+        <div class="tabs">
+          <div class="tab active" data-spritetab="procesadas">ANIMACIONES (V4)</div>
+          <div class="tab" data-spritetab="fuentes">FUENTES SIN PROCESAR</div>
+        </div>
+
+        <div id="spriteTabProcesadas">
+          <div class="sprite-path" id="spritePath"></div>
+          <div class="empty" id="spriteStatus">Cargando…</div>
+          <div class="sprite-grid" id="spriteGrid"></div>
+        </div>
+
+        <div id="spriteTabFuentes" class="hidden">
+          <div class="sprite-path" id="spriteSourcesPath"></div>
+          <div class="empty" id="spriteSourcesStatus">Cargando…</div>
+          <div class="sprite-grid" id="spriteSourcesGrid"></div>
+        </div>
       </section>
     </main>
   </div>

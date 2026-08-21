@@ -10,6 +10,7 @@ let allEntries = []
 let currentDate = null
 let repoLinks = {}
 let spritesLoaded = false
+let spriteSourcesLoaded = false
 
 const NOMBRES_SPRITE = {
   idle: 'respirando',
@@ -327,6 +328,61 @@ async function loadSpriteViewer () {
   }
 }
 
+async function loadSpriteSources () {
+  if (spriteSourcesLoaded) return
+  spriteSourcesLoaded = true
+  const status = document.getElementById('spriteSourcesStatus')
+  const grid = document.getElementById('spriteSourcesGrid')
+  const baseUrl = '../../../sf-sprite-nala/'
+  document.getElementById('spriteSourcesPath').textContent =
+    `Leyendo de: ${new URL(baseUrl, document.baseURI).pathname}`
+
+  try {
+    const sources = await window.diary.getSpriteSources()
+    if (!sources.length) {
+      status.textContent = 'No hay carpetas en sf-sprite-nala/.'
+      return
+    }
+    status.textContent = `${sources.length} carpetas`
+
+    for (const { name, metadata } of sources) {
+      const fw = metadata.frame_w || 256
+      const fh = metadata.frame_h || 256
+      const frames = metadata.frame_count || 1
+      const fps = metadata.fps || 8
+      const src = baseUrl + name.split('/').map(encodeURIComponent).join('/') + '/spritesheet.png'
+
+      const cell = document.createElement('div')
+      cell.className = 'sprite-cell'
+
+      const canvas = document.createElement('canvas')
+      canvas.width = 128
+      canvas.height = 128
+      cell.appendChild(canvas)
+
+      const label = document.createElement('div')
+      label.className = 'sprite-name'
+      label.textContent = name
+      cell.appendChild(label)
+
+      const info = document.createElement('div')
+      info.className = 'sprite-meta'
+      info.textContent = `${frames} frames · ${fps}fps`
+      cell.appendChild(info)
+
+      grid.appendChild(cell)
+
+      const img = new Image()
+      img.onload = () => animateSprite(canvas, img, { row: 0, frames, fps, loop: true }, fw, fh)
+      img.onerror = () => { info.textContent += ' · no cargo la imagen' }
+      img.src = src
+    }
+  } catch (err) {
+    console.error('[diary] no pude cargar sf-sprite-nala:', err)
+    status.textContent = 'No pude leer sf-sprite-nala/.'
+  }
+}
+
 function showConnError (show) {
   document.getElementById('connError').classList.toggle('hidden', !show)
 }
@@ -369,7 +425,16 @@ document.querySelectorAll('.nav-item[data-view]').forEach((item) => {
     for (const v of VIEWS) {
       document.getElementById(`view${v[0].toUpperCase()}${v.slice(1)}`).classList.toggle('hidden', item.dataset.view !== v)
     }
-    if (item.dataset.view === 'sprites') loadSpriteViewer()
+    if (item.dataset.view === 'sprites') { loadSpriteViewer(); loadSpriteSources() }
+  })
+})
+
+document.querySelectorAll('.tab[data-spritetab]').forEach((tab) => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab[data-spritetab]').forEach((t) => t.classList.remove('active'))
+    tab.classList.add('active')
+    document.getElementById('spriteTabProcesadas').classList.toggle('hidden', tab.dataset.spritetab !== 'procesadas')
+    document.getElementById('spriteTabFuentes').classList.toggle('hidden', tab.dataset.spritetab !== 'fuentes')
   })
 })
 
