@@ -132,3 +132,11 @@ body {
 .day-bar { width: 100%; background: var(--border); }
 .day-bar.today { background: var(--accent); }
 .hidden { display: none; }
+.conn-error {
+  background: #7a2e2e;
+  color: #fbe4e4;
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}

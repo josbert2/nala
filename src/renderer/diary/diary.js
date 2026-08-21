@@ -95,12 +95,22 @@ function renderReports (reports) {
   `
 }
 
+function showConnError (show) {
+  document.getElementById('connError').classList.toggle('hidden', !show)
+}
+
 async function loadAndRender () {
-  const data = await window.diary.getData()
-  renderStats(data.stats)
-  renderHeatmap(data.stats.heatmap)
-  renderEntries(data.entries)
-  renderReports(data.reports)
+  try {
+    const data = await window.diary.getData()
+    showConnError(false)
+    renderStats(data.stats)
+    renderHeatmap(data.stats.heatmap)
+    renderEntries(data.entries)
+    renderReports(data.reports)
+  } catch (err) {
+    console.error('[diary] no pude cargar los datos:', err)
+    showConnError(true)
+  }
 }
 
 document.getElementById('themeToggle').addEventListener('click', () => {
@@ -121,8 +131,14 @@ document.getElementById('noteForm').addEventListener('submit', async (e) => {
   const input = document.getElementById('noteInput')
   const mensaje = input.value.trim()
   if (!mensaje) return
-  await window.diary.addNote({ mensaje })
-  input.value = ''
+  try {
+    await window.diary.addNote({ mensaje })
+    input.value = ''
+  } catch (err) {
+    console.error('[diary] no pude guardar la nota:', err)
+    showConnError(true)
+    return
+  }
   loadAndRender()
 })
 
