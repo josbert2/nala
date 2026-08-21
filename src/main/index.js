@@ -10,6 +10,7 @@ const { scanAllRepos } = require('./diary/scan-repos')
 const apiClient = require('./diary/api-client')
 const { loadScanState, saveScanState } = require('./diary/scan-state')
 const { createDiaryWindow, toggleDiaryWindow } = require('./diary/window')
+const { githubUrlsByProject } = require('./diary/repo-links')
 
 const ROOT = path.join(__dirname, '..', '..')
 const BUNDLED_CONFIG = path.join(ROOT, 'config', 'cat.json')
@@ -665,6 +666,10 @@ ipcMain.handle('get-config', () => loadConfig())
 ipcMain.on('toggle-diary', () => toggleDiaryWindow())
 ipcMain.handle('diary:get-data', () => getDiaryData())
 ipcMain.handle('diary:add-note', (_e, note) => addDiaryNote(note))
+ipcMain.handle('diary:get-repo-links', () => githubUrlsByProject(loadProyectos()))
+ipcMain.on('diary:open-external', (_e, url) => {
+  if (typeof url === 'string' && url.startsWith('https://github.com/')) shell.openExternal(url)
+})
 
 // El menu de click derecho sobre ella tambien puede cambiarle la pinta.
 ipcMain.on('cycle-look', () => cycleLook())

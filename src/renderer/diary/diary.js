@@ -8,6 +8,7 @@ const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
 
 let allEntries = []
 let currentDate = null
+let repoLinks = {}
 
 function applyTheme (theme) {
   document.body.dataset.theme = theme
@@ -120,8 +121,12 @@ function renderEntries () {
     const div = document.createElement('div')
     div.className = 'entry'
     const proyecto = e.proyecto ? e.proyecto.toUpperCase() : 'NOTA'
+    const repoUrl = e.proyecto && repoLinks[e.proyecto]
+    const link = repoUrl && e.hash
+      ? `<button class="gh-link" data-url="${escapeHtml(repoUrl)}/commit/${escapeHtml(e.hash)}">Ver en GitHub</button>`
+      : ''
     div.innerHTML = `
-      <div class="entry-meta">${e.hora} · ${escapeHtml(proyecto)}</div>
+      <div class="entry-meta">${e.hora} · ${escapeHtml(proyecto)}${link}</div>
       <div class="entry-title">${escapeHtml(e.mensaje)}</div>
     `
     el.appendChild(div)
@@ -177,9 +182,10 @@ function showConnError (show) {
 
 async function loadAndRender () {
   try {
-    const data = await window.diary.getData()
+    const [data, links] = await Promise.all([window.diary.getData(), window.diary.getRepoLinks()])
     showConnError(false)
     allEntries = data.entries
+    repoLinks = links
     if (!currentDate) currentDate = isoDate(todayUTC())
     renderStats(data.stats)
     renderHeatmap(data.stats.heatmap)
@@ -193,6 +199,11 @@ async function loadAndRender () {
 }
 
 document.getElementById('closeBtn').addEventListener('click', () => window.close())
+
+document.getElementById('entries').addEventListener('click', (e) => {
+  const btn = e.target.closest('.gh-link')
+  if (btn) window.diary.openExternal(btn.dataset.url)
+})
 
 document.getElementById('themeToggle').addEventListener('click', () => {
   applyTheme(document.body.dataset.theme === 'dark' ? 'light' : 'dark')
