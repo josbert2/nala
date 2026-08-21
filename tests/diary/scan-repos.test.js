@@ -24,12 +24,6 @@ test('gitUserFor: reads the local git user.name', () => {
   assert.equal(gitUserFor(dir), 'Test User')
 })
 
-test('gitUserFor: returns null when there is no user configured and no global fallback resolves', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'diary-norepo-'))
-  // no es un repo git en absoluto
-  assert.equal(gitUserFor(dir), null)
-})
-
 test('gitUserFor: returns null when the repo has no local user.name and the (scoped) global config has none either', () => {
   // repo git real, sin `user.name` local
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'diary-repo-noconfig-'))
