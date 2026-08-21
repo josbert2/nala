@@ -724,6 +724,15 @@ document.querySelectorAll('.tab[data-spritetab]').forEach((tab) => {
   })
 })
 
+document.querySelectorAll('.tab[data-flujotab]').forEach((tab) => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab[data-flujotab]').forEach((t) => t.classList.remove('active'))
+    tab.classList.add('active')
+    document.getElementById('flujoTabArquitectura').classList.toggle('hidden', tab.dataset.flujotab !== 'arquitectura')
+    document.getElementById('flujoTabSprites').classList.toggle('hidden', tab.dataset.flujotab !== 'sprites')
+  })
+})
+
 document.getElementById('prevDay').addEventListener('click', () => selectDate(shiftDate(currentDate, -1)))
 document.getElementById('nextDay').addEventListener('click', () => {
   const next = shiftDate(currentDate, 1)

@@ -708,6 +708,42 @@ main {
   border: 5px solid transparent;
   border-left-color: #d4d4d8;
 }
+.arch-canvas {
+  display: grid;
+  grid-auto-columns: minmax(170px, 230px);
+  grid-auto-rows: min-content;
+  gap: 14px 6px;
+  align-items: center;
+  padding: 24px;
+  border-radius: 10px;
+  background-color: #fafafa;
+  background-image: radial-gradient(#e4e4e7 1px, transparent 1px);
+  background-size: 16px 16px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+.arch-zone {
+  background: #fff;
+  border: 1px dashed #d4d4d8;
+  border-radius: 10px;
+  padding: 12px;
+}
+.arch-zone.arch-zone-server { border-color: #7b68ee; }
+.arch-zone-label { font-size: 10px; font-weight: 700; letter-spacing: .04em; color: #a1a1aa; margin-bottom: 8px; }
+.arch-node {
+  background: #fafafa;
+  border: 1px solid #e4e4e7;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 11px;
+  color: #27272a;
+  margin-bottom: 6px;
+}
+.arch-node:last-child { margin-bottom: 0; }
+.arch-connector-label { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.arch-connector-label span { font-size: 9px; color: #a1a1aa; white-space: nowrap; }
+.arch-externals { display: flex; flex-direction: column; gap: 6px; }
+.arch-ext-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #71717a; }
 .mascot {
   position: fixed;
   right: 18px;
