@@ -1,28 +1,27 @@
 'use strict'
 const { BrowserWindow, screen } = require('electron')
 
-const WIDTH = 320
+const WIDTH = 1100
+const HEIGHT = 750
 
 let diaryWin = null
 
 function createDiaryWindow ({ preloadPath, htmlPath }) {
-  const display = screen.getPrimaryDisplay()
-  const { x, y, width, height } = display.workArea
+  const { workArea } = screen.getPrimaryDisplay()
+  const w = Math.min(WIDTH, workArea.width - 40)
+  const h = Math.min(HEIGHT, workArea.height - 40)
 
   diaryWin = new BrowserWindow({
-    x: x + width - WIDTH,
-    y,
-    width: WIDTH,
-    height,
+    x: workArea.x + Math.round((workArea.width - w) / 2),
+    y: workArea.y + Math.round((workArea.height - h) / 2),
+    width: w,
+    height: h,
     show: false,
-    frame: false,
-    resizable: false,
-    movable: false,
-    minimizable: false,
-    maximizable: false,
-    fullscreenable: false,
-    skipTaskbar: true,
-    alwaysOnTop: true,
+    frame: true,
+    resizable: true,
+    minWidth: 700,
+    minHeight: 500,
+    title: 'Nala Dev Diary',
     webPreferences: {
       preload: preloadPath,
       contextIsolation: true,
@@ -38,7 +37,7 @@ function createDiaryWindow ({ preloadPath, htmlPath }) {
 function toggleDiaryWindow () {
   if (!diaryWin || diaryWin.isDestroyed()) return
   if (diaryWin.isVisible()) diaryWin.hide()
-  else diaryWin.show()
+  else { diaryWin.show(); diaryWin.focus() }
 }
 
 function getDiaryWindow () {

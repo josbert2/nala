@@ -11,30 +11,31 @@
     <button class="theme-toggle" id="themeToggle">☀/☾</button>
   </div>
   <div class="conn-error hidden" id="connError">No se pudo conectar al server del diario.</div>
-  <div class="tabs">
-    <div class="tab active" data-tab="diario">DIARIO</div>
-    <div class="tab" data-tab="reportes">REPORTES</div>
-  </div>
 
-  <div class="content" id="tabDiario">
-    <div class="stats" id="stats"></div>
-    <div class="section-label">ACTIVIDAD</div>
-    <div class="heatmap" id="heatmap"></div>
-    <form class="note-form" id="noteForm">
-      <input type="text" id="noteInput" placeholder="+ nota..." maxlength="140">
-      <button type="submit">+</button>
-    </form>
-    <div id="entries"></div>
-  </div>
+  <div class="stats" id="stats"></div>
 
-  <div class="content hidden" id="tabReportes">
-    <div class="summary-box" id="weeklySummary"></div>
-    <div class="section-label">COMMITS POR PROYECTO</div>
-    <div id="byProject"></div>
-    <div class="section-label">POR DÍA (7 DÍAS)</div>
-    <div class="day-bars" id="byDay"></div>
-    <div class="section-label">HORARIOS MÁS ACTIVOS</div>
-    <div id="byHour"></div>
+  <div class="board">
+    <div class="col">
+      <div class="section-label">ACTIVIDAD</div>
+      <div class="heatmap" id="heatmap"></div>
+      <form class="note-form" id="noteForm">
+        <input type="text" id="noteInput" placeholder="+ nota..." maxlength="140">
+        <button type="submit">+</button>
+      </form>
+      <div class="section-label">ENTRADAS RECIENTES</div>
+      <div id="entries"></div>
+    </div>
+
+    <div class="col">
+      <div class="section-label">RESUMEN SEMANAL</div>
+      <div class="summary-box" id="weeklySummary"></div>
+      <div class="section-label">COMMITS POR PROYECTO</div>
+      <div id="byProject"></div>
+      <div class="section-label">POR DÍA (7 DÍAS)</div>
+      <div class="day-bars" id="byDay"></div>
+      <div class="section-label">HORARIOS MÁS ACTIVOS</div>
+      <div id="byHour"></div>
+    </div>
   </div>
 
   <script src="diary.js"></script>

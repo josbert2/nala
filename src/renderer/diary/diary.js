@@ -117,15 +117,6 @@ document.getElementById('themeToggle').addEventListener('click', () => {
   applyTheme(document.body.dataset.theme === 'dark' ? 'light' : 'dark')
 })
 
-document.querySelectorAll('.tab').forEach((tab) => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'))
-    tab.classList.add('active')
-    document.getElementById('tabDiario').classList.toggle('hidden', tab.dataset.tab !== 'diario')
-    document.getElementById('tabReportes').classList.toggle('hidden', tab.dataset.tab !== 'reportes')
-  })
-})
-
 document.getElementById('noteForm').addEventListener('submit', async (e) => {
   e.preventDefault()
   const input = document.getElementById('noteInput')

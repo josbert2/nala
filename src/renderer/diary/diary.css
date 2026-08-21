@@ -24,7 +24,6 @@ body {
   font-family: 'Courier New', monospace;
   background: var(--bg);
   color: var(--text);
-  border-left: 6px solid var(--text);
   overflow-y: auto;
 }
 .header {
@@ -48,24 +47,16 @@ body {
   padding: 2px 6px;
   cursor: pointer;
 }
-.tabs { display: flex; border-bottom: 3px solid var(--border); }
-.tab {
-  flex: 1;
-  text-align: center;
-  padding: 8px;
-  font-size: 11px;
-  color: var(--muted);
-  cursor: pointer;
-  background: var(--bg);
+.board {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 0 20px 20px;
+  max-width: 1100px;
+  margin: 0 auto;
 }
-.tab.active {
-  font-weight: 700;
-  color: var(--text);
-  background: var(--panel);
-  border-bottom: 3px solid var(--accent);
-}
-.content { padding: 14px; }
-.stats { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.col { min-width: 0; }
+.stats { display: flex; gap: 6px; padding: 16px 20px 6px; flex-wrap: wrap; max-width: 1100px; margin: 0 auto; }
 .stat {
   background: var(--panel);
   border: 3px solid var(--border);
@@ -83,13 +74,13 @@ body {
 .heatmap {
   display: grid;
   grid-template-columns: repeat(13, 1fr);
-  gap: 2px;
+  gap: 3px;
   margin-bottom: 16px;
   background: var(--border);
-  padding: 4px;
+  padding: 6px;
   border: 3px solid var(--border);
 }
-.heatmap-cell { width: 10px; height: 10px; background: var(--bg); }
+.heatmap-cell { width: 100%; aspect-ratio: 1; background: var(--bg); }
 .note-form { display: flex; gap: 6px; margin-bottom: 14px; }
 .note-form input {
   flex: 1;
