@@ -115,9 +115,27 @@ async function getShareFile (config, id) {
   return { mime, base64: buffer.toString('base64') }
 }
 
-async function getTasks (config) {
-  const { tasks } = await apiFetch(config, '/api/tasks')
+async function getTasks (config, proyectoId) {
+  const { tasks } = await apiFetch(config, `/api/tasks?proyectoId=${proyectoId}`)
   return tasks
+}
+
+async function getProjects (config) {
+  const { projects } = await apiFetch(config, '/api/projects')
+  return projects
+}
+
+async function createProject (config, nombre) {
+  const { project } = await apiFetch(config, '/api/projects', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre })
+  })
+  return project
+}
+
+async function deleteProject (config, id) {
+  await apiFetch(config, `/api/projects/${id}`, { method: 'DELETE' })
 }
 
 async function getTask (config, id) {
@@ -185,5 +203,8 @@ module.exports = {
   deleteTask,
   getComments,
   addComment,
-  deleteComment
+  deleteComment,
+  getProjects,
+  createProject,
+  deleteProject
 }

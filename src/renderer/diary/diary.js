@@ -287,12 +287,60 @@ function renderTasks (tasks) {
   document.getElementById('countDone').textContent = tasks.filter((t) => t.estado === 'done').length
 }
 
+let currentProjectId = null
+
 async function loadTasks () {
+  if (!currentProjectId) return
   try {
-    const tasks = await window.diary.getTasks()
+    const tasks = await window.diary.getTasks(currentProjectId)
     renderTasks(tasks)
   } catch (err) {
     console.error('[diary] no pude cargar las tareas:', err)
+  }
+}
+
+let loadedProjects = []
+
+function updateBreadcrumb () {
+  const p = loadedProjects.find((pr) => pr.id === currentProjectId)
+  document.getElementById('proyectoBreadcrumbName').textContent = p ? p.nombre : '—'
+}
+
+function renderProjects (projects) {
+  loadedProjects = projects
+  const el = document.getElementById('projectSwitcher')
+  el.innerHTML = ''
+  for (const p of projects) {
+    const pill = document.createElement('div')
+    pill.className = 'project-pill' + (p.id === currentProjectId ? ' active' : '')
+    pill.dataset.id = p.id
+    pill.innerHTML = `
+      <span class="project-pill-icon">☰</span>
+      <span class="project-pill-name">${escapeHtml(p.nombre)}</span>
+      <span class="project-pill-count">${p.taskCount}</span>
+    `
+    pill.addEventListener('click', () => selectProject(p.id))
+    el.appendChild(pill)
+  }
+  updateBreadcrumb()
+}
+
+function selectProject (id) {
+  currentProjectId = id
+  closeTaskDetail()
+  document.querySelectorAll('.project-pill').forEach((p) => p.classList.toggle('active', Number(p.dataset.id) === id))
+  updateBreadcrumb()
+  loadTasks()
+}
+
+async function loadProjects () {
+  try {
+    const projects = await window.diary.getProjects()
+    if (!currentProjectId && projects.length) currentProjectId = projects[0].id
+    renderProjects(projects)
+    loadTasks()
+  } catch (err) {
+    console.error('[diary] no pude cargar los proyectos:', err)
   }
 }
 
@@ -623,7 +671,7 @@ document.querySelectorAll('.nav-item[data-view]').forEach((item) => {
     }
     if (item.dataset.view === 'sprites') { loadSpriteViewer(); loadSpriteSources() }
     if (item.dataset.view === 'compartir') loadShares()
-    if (item.dataset.view === 'proyectos') loadTasks()
+    if (item.dataset.view === 'proyectos') loadProjects()
   })
 })
 
@@ -773,13 +821,33 @@ document.querySelectorAll('.task-form').forEach((form) => {
     const titulo = input.value.trim()
     if (!titulo) return
     try {
-      await window.diary.createTask({ titulo, estado: form.dataset.estado })
+      await window.diary.createTask({ proyectoId: currentProjectId, titulo, estado: form.dataset.estado })
       input.value = ''
       loadTasks()
+      loadProjects()
     } catch (err) {
       console.error('[diary] no pude crear la tarea:', err)
     }
   })
+})
+
+document.getElementById('addProjectForm').addEventListener('submit', async (e) => {
+  e.preventDefault()
+  const input = document.getElementById('addProjectInput')
+  const nombre = input.value.trim()
+  if (!nombre) return
+  try {
+    const project = await window.diary.createProject(nombre)
+    input.value = ''
+    currentProjectId = project.id
+    loadProjects()
+  } catch (err) {
+    console.error('[diary] no pude crear el proyecto:', err)
+  }
+})
+
+document.getElementById('topAddTaskBtn').addEventListener('click', () => {
+  document.querySelector('.add-task-row[data-estado="todo"] input').focus()
 })
 
 document.querySelectorAll('.task-rows').forEach((col) => {

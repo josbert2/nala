@@ -230,11 +230,38 @@ async function saveShareFile (id, suggestedName) {
   return true
 }
 
-async function getTasks () {
+async function getTasks (proyectoId) {
   try {
-    return await apiClient.getTasks(loadServidorConfig())
+    return await apiClient.getTasks(loadServidorConfig(), proyectoId)
   } catch (err) {
     console.error('[nala] proyectos: no pude obtener las tareas:', err.message)
+    throw err
+  }
+}
+
+async function getProjects () {
+  try {
+    return await apiClient.getProjects(loadServidorConfig())
+  } catch (err) {
+    console.error('[nala] proyectos: no pude obtener los proyectos:', err.message)
+    throw err
+  }
+}
+
+async function createProject (nombre) {
+  try {
+    return await apiClient.createProject(loadServidorConfig(), nombre)
+  } catch (err) {
+    console.error('[nala] proyectos: no pude crear el proyecto:', err.message)
+    throw err
+  }
+}
+
+async function deleteProject (id) {
+  try {
+    await apiClient.deleteProject(loadServidorConfig(), id)
+  } catch (err) {
+    console.error('[nala] proyectos: no pude borrar el proyecto:', err.message)
     throw err
   }
 }
@@ -848,7 +875,10 @@ ipcMain.handle('diary:delete-share', (_e, id) => deleteShare(id))
 ipcMain.handle('diary:get-share-file', (_e, id) => getShareFile(id))
 ipcMain.handle('diary:pick-share-file', () => pickShareFile())
 ipcMain.handle('diary:save-share-file', (_e, id, suggestedName) => saveShareFile(id, suggestedName))
-ipcMain.handle('diary:get-tasks', () => getTasks())
+ipcMain.handle('diary:get-tasks', (_e, proyectoId) => getTasks(proyectoId))
+ipcMain.handle('diary:get-projects', () => getProjects())
+ipcMain.handle('diary:create-project', (_e, nombre) => createProject(nombre))
+ipcMain.handle('diary:delete-project', (_e, id) => deleteProject(id))
 ipcMain.handle('diary:get-task', (_e, id) => getTask(id))
 ipcMain.handle('diary:create-task', (_e, task) => createTask(task))
 ipcMain.handle('diary:update-task', (_e, id, changes) => updateTask(id, changes))

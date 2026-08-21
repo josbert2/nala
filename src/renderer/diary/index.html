@@ -125,8 +125,30 @@
       </section>
 
       <section id="viewProyectos" class="hidden">
-        <div class="tasks-layout">
+        <div class="proyectos-shell">
+          <aside class="project-sidebar">
+            <div class="project-sidebar-label">PROYECTOS</div>
+            <div id="projectSwitcher"></div>
+            <form class="add-project-form" id="addProjectForm">
+              <span class="add-project-icon">+</span>
+              <input type="text" id="addProjectInput" placeholder="Nuevo proyecto" maxlength="255">
+            </form>
+          </aside>
+
+          <div class="tasks-layout">
           <div class="tasks-list-col">
+            <div class="proyecto-topbar">
+              <div class="proyecto-breadcrumb">
+                <span>Proyectos</span> / <strong id="proyectoBreadcrumbName">—</strong>
+              </div>
+              <button type="button" class="btn-nueva-tarea" id="topAddTaskBtn">+ Tarea</button>
+            </div>
+            <div class="view-tabs">
+              <span class="view-tab active">☰ Lista</span>
+              <span class="view-tab disabled">▤ Tablero</span>
+              <span class="view-tab disabled">🗓 Calendario</span>
+              <span class="view-tab disabled">📊 Gantt</span>
+            </div>
             <div class="tasks-table-wrap">
               <div class="task-group" data-estado="doing">
                 <div class="task-group-header" data-estado="doing">
@@ -217,6 +239,7 @@
             </form>
 
             <button class="task-detail-delete" id="taskDelete">Borrar tarea</button>
+          </div>
           </div>
         </div>
       </section>

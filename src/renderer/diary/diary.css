@@ -369,7 +369,72 @@ main {
   cursor: pointer;
   font-size: 13px;
 }
-.tasks-layout { display: flex; gap: 20px; align-items: flex-start; }
+/* Proyectos: sidebar vertical de proyectos, como el "Espacios" de ClickUp. */
+.proyectos-shell { display: flex; gap: 24px; align-items: flex-start; }
+.project-sidebar { width: 190px; flex: none; }
+.project-sidebar-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.project-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 2px;
+}
+.project-pill:hover { background: var(--sidebar-bg); }
+.project-pill.active { background: var(--accent); color: #fff; }
+.project-pill-icon { flex: none; }
+.project-pill-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.project-pill-count { font-size: 11px; opacity: .7; }
+.add-project-form { display: flex; align-items: center; gap: 8px; padding: 7px 8px; margin-top: 6px; }
+.add-project-icon { color: #a1a1aa; font-size: 13px; }
+.add-project-form input {
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 0;
+  flex: 1;
+  min-width: 0;
+}
+.add-project-form input:focus { outline: none; }
+.tasks-layout { display: flex; gap: 20px; align-items: flex-start; flex: 1; min-width: 0; }
+.proyecto-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.proyecto-breadcrumb { font-size: 13px; color: #71717a; }
+.proyecto-breadcrumb strong { color: #27272a; font-weight: 600; }
+.btn-nueva-tarea {
+  background: #27272a;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 14px;
+  cursor: pointer;
+}
+.btn-nueva-tarea:hover { background: #3f3f46; }
+.view-tabs { display: flex; gap: 4px; margin-bottom: 14px; border-bottom: 1px solid #e4e4e7; }
+.view-tab {
+  font-size: 12px;
+  font-weight: 600;
+  color: #71717a;
+  padding: 6px 10px;
+  cursor: default;
+}
+.view-tab.active { color: #7b68ee; border-bottom: 2px solid #7b68ee; }
+.view-tab.disabled { opacity: .4; cursor: not-allowed; }
 .tasks-list-col { flex: 1; min-width: 0; }
 /* Proyectos: tabla blanca fija, independiente del tema (pedido explicito). */
 .tasks-table-wrap {
@@ -537,4 +602,36 @@ main {
   image-rendering: pixelated;
   pointer-events: none;
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .35));
+}
+
+/* Tema claro: tipografia mas minimalista, sin el peso/espaciado del look
+   pixel-art original (que sigue intacto en el tema oscuro). */
+[data-theme="light"] .brand,
+[data-theme="light"] .nav-item,
+[data-theme="light"] .titlebar,
+[data-theme="light"] .section-label,
+[data-theme="light"] .stat,
+[data-theme="light"] .day-nav,
+[data-theme="light"] .entry-meta,
+[data-theme="light"] .card-delete,
+[data-theme="light"] .task-detail-title,
+[data-theme="light"] .status-pill,
+[data-theme="light"] .theme-toggle,
+[data-theme="light"] .gh-link,
+[data-theme="light"] .note-form button,
+[data-theme="light"] .day-nav button,
+[data-theme="light"] .task-detail-delete {
+  font-weight: 500;
+  letter-spacing: 0;
+}
+[data-theme="light"] .nav-item.active {
+  font-weight: 600;
+}
+[data-theme="light"] .entry-title {
+  font-weight: 600;
+}
+[data-theme="light"] .section-label {
+  text-transform: uppercase;
+  font-size: 11px;
+  color: #a1a1aa;
 }

@@ -9,7 +9,8 @@ const {
   fetchDiaryData, bulkInsert, addNote, getCards, createCard, updateCard, deleteCard,
   getShares, createShare, createShareFile, deleteShare, getShareFile,
   getTasks, getTask, createTask, updateTask, deleteTask,
-  getComments, addComment, deleteComment
+  getComments, addComment, deleteComment,
+  getProjects, createProject, deleteProject
 } = require('../../src/main/diary/api-client')
 
 function startFakeServer (handler) {
@@ -252,14 +253,60 @@ test('getShareFile: GETs el archivo binario y lo devuelve en base64 con su mime'
   await closeServer(server)
 })
 
-test('getTasks: GETs /api/tasks and returns the tasks array', async () => {
+test('getTasks: GETs /api/tasks?proyectoId=... and returns the tasks array', async () => {
+  let receivedUrl = null
   const server = await startFakeServer((req, res) => {
+    receivedUrl = req.url
     res.setHeader('Content-Type', 'application/json')
     res.end(JSON.stringify({ tasks: [{ id: 1, titulo: 'x', estado: 'todo' }] }))
   })
   const { port } = server.address()
-  const tasks = await getTasks({ apiUrl: `http://localhost:${port}`, apiToken: 't' })
+  const tasks = await getTasks({ apiUrl: `http://localhost:${port}`, apiToken: 't' }, 7)
   assert.deepEqual(tasks, [{ id: 1, titulo: 'x', estado: 'todo' }])
+  assert.equal(receivedUrl, '/api/tasks?proyectoId=7')
+  await closeServer(server)
+})
+
+test('getProjects: GETs /api/projects and returns the projects array', async () => {
+  const server = await startFakeServer((req, res) => {
+    res.setHeader('Content-Type', 'application/json')
+    res.end(JSON.stringify({ projects: [{ id: 1, nombre: 'General', taskCount: 0 }] }))
+  })
+  const { port } = server.address()
+  const projects = await getProjects({ apiUrl: `http://localhost:${port}`, apiToken: 't' })
+  assert.deepEqual(projects, [{ id: 1, nombre: 'General', taskCount: 0 }])
+  await closeServer(server)
+})
+
+test('createProject: POSTs to /api/projects and returns the created project', async () => {
+  let received = null
+  const server = await startFakeServer((req, res) => {
+    let body = ''
+    req.on('data', (c) => { body += c })
+    req.on('end', () => {
+      received = JSON.parse(body)
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify({ project: { id: 2, nombre: 'Furgovan', taskCount: 0 } }))
+    })
+  })
+  const { port } = server.address()
+  const project = await createProject({ apiUrl: `http://localhost:${port}`, apiToken: 't' }, 'Furgovan')
+  assert.equal(project.nombre, 'Furgovan')
+  assert.deepEqual(received, { nombre: 'Furgovan' })
+  await closeServer(server)
+})
+
+test('deleteProject: DELETEs /api/projects/:id', async () => {
+  let received = null
+  const server = await startFakeServer((req, res) => {
+    received = { url: req.url, method: req.method }
+    res.statusCode = 204
+    res.end()
+  })
+  const { port } = server.address()
+  await deleteProject({ apiUrl: `http://localhost:${port}`, apiToken: 't' }, 4)
+  assert.equal(received.url, '/api/projects/4')
+  assert.equal(received.method, 'DELETE')
   await closeServer(server)
 })
 
