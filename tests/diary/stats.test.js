@@ -33,6 +33,21 @@ test('computeStreak: last entry two days ago is a streak of 0', () => {
   assert.equal(computeStreak(['2026-08-17'], '2026-08-20'), 0)
 })
 
+test('computeStreak: result is independent of the local timezone (regression for addDays UTC bug)', () => {
+  const originalTz = process.env.TZ
+  try {
+    process.env.TZ = 'Australia/Sydney'
+    const days = ['2026-08-18', '2026-08-19', '2026-08-20']
+    assert.equal(computeStreak(days, '2026-08-20'), 3)
+  } finally {
+    if (originalTz === undefined) {
+      delete process.env.TZ
+    } else {
+      process.env.TZ = originalTz
+    }
+  }
+})
+
 test('computeStats: combines totals, active days and streak', () => {
   const entries = [
     { fecha: '2026-08-19' }, { fecha: '2026-08-19' }, { fecha: '2026-08-20' }

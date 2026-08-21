@@ -1,9 +1,10 @@
 'use strict'
 
 function addDays (isoDate, delta) {
-  const d = new Date(isoDate + 'T00:00:00')
-  d.setDate(d.getDate() + delta)
-  return d.toISOString().slice(0, 10)
+  const [y, m, d] = isoDate.split('-').map(Number)
+  const utc = new Date(Date.UTC(y, m - 1, d))
+  utc.setUTCDate(utc.getUTCDate() + delta)
+  return utc.toISOString().slice(0, 10)
 }
 
 function computeHeatmap (entries) {
@@ -14,11 +15,12 @@ function computeHeatmap (entries) {
   return counts
 }
 
+// If today has no entry yet, count from yesterday's streak instead of showing 0 —
+// an entry can still be logged later today without the streak flickering to zero.
 function computeStreak (days, today = new Date().toISOString().slice(0, 10)) {
   const daySet = new Set(days)
   if (daySet.size === 0) return 0
   let cursor = daySet.has(today) ? today : addDays(today, -1)
-  if (!daySet.has(cursor)) return 0
   let streak = 0
   while (daySet.has(cursor)) {
     streak++
@@ -38,4 +40,4 @@ function computeStats (entries, today = new Date().toISOString().slice(0, 10)) {
   }
 }
 
-module.exports = { computeStats, computeStreak, computeHeatmap }
+module.exports = { computeHeatmap, computeStreak, computeStats }
