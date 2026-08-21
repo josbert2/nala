@@ -6,16 +6,16 @@ const {
 const path = require('path')
 const fs = require('fs')
 
-const diaryStore = require('./diary/store')
 const { scanAllRepos } = require('./diary/scan-repos')
-const { computeStats } = require('./diary/stats')
-const { commitsByProject, commitsByDay, activeHours, weeklySummary } = require('./diary/reports')
+const apiClient = require('./diary/api-client')
+const { loadScanState, saveScanState } = require('./diary/scan-state')
 const { createDiaryWindow, toggleDiaryWindow } = require('./diary/window')
 
 const ROOT = path.join(__dirname, '..', '..')
 const BUNDLED_CONFIG = path.join(ROOT, 'config', 'cat.json')
 const SPRITES_DIR = path.join(ROOT, 'assets', 'sprites')
 const BUNDLED_PROYECTOS = path.join(ROOT, 'config', 'proyectos.json')
+const BUNDLED_SERVIDOR = path.join(ROOT, 'config', 'servidor.json')
 
 // Ya instalada, ROOT vive dentro de app.asar y es de solo lectura. Su config y
 // sus ajustes van a la carpeta de datos del usuario; la primera vez copiamos
@@ -25,7 +25,8 @@ const CONFIG_PATH = path.join(USER_DIR, 'cat.json')
 const SETTINGS_PATH = path.join(USER_DIR, 'settings.json')
 const STATE_PATH = path.join(USER_DIR, 'estado.json')
 const PROYECTOS_PATH = path.join(USER_DIR, 'proyectos.json')
-const DIARY_PATH = path.join(USER_DIR, 'diario.json')
+const SERVIDOR_PATH = path.join(USER_DIR, 'servidor.json')
+const SCAN_STATE_PATH = path.join(USER_DIR, 'scan-state.json')
 
 // Wayland no le permite a una app posicionarse sola en pantalla, y sin eso la
 // gata no puede caminar por el escritorio. Forzamos XWayland, que si lo permite.
@@ -75,34 +76,59 @@ function loadProyectos () {
   }
 }
 
-function runDiaryScan () {
-  const repos = loadProyectos()
-  if (!repos.length) return
-  let diary = diaryStore.loadDiary(DIARY_PATH)
-  const { entries, lastHashes, errors } = scanAllRepos(repos, diary.lastHashes)
-  diary = diaryStore.appendEntries({ ...diary, lastHashes }, entries)
-  diaryStore.saveDiary(DIARY_PATH, diary)
-  for (const e of errors) console.error(`[nala] diario: ${e.repoPath} -> ${e.error}`)
-}
-
-function getDiaryData () {
-  const diary = diaryStore.loadDiary(DIARY_PATH)
-  return {
-    entries: diary.entries,
-    stats: computeStats(diary.entries),
-    reports: {
-      weeklySummary: weeklySummary(diary.entries),
-      byProject: commitsByProject(diary.entries),
-      byDay: commitsByDay(diary.entries),
-      byHour: activeHours(diary.entries)
+function loadServidorConfig () {
+  try {
+    if (!fs.existsSync(SERVIDOR_PATH)) {
+      fs.mkdirSync(USER_DIR, { recursive: true })
+      fs.copyFileSync(BUNDLED_SERVIDOR, SERVIDOR_PATH)
     }
+    return JSON.parse(fs.readFileSync(SERVIDOR_PATH, 'utf8'))
+  } catch (err) {
+    console.error('[nala] no pude leer servidor.json:', err.message)
+    return { apiUrl: '', apiToken: '' }
   }
 }
 
-function addDiaryNote (note) {
-  let diary = diaryStore.loadDiary(DIARY_PATH)
-  diary = diaryStore.addManualNote(diary, note)
-  diaryStore.saveDiary(DIARY_PATH, diary)
+async function runDiaryScan () {
+  const repos = loadProyectos()
+  if (!repos.length) return
+
+  const scanState = loadScanState(SCAN_STATE_PATH)
+  const { entries, lastHashes, errors } = scanAllRepos(repos, scanState.lastHashes)
+  for (const e of errors) console.error(`[nala] diario: ${e.repoPath} -> ${e.error}`)
+
+  if (!entries.length) {
+    saveScanState(SCAN_STATE_PATH, { lastHashes })
+    return
+  }
+
+  try {
+    await apiClient.bulkInsert(loadServidorConfig(), entries)
+    // lastHashes solo avanza si el server confirmo que los guardo — si el
+    // POST falla, la proxima corrida (15 min despues) vuelve a mandar estos
+    // mismos commits en vez de perderlos para siempre.
+    saveScanState(SCAN_STATE_PATH, { lastHashes })
+  } catch (err) {
+    console.error('[nala] diario: no pude mandar los commits al server, reintento en el proximo scan:', err.message)
+  }
+}
+
+async function getDiaryData () {
+  try {
+    return await apiClient.fetchDiaryData(loadServidorConfig())
+  } catch (err) {
+    console.error('[nala] diario: no pude obtener datos del server:', err.message)
+    throw err
+  }
+}
+
+async function addDiaryNote (note) {
+  try {
+    await apiClient.addNote(loadServidorConfig(), note)
+  } catch (err) {
+    console.error('[nala] diario: no pude guardar la nota en el server:', err.message)
+    throw err
+  }
 }
 
 // ------------------------------------------------------- versiones de su pinta
@@ -341,6 +367,12 @@ function createWindow () {
   win.setIgnoreMouseEvents(true, { forward: true })
 
   win.loadFile(path.join(ROOT, 'src', 'renderer', 'index.html'))
+
+  if (DEBUG) {
+    win.webContents.on('console-message', (_e, level, message, line, sourceId) => {
+      console.log(`[renderer] ${message} (${sourceId}:${line})`)
+    })
+  }
 
   win.webContents.on('did-finish-load', () => {
     win.webContents.send('boot', {
