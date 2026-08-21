@@ -466,6 +466,17 @@ main {
 .task-group.collapsed .task-group-body { display: none; }
 .task-group.collapsed .chevron { transform: rotate(-90deg); }
 .chevron { color: #71717a; font-size: 11px; transition: transform .15s; display: inline-block; }
+.group-add-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #a1a1aa;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: inline-flex;
+}
+.group-add-btn:hover { background: #eee; color: #27272a; }
 .status-pill {
   font-size: 11px;
   font-weight: 700;

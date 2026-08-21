@@ -881,8 +881,18 @@ document.querySelectorAll('.task-rows').forEach((col) => {
 })
 
 document.querySelectorAll('.task-group-header').forEach((header) => {
-  header.addEventListener('click', () => {
+  header.addEventListener('click', (e) => {
+    if (e.target.closest('.group-add-btn')) return
     header.closest('.task-group').classList.toggle('collapsed')
+  })
+})
+
+document.querySelectorAll('.group-add-btn').forEach((btn) => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation()
+    const group = btn.closest('.task-group')
+    group.classList.remove('collapsed')
+    group.querySelector('.add-task-row input').focus()
   })
 })
 
