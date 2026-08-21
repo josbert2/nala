@@ -312,15 +312,22 @@ function renderTasks (tasks) {
 }
 
 let currentProjectId = null
+let lastLoadedTasks = []
 
 async function loadTasks () {
   if (!currentProjectId) return
   try {
-    const tasks = await window.diary.getTasks(currentProjectId)
-    renderTasks(tasks)
+    lastLoadedTasks = await window.diary.getTasks(currentProjectId)
+    renderFilteredTasks()
   } catch (err) {
     console.error('[diary] no pude cargar las tareas:', err)
   }
+}
+
+function renderFilteredTasks () {
+  const term = document.getElementById('taskSearchInput').value.trim().toLowerCase()
+  const tasks = term ? lastLoadedTasks.filter((t) => t.titulo.toLowerCase().includes(term)) : lastLoadedTasks
+  renderTasks(tasks)
 }
 
 let loadedProjects = []
@@ -873,6 +880,8 @@ document.getElementById('addProjectForm').addEventListener('submit', async (e) =
 document.getElementById('topAddTaskBtn').addEventListener('click', () => {
   document.querySelector('.add-task-row[data-estado="todo"] input').focus()
 })
+
+document.getElementById('taskSearchInput').addEventListener('input', renderFilteredTasks)
 
 document.querySelectorAll('.task-rows').forEach((col) => {
   col.addEventListener('click', (e) => {
