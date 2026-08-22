@@ -9,7 +9,7 @@ const fs = require('fs')
 const { scanAllRepos } = require('./diary/scan-repos')
 const apiClient = require('./diary/api-client')
 const { loadScanState, saveScanState } = require('./diary/scan-state')
-const { createDiaryWindow, toggleDiaryWindow } = require('./diary/window')
+const { createDiaryWindow, toggleDiaryWindow, getDiaryWindow } = require('./diary/window')
 const { githubUrlsByProject } = require('./diary/repo-links')
 const { listSpriteSources } = require('./diary/sprite-sources')
 
@@ -860,6 +860,10 @@ ipcMain.on('hot-rects', (_e, payload) => {
 ipcMain.handle('get-config', () => loadConfig())
 
 ipcMain.on('toggle-diary', () => toggleDiaryWindow())
+ipcMain.on('diary:hide', () => {
+  const w = getDiaryWindow()
+  if (w && !w.isDestroyed()) w.hide()   // el evento 'hide' vuelve a mostrar la gata
+})
 ipcMain.handle('diary:get-data', () => getDiaryData())
 ipcMain.handle('diary:add-note', (_e, note) => addDiaryNote(note))
 ipcMain.handle('diary:get-repo-links', () => githubUrlsByProject(loadProyectos()))

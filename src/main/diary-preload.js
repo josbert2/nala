@@ -31,5 +31,6 @@ contextBridge.exposeInMainWorld('diary', {
   deleteComment: (taskId, commentId) => ipcRenderer.invoke('diary:delete-comment', taskId, commentId),
   pathForFile: (file) => webUtils.getPathForFile(file),
   getFlow: () => ipcRenderer.invoke('diary:get-flow'),
-  saveFlow: (flow) => ipcRenderer.invoke('diary:save-flow', flow)
+  saveFlow: (flow) => ipcRenderer.invoke('diary:save-flow', flow),
+  hidePanel: () => ipcRenderer.send('diary:hide')
 })

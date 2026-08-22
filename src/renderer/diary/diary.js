@@ -934,9 +934,9 @@ async function loadAndRender () {
   }
 }
 
-document.getElementById('closeBtn').addEventListener('click', () => window.close())
-document.getElementById('showCatBtn').addEventListener('click', () => window.close())
-document.getElementById('backToCatBtn').addEventListener('click', () => window.close())
+document.getElementById('closeBtn').addEventListener('click', () => window.diary.hidePanel())
+document.getElementById('showCatBtn').addEventListener('click', () => window.diary.hidePanel())
+document.getElementById('backToCatBtn').addEventListener('click', () => window.diary.hidePanel())
 
 document.getElementById('entries').addEventListener('click', (e) => {
   const btn = e.target.closest('.gh-link')
