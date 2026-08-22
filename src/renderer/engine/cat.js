@@ -349,21 +349,9 @@ export class Cat {
       return
     }
 
-    // Cursor muy cerca y moviendose: se despierta y mira.
-    if (dist < 160 && p.movingMs < 400) {
-      if (this.state === 'sleep') {
-        this.setState('stretch', 1400)
-        this.energy = Math.max(this.energy, 0.5)
-        return
-      }
-      // Echada no se levanta a mirar: se queda como esta y te sigue con los
-      // ojos, que es justo la gracia de esa pose.
-      if (RESTING.includes(this.state) && this.state !== 'stretch' &&
-          this.state !== 'loaf') {
-        this.facing = p.x > cx ? 1 : -1
-        this.setState('watch')
-      }
-    }
+    // (Sacado a pedido: la gata NO reacciona a que el cursor pase cerca/encima.
+    // Antes se ponia en 'watch' (animacion alert/handler-click) al acercar el
+    // mouse; eso era el "hover" que no se queria.)
   }
 
   /** Ejecuta el estado actual. */
