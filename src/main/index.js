@@ -32,13 +32,16 @@ const SERVIDOR_PATH = path.join(USER_DIR, 'servidor.json')
 const SCAN_STATE_PATH = path.join(USER_DIR, 'scan-state.json')
 const FLOW_PATH = path.join(USER_DIR, 'flow.json')
 
+// La aceleracion por GPU con una ventana transparente deja "fantasmas" (la
+// gata duplicada, un frame viejo que el compositor no limpia) tanto en Windows
+// como en Linux. La apagamos siempre; para un overlay chico no cuesta nada.
+app.disableHardwareAcceleration()
+
 // Wayland no le permite a una app posicionarse sola en pantalla, y sin eso la
 // gata no puede caminar por el escritorio. Forzamos XWayland, que si lo permite.
 if (process.platform === 'linux') {
   app.commandLine.appendSwitch('ozone-platform', 'x11')
   app.commandLine.appendSwitch('enable-transparent-visuals')
-  // Sin esto la transparencia queda negra en varios drivers de Linux.
-  app.disableHardwareAcceleration()
 }
 
 let win = null
