@@ -614,11 +614,13 @@ export class Cat {
     this.x += this.vx * dt
 
     if (this.airborne) {
+      // Agarrada con el mouse: no le aplicamos gravedad, la posiciona el puntero.
+      // Sin esto la gravedad la iba hundiendo y se "caia" del hold al tenerla quieta.
+      if (this.state === 'dragged') { this.vy = 0; return }
+
       this.vy = Math.min(MAX_FALL, this.vy + GRAVITY * dt)
       this.y += this.vy * dt
       this.x = Math.max(8, Math.min(this.world.width - 8, this.x))
-
-      if (this.state === 'dragged') return
 
       const wasPounce = this.state === 'pounce'
       const restringida = this.sheet.meta.autonomous === 'limited' || this.sheet.meta.autonomous === false
