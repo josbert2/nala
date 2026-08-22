@@ -37,7 +37,7 @@ const ACTION_LABELS = {
   meow: 'miau',
   eatTreat: 'comiendo',
   chaseButterfly: 'una mariposa',
-  yawn: 'recién levantada',
+  yawn: 'bostezando',
   amasar: 'amasando',
   mirandoLaNada: 'mirando la nada',
   enojada: 'dejala',
@@ -45,7 +45,7 @@ const ACTION_LABELS = {
   tomaRegalo: 'te trae algo',
   llevaRegalo: 'te trae algo',
   ofrece: 'es para vos',
-  acompana: 'acompañándote',
+  acompana: 'trabajando',
   watchBird: 'un pajarito',
   startle: '¿qué fue eso?',
   stalkBird: 'acechando',
@@ -57,6 +57,53 @@ const ACTION_LABELS = {
   eat: 'comiendo',
   groom: 'lamiendose'
   // 'sleep' no lleva tooltip: mientras duerme hablan los prrr
+}
+
+// Coherencia con el sprite: si un estado no tiene texto propio arriba, cae al
+// texto de la ANIMACION que se esta mostrando. Asi ninguna accion queda muda y
+// el texto siempre coincide con lo que se ve. null = ese sprite no muestra nada.
+const SPRITE_LABELS = {
+  idle: 'tranqui',
+  walk: 'caminando',
+  sit: 'sentada',
+  sleep: null,
+  loaf: 'mirándote',
+  groom: 'lamiéndose',
+  scratch: 'rascando',
+  rascarse: 'rascándose',
+  dig: 'escarbando',
+  angry: 'dejala',
+  alert: 'atenta',
+  blep: 'blep',
+  frotar: 'restregándose',
+  olfatear: 'olfateando',
+  amasar: 'amasando',
+  crouch: 'jugando',
+  stretch: 'estirándose',
+  yawn: 'bostezando',
+  eat: 'comiendo',
+  run: 'corriendo',
+  fall: null,
+  rear: 'manoteando',
+  startle: '¿qué fue eso?',
+  slide: 'derrapando'
+}
+
+// Lo que el usuario ponga en config.cat.json > "tooltips" pisa cualquier default.
+let tooltipsOverride = {}
+
+/** Texto del globito para el estado/sprite actual. Prioridad: override del
+ *  usuario > texto del estado > texto del sprite. undefined = sin texto. */
+function tooltipFor (c) {
+  if (!c) return null
+  if (Object.prototype.hasOwnProperty.call(tooltipsOverride, c.state)) {
+    return tooltipsOverride[c.state] || null
+  }
+  if (Object.prototype.hasOwnProperty.call(ACTION_LABELS, c.state)) {
+    return ACTION_LABELS[c.state]
+  }
+  const s = SPRITE_LABELS[c.anim]
+  return s != null ? s : null
 }
 
 let sheet = null
@@ -223,6 +270,7 @@ function resize () {
 window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, estado, debug, flow }) => {
   origin = { x: display.x, y: display.y }
   displays = display.displays
+  tooltipsOverride = (config && config.tooltips) || {}   // textos que pisan los default
 
   // Cada version de su pinta tiene su propia carpeta. El proceso principal nos
   // dice cual esta puesta; si no dijo nada, la primera que existio.
@@ -785,7 +833,7 @@ function drawHearts (dt) {
 // -------------------------------------------------------------------- tooltip
 
 function drawTip () {
-  const label = cat ? ACTION_LABELS[cat.state] : null
+  const label = tooltipFor(cat)
   // El globito de texto manda: no se muestran los dos a la vez.
   if (!label || (cat && cat.bubble)) {
     tipEl.dataset.show = '0'
