@@ -25,7 +25,8 @@
     "files": [
       "src/**/*",
       "assets/**/*",
-      "config/**/*"
+      "config/**/*",
+      "sf-sprite-nala/**/*"
     ],
     "win": {
       "target": [
