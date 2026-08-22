@@ -373,7 +373,7 @@ window.addEventListener('resize', resize)
 
 // ------------------------------------------------------------------- puntero
 
-const DRAG_THRESHOLD = 7        // px que hay que mover para que sea arrastre y no caricia
+const DRAG_THRESHOLD = 24       // px que hay que mover para que sea arrastre y no caricia
 const HOVER_PAD = 10            // margen extra alrededor de ella para el hit test
 
 // Que esta agarrando el mouse ahora mismo.
@@ -405,7 +405,8 @@ window.nala.onPointer((p) => {
 
   if (!grip) return
 
-  if (!grip.moved && Math.hypot(x - grip.downX, y - grip.downY) > DRAG_THRESHOLD) {
+  if (!grip.moved && performance.now() - grip.downAt > 120 &&
+      Math.hypot(x - grip.downX, y - grip.downY) > DRAG_THRESHOLD) {
     grip.moved = true
     if (grip.kind === 'cat') cat.grab(x, y + 20)
   }

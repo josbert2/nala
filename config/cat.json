@@ -1,7 +1,7 @@
 {
   "_comment": "Poné su nombre en 'name'. Los horarios son 24h. Las notas aparecen de a ratos.",
   "name": "Nala",
-  "scale": 1.5,
+  "scale": 1,
   "greeting": "",
   "bowlAt": 0.12,
   "bedAt": 0.86,
