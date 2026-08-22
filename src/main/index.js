@@ -338,14 +338,41 @@ async function deleteComment (taskId, commentId) {
 const LOOKS_PATH = path.join(SPRITES_DIR, 'looks.json')
 const FALLBACK_LOOKS = { default: 'v1', looks: [{ id: 'v1', label: 'Version 1' }] }
 
+// Detecta las versiones solo: cada subcarpeta de assets/sprites/ con un cat.json
+// es una pinta. El id es el nombre de la carpeta y el label sale del cat.json.
+// Asi agregar una carpeta nueva la hace aparecer sin tocar codigo ni regenerar
+// looks.json.
+function scanLooks () {
+  const looks = []
+  for (const d of fs.readdirSync(SPRITES_DIR, { withFileTypes: true })) {
+    if (!d.isDirectory()) continue
+    const catPath = path.join(SPRITES_DIR, d.name, 'cat.json')
+    if (!fs.existsSync(catPath)) continue
+    let label = d.name
+    try {
+      const meta = JSON.parse(fs.readFileSync(catPath, 'utf8'))
+      if (meta.label) label = meta.label
+    } catch (_) { /* sin label, usa el nombre de la carpeta */ }
+    looks.push({ id: d.name, label })
+  }
+  // Orden natural: v2 antes que v10.
+  looks.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }))
+  return looks
+}
+
 function loadLooks () {
   try {
-    const idx = JSON.parse(fs.readFileSync(LOOKS_PATH, 'utf8'))
-    if (Array.isArray(idx.looks) && idx.looks.length) return idx
-    throw new Error('looks.json no trae ninguna version')
+    const looks = scanLooks()
+    if (!looks.length) throw new Error('no hay carpetas de sprites con cat.json')
+    // El default sale de looks.json si sigue siendo valido; si no, la mas nueva.
+    let def = looks[looks.length - 1].id
+    try {
+      const idx = JSON.parse(fs.readFileSync(LOOKS_PATH, 'utf8'))
+      if (idx.default && looks.some((l) => l.id === idx.default)) def = idx.default
+    } catch (_) { /* sin looks.json: queda la mas nueva */ }
+    return { default: def, looks }
   } catch (err) {
-    console.warn('[nala] no pude leer looks.json:', err.message)
-    console.warn('[nala] regeneralo con: python3 tools/make_sprites.py')
+    console.warn('[nala] no pude detectar looks:', err.message)
     return FALLBACK_LOOKS
   }
 }
