@@ -306,7 +306,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, est
     setTimeout(() => { forceStats = true }, 3200)
     setTimeout(() => { forceStats = false; soltarBandada() }, 3300)
     setTimeout(() => {
-      console.log(`[nala] ball.active=${ball.active} estado=${cat.state} menu=${menuOpen}`)
+      console.log(`[nala] ball.active=${ball.active} estado=${cat.state}`)
     }, 5500)
   }
 })
@@ -518,19 +518,6 @@ function sendHotRects () {
     })
   }
 
-  if (menuOpen) {
-    // Con getBoundingClientRect, no con offsetLeft: el panel entra con un
-    // `transform`, y offsetLeft no lo tiene en cuenta. Con offsetLeft la zona
-    // sensible quedaba donde el panel TERMINA, no donde se lo ve mientras entra.
-    const m = menuEl.getBoundingClientRect()
-    rects.push({
-      x: Math.round(m.left + origin.x),
-      y: Math.round(m.top + origin.y),
-      w: Math.round(m.width),
-      h: Math.round(m.height)
-    })
-  }
-
   // Mientras la arrastras no hay que soltarla nunca. El panel NO fuerza la
   // ventana entera: es un panel que se queda abierto, y si forzara no podrias
   // hacer click en nada de lo que tenes atras mientras lo tengas ahi.
@@ -604,7 +591,7 @@ const HOVER_DELAY = 800   // cuanto hay que quedarse encima para que aparezca
  * mirarla, no para tener que atenderla: ella se arregla sola.
  */
 function drawStats (now) {
-  const over = forceStats || (cat && !menuOpen && !grip && hit(pointer.x, pointer.y))
+  const over = forceStats || (cat && !grip && hit(pointer.x, pointer.y))
   if (!over) { hoverSince = 0; statsEl.dataset.show = '0'; return }
   if (!hoverSince) hoverSince = now
   if (now - hoverSince < HOVER_DELAY) { statsEl.dataset.show = '0'; return }
