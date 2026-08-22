@@ -935,6 +935,7 @@ async function loadAndRender () {
 }
 
 document.getElementById('closeBtn').addEventListener('click', () => window.close())
+document.getElementById('showCatBtn').addEventListener('click', () => window.close())
 
 document.getElementById('entries').addEventListener('click', (e) => {
   const btn = e.target.closest('.gh-link')
