@@ -105,7 +105,7 @@ export class Cat {
       case 'llevaRegalo': return 'walk'
       case 'ofrece': return 'alert'
       case 'dormirConEl': return 'sleep'
-      case 'acompana': return 'loaf'
+      case 'acompana': return 'eat'   // fila con el sprite 'trabajando': teclea al lado tuyo mientras currás
       case 'vaAcompanar': return 'walk'
       case 'goingBox': return 'walk'
       case 'zoom': return 'run'

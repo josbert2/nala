@@ -933,9 +933,9 @@ function loop (now) {
 
     // Si venis trabajando hace un rato, se viene a acompañar. No pide nada:
     // se echa al lado y se queda.
-    if (trabajo > 0.75 && now > nextAcompanar && cat.energy > 0.25 &&
+    if (trabajo > 0.6 && now > nextAcompanar && cat.energy > 0.25 &&
         ['idle', 'sit', 'loaf', 'groom'].includes(cat.state)) {
-      nextAcompanar = now + 8 * 60 * 1000
+      nextAcompanar = now + 90 * 1000   // se viene a "trabajar" al lado tuyo cada ~90s de actividad
       cat.acompanar({ pointer })
     }
 
