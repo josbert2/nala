@@ -39,7 +39,6 @@ export class Cat {
     this.after = null          // que hace al llegar
     this.props = null          // {bowl, ball}
     this.pinned = false        // el usuario la agarro con el mouse
-    this.hovering = false       // el mouse esta encima: se queda en 'alert' (handler-click)
     this.bubble = null         // {text, until}
     this.huntCooldownUntil = 0 // no vuelve a cazar el cursor hasta aca
     this.birdCooldownUntil = 0 // deja de obsesionarse con el mismo pajaro
@@ -201,15 +200,6 @@ export class Cat {
     this.energy = Math.min(1, Math.max(0, this.energy))
 
     if (this.state === 'dragged') { this._physics(dt, false); return }
-
-    // Mouse encima: se queda haciendo 'alert' (handler-click) hasta que te vas.
-    if (this.hovering && !this.airborne && !this.enojada) {
-      if (this.state !== 'alert') this.setState('alert', Infinity)
-      this._physics(dt, true)
-      return
-    }
-    // Salio del hover: si quedo colgada en el 'alert' del hover, la soltamos.
-    if (this.state === 'alert' && this.hold === Infinity) this.setState('idle', 800)
 
     this._react(ctx)
     this._act(dt, ctx)
