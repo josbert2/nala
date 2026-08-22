@@ -704,8 +704,10 @@ export class Cat {
     // Si armaron un flujo a mano (pestana FLUJO del Dev Diary) y el estado que
     // termino tiene salidas definidas, seguimos esas conexiones en vez de la
     // tabla de pesos de siempre. Sin salidas para este estado, cae al default.
+    // Las conexiones a una fuente "raw:" (sf-sprite-nala/ sin mergear al
+    // sheet todavia) se ignoran: no hay animacion real que reproducir.
     const edges = this.flow && Array.isArray(this.flow.edges)
-      ? this.flow.edges.filter((e) => e.from === this.state)
+      ? this.flow.edges.filter((e) => e.from === this.state && !e.to.startsWith('raw:'))
       : []
     if (edges.length) {
       const next = edges[Math.floor(Math.random() * edges.length)].to

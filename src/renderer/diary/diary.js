@@ -594,6 +594,12 @@ async function loadSpriteSources () {
   }
 }
 
+/** Nombre para mostrar: las fuentes sin procesar llevan prefijo "raw:" internamente. */
+function flowNodeLabel (name) {
+  if (name.startsWith('raw:')) return `${name.slice(4)} (sin procesar)`
+  return NOMBRES_SPRITE[name] || name
+}
+
 /**
  * Recorre las conexiones y arma las cadenas completas para mostrar arriba,
  * tipo "idle -> loaf -> sleep -> idle". Si un nodo tiene mas de una salida,
@@ -641,7 +647,7 @@ function renderFlowChains () {
   el.className = ''
   el.innerHTML = chains.map((chain) => {
     const partes = chain.map((step) => {
-      const label = escapeHtml(NOMBRES_SPRITE[step.node] || step.node)
+      const label = escapeHtml(flowNodeLabel(step.node))
       return step.loop
         ? `<span class="flow-chain-loop">${label} (repite)</span>`
         : `<span class="flow-chain-node">${label}</span>`
@@ -662,7 +668,7 @@ function renderFlowEdges () {
     const row = document.createElement('div')
     row.className = 'flow-edge-row'
     row.innerHTML = `
-      <strong>${escapeHtml(edge.from)}</strong> ${icon('arrowRight', 12)} <strong>${escapeHtml(edge.to)}</strong>
+      <strong>${escapeHtml(flowNodeLabel(edge.from))}</strong> ${icon('arrowRight', 12)} <strong>${escapeHtml(flowNodeLabel(edge.to))}</strong>
       <button type="button" class="flow-edge-delete" data-i="${i}" title="Borrar">${icon('close', 12)}</button>
     `
     el.appendChild(row)
@@ -670,7 +676,7 @@ function renderFlowEdges () {
 }
 
 function populateFlowSelects () {
-  const opts = flowAnimNames.map((n) => `<option value="${escapeHtml(n)}">${escapeHtml(NOMBRES_SPRITE[n] || n)}</option>`).join('')
+  const opts = flowAnimNames.map((n) => `<option value="${escapeHtml(n)}">${escapeHtml(flowNodeLabel(n))}</option>`).join('')
   document.getElementById('flowFrom').innerHTML = opts
   document.getElementById('flowTo').innerHTML = opts
 }
@@ -724,6 +730,51 @@ async function loadFlowEditor () {
 
       grid.appendChild(cell)
       animateSprite(canvas, image, a, cw, ch)
+    }
+
+    // Las fuentes de sf-sprite-nala/ todavia no estan mergeadas al cat.png —
+    // no se pueden reproducir de verdad (ver flow.js en cat.js, que ignora
+    // las conexiones a "raw:"), pero sirven para planear la secuencia antes
+    // de procesarlas. Van con prefijo "raw:" para no chocar con un nombre de
+    // animacion real, y marcadas como sin procesar en todos lados.
+    try {
+      const sources = await window.diary.getSpriteSources()
+      for (const { name, metadata } of sources) {
+        const value = `raw:${name}`
+        flowAnimNames.push(value)
+
+        const fw = metadata.frame_w || 256
+        const fh = metadata.frame_h || 256
+        const frames = metadata.frame_count || 1
+        const fps = metadata.fps || 8
+        const src = '../../../sf-sprite-nala/' + name.split('/').map(encodeURIComponent).join('/') + '/spritesheet.png'
+
+        const cell = document.createElement('div')
+        cell.className = 'sprite-cell'
+
+        const canvas = document.createElement('canvas')
+        canvas.width = 96
+        canvas.height = 96
+        cell.appendChild(canvas)
+
+        const label = document.createElement('div')
+        label.className = 'sprite-name'
+        label.textContent = name
+        cell.appendChild(label)
+
+        const badge = document.createElement('div')
+        badge.className = 'sprite-meta'
+        badge.textContent = 'sin procesar'
+        cell.appendChild(badge)
+
+        grid.appendChild(cell)
+
+        const img = new Image()
+        img.onload = () => animateSprite(canvas, img, { row: 0, frames, fps, loop: true }, fw, fh)
+        img.src = src
+      }
+    } catch (err) {
+      console.error('[diary] no pude sumar sf-sprite-nala al editor de flujo:', err)
     }
 
     populateFlowSelects()
