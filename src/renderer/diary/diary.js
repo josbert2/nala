@@ -44,6 +44,7 @@ let spriteSourcesLoaded = false
 let flowLoaded = false
 let flowAnimNames = []
 let flowEdges = []
+let flowNodeData = {}   // name -> { image, row, frames, fps, cw, ch } — para animar previews inline
 
 const NOMBRES_SPRITE = {
   idle: 'respirando',
@@ -635,8 +636,31 @@ function buildFlowChains (edges) {
   return chains
 }
 
+let flowChainRafIds = []
+
+function animateChainThumb (canvas, node) {
+  const data = flowNodeData[node]
+  if (!data) return
+  const ctx = canvas.getContext('2d')
+  ctx.imageSmoothingEnabled = false
+  const { image, row, frames, fps, cw, ch } = data
+  const start = performance.now()
+  function frame (now) {
+    const elapsed = now - start
+    let idx = Math.floor((elapsed / 1000) * fps)
+    idx = ((idx % frames) + frames) % frames
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.drawImage(image, idx * cw, row * ch, cw, ch, 0, 0, canvas.width, canvas.height)
+    flowChainRafIds.push(requestAnimationFrame(frame))
+  }
+  flowChainRafIds.push(requestAnimationFrame(frame))
+}
+
 function renderFlowChains () {
   const el = document.getElementById('flowChainResult')
+  flowChainRafIds.forEach((id) => cancelAnimationFrame(id))
+  flowChainRafIds = []
+
   const chains = buildFlowChains(flowEdges)
   if (!chains.length) {
     el.innerHTML = ''
@@ -645,15 +669,37 @@ function renderFlowChains () {
     return
   }
   el.className = ''
-  el.innerHTML = chains.map((chain) => {
-    const partes = chain.map((step) => {
-      const label = escapeHtml(flowNodeLabel(step.node))
-      return step.loop
-        ? `<span class="flow-chain-loop">${label} (repite)</span>`
-        : `<span class="flow-chain-node">${label}</span>`
+  el.innerHTML = ''
+  chains.forEach((chain) => {
+    const line = document.createElement('div')
+    line.className = 'flow-chain-line'
+    chain.forEach((step, i) => {
+      if (i > 0) {
+        const arrow = document.createElement('span')
+        arrow.className = 'flow-chain-arrow'
+        arrow.textContent = '→'
+        line.appendChild(arrow)
+      }
+      const stepEl = document.createElement('span')
+      stepEl.className = step.loop ? 'flow-chain-loop' : 'flow-chain-node'
+
+      if (flowNodeData[step.node]) {
+        const canvas = document.createElement('canvas')
+        canvas.width = 28
+        canvas.height = 28
+        canvas.className = 'flow-chain-thumb'
+        stepEl.appendChild(canvas)
+        animateChainThumb(canvas, step.node)
+      }
+
+      const label = document.createElement('span')
+      label.textContent = flowNodeLabel(step.node) + (step.loop ? ' (repite)' : '')
+      stepEl.appendChild(label)
+
+      line.appendChild(stepEl)
     })
-    return `<div class="flow-chain-line">${partes.join(' → ')}</div>`
-  }).join('')
+    el.appendChild(line)
+  })
 }
 
 function renderFlowEdges () {
@@ -714,6 +760,7 @@ async function loadFlowEditor () {
     for (const [name, a] of Object.entries(meta.animations)) {
       if (isSpriteRowBlank(image, a.row, a.frames, cw, ch)) continue
       flowAnimNames.push(name)
+      flowNodeData[name] = { image, row: a.row, frames: a.frames, fps: a.fps, loop: true, cw, ch }
 
       const cell = document.createElement('div')
       cell.className = 'sprite-cell'
@@ -770,7 +817,11 @@ async function loadFlowEditor () {
         grid.appendChild(cell)
 
         const img = new Image()
-        img.onload = () => animateSprite(canvas, img, { row: 0, frames, fps, loop: true }, fw, fh)
+        img.onload = () => {
+          flowNodeData[value] = { image: img, row: 0, frames, fps, loop: true, cw: fw, ch: fh }
+          animateSprite(canvas, img, { row: 0, frames, fps, loop: true }, fw, fh)
+          renderFlowChains()
+        }
         img.src = src
       }
     } catch (err) {

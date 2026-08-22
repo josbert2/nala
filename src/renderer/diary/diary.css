@@ -751,14 +751,33 @@ main {
   margin-bottom: 16px;
 }
 .flow-chain-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
   font-size: 15px;
   font-weight: 700;
   color: var(--text);
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   word-break: break-word;
+}
+.flow-chain-line .flow-chain-node,
+.flow-chain-line .flow-chain-loop {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 .flow-chain-line .flow-chain-node { color: var(--accent); }
 .flow-chain-line .flow-chain-loop { color: #c0392b; font-weight: 700; }
+.flow-chain-arrow { color: var(--muted); font-weight: 400; }
+.flow-chain-thumb {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--border);
+  background: var(--bg);
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
 .flow-edge-form {
   display: flex;
   align-items: center;

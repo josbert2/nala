@@ -32,6 +32,13 @@ function createDiaryWindow ({ preloadPath, htmlPath }) {
 
   diaryWin.loadFile(htmlPath)
   diaryWin.on('closed', () => { diaryWin = null })
+
+  if (process.env.NALA_DEBUG) {
+    diaryWin.webContents.on('console-message', (_e, level, message, line, sourceId) => {
+      console.log(`[diary-renderer] ${message} (${sourceId}:${line})`)
+    })
+  }
+
   return diaryWin
 }
 
