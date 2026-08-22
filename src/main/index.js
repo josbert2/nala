@@ -411,30 +411,11 @@ function currentHabitat () {
   return HABITATS.habitats.find((h) => h.id === id)
 }
 
-function setHabitat (id) {
-  if (!HABITATS.habitats.some((h) => h.id === id)) return
-  if (id === currentHabitatId()) return
-  settings.habitat = id
-  saveSettings()
-  rebuildTray()
-  if (win && !win.isDestroyed()) win.reload()
-}
-
 /** La version elegida. Si nunca eligio ninguna, la que viene por defecto. */
 function currentLook () {
   const ids = LOOKS.looks.map((l) => l.id)
   if (settings.look && ids.includes(settings.look)) return settings.look
   return ids.includes(LOOKS.default) ? LOOKS.default : ids[0]
-}
-
-/**
- * Pintas como v4 no tienen plato, pelota, cama, poste, etc — son "solo la
- * gata". Comer/jugar/dormir en su cama/rascar/etc dependen de esos objetos y
- * no hacen nada si no estan (ver mealtime/playtime/goToBed/... en cat.js), asi
- * que ni el tray ni los atajos globales ofrecen esas opciones para esas pintas.
- */
-function hasFurniture () {
-  return fs.existsSync(path.join(SPRITES_DIR, currentLook(), 'furniture.json'))
 }
 
 // ------------------------------------------------------------------- ajustes
@@ -737,28 +718,14 @@ function refreshTrayMenu () {
   const send = (channel, payload) => () => win && win.webContents.send(channel, payload)
   const multi = screen.getAllDisplays().length > 1
 
-  const furniture = hasFurniture()
-
   tray.setContextMenu(Menu.buildFromTemplate([
     { label: cfg.name || 'Nala', enabled: false },
     { label: 'Dev Diary', click: () => toggleDiaryWindow() },
     { type: 'separator' },
-    { label: 'Servirle la comida', visible: furniture, click: send('command', { type: 'feed' }) },
-    { label: 'Sacar la pelota', visible: furniture, click: send('command', { type: 'play' }) },
     { label: 'Soltar una mariposa', click: send('command', { type: 'butterfly' }) },
     { label: 'Que pase un pajarito', click: send('command', { type: 'bird' }) },
-    { label: 'Que te traiga algo', visible: furniture, click: send('command', { type: 'gift' }) },
-    { label: 'Darle un premio', visible: furniture, click: send('command', { type: 'treat' }) },
-    { type: 'separator', visible: furniture },
-    { label: 'A rascar el poste', visible: furniture, click: send('command', { type: 'scratch' }) },
-    { label: 'Arriba del arbol', visible: furniture, click: send('command', { type: 'tree' }) },
-    { label: 'A su cueva', visible: furniture, click: send('command', { type: 'cave' }) },
-    { label: 'A su arenero', visible: furniture, click: send('command', { type: 'litter' }) },
-    { label: 'A su caja', visible: furniture, click: send('command', { type: 'box' }) },
-    { label: 'A jugar con un juguete', visible: furniture, click: send('command', { type: 'toy' }) },
     { type: 'separator' },
     { label: 'Que venga', click: send('command', { type: 'come' }) },
-    { label: 'Mandarla a su cama', visible: furniture, click: send('command', { type: 'bed' }) },
     { label: 'Que duerma', click: send('command', { type: 'sleep' }) },
     { label: 'Dejarla en paz', click: send('command', { type: 'free' }) },
     { type: 'separator' },
@@ -782,16 +749,6 @@ function refreshTrayMenu () {
       ]
     },
     { type: 'separator', visible: multi },
-    {
-      label: 'Su hábitat',
-      visible: HABITATS.habitats.length > 1,
-      submenu: HABITATS.habitats.map((h) => ({
-        label: h.label,
-        type: 'radio',
-        checked: currentHabitatId() === h.id,
-        click: () => setHabitat(h.id)
-      }))
-    },
     {
       label: 'Su pinta',
       // Con una sola version no hay nada que elegir.
@@ -817,21 +774,7 @@ function refreshTrayMenu () {
 // En GNOME el icono de bandeja depende de la extension AppIndicator, que no
 // siempre esta. Los atajos son el camino que siempre funciona.
 
-// Los que dependen de mobiliario (plato/pelota/cama/poste/arbol/cueva/
-// arenero/caja/juguetes) no se registran en pintas sin furniture.json (v4):
-// no hacen nada igual, ver hasFurniture().
-const SHORTCUTS_FURNITURE = [
-  ['Control+Alt+P', 'la pelota', { type: 'play' }],
-  ['Control+Alt+O', 'un premio', { type: 'treat' }],
-  ['Control+Alt+C', 'la comida', { type: 'feed' }],
-  ['Control+Alt+K', 'a su cama', { type: 'bed' }],
-  ['Control+Alt+R', 'a rascar', { type: 'scratch' }],
-  ['Control+Alt+T', 'al arbol', { type: 'tree' }],
-  ['Control+Alt+A', 'al arenero', { type: 'litter' }],
-  ['Control+Alt+B', 'a su caja', { type: 'box' }],
-  ['Control+Alt+G', 'que te traiga algo', { type: 'gift' }]
-]
-const SHORTCUTS_SIEMPRE = [
+const SHORTCUTS = [
   ['Control+Alt+L', 'que venga', { type: 'come' }],
   ['Control+Alt+M', 'una mariposa', { type: 'butterfly' }],
   ['Control+Alt+J', 'un pajarito', { type: 'bird' }]
@@ -868,8 +811,7 @@ function debugSelfTest () {
 
 function registerShortcuts () {
   const ok = []
-  const shortcuts = hasFurniture() ? [...SHORTCUTS_SIEMPRE, ...SHORTCUTS_FURNITURE] : SHORTCUTS_SIEMPRE
-  for (const [accel, what, cmd] of shortcuts) {
+  for (const [accel, what, cmd] of SHORTCUTS) {
     const done = globalShortcut.register(accel, () => {
       if (win && !win.isDestroyed()) win.webContents.send('command', cmd)
     })
@@ -930,7 +872,6 @@ ipcMain.on('estado', (_e, parcial) => {
   saveState()
 })
 
-ipcMain.on('set-habitat', (_e, id) => setHabitat(id))
 
 // ------------------------------------------------------------------------ ciclo
 
