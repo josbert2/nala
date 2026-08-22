@@ -110,6 +110,24 @@ body {
 .nav-item.active { color: var(--text); background: var(--panel); border-left: 4px solid var(--accent); }
 .nav-item.disabled { opacity: .35; cursor: default; }
 .sidebar-bottom { margin-top: auto; padding: 0 18px; }
+.back-to-cat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-bottom: 10px;
+  background: #7c6cf0;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 9px 10px;
+  cursor: pointer;
+}
+.back-to-cat:hover { filter: brightness(1.08); }
 
 main {
   flex: 1;
