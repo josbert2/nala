@@ -13,20 +13,23 @@
  */
 
 // Horas que tarda cada una en ir de llena a vacía si nadie hace nada.
+// Aceleradas para que su conducta se NOTE en una sesión: va sola a comer,
+// tomar agua, al arenero y a buscarte cada tanto. Ajustable con needHours.
 const HOURS = {
-  comida: 7,
-  agua: 5,
-  cariño: 6
+  comida: 1,
+  agua: 0.8,
+  cariño: 0.9
 }
 
-// Debajo de esto se pone en movimiento sola.
+// Debajo de esto se pone en movimiento sola. Un poco más alto = reacciona antes.
 const LOW = {
-  comida: 0.32,
-  agua: 0.34,
-  cariño: 0.28
+  comida: 0.4,
+  agua: 0.42,
+  cariño: 0.35
 }
 
-const BANO_URGENTE = 0.75
+const BANO_URGENTE = 0.7
+const BANO_HORAS = 1.2   // cuánto tarda en necesitar el arenero
 
 export class Needs {
   constructor (config = {}) {
@@ -68,7 +71,7 @@ export class Needs {
     this.agua = clamp01(this.agua - this.rate.agua * dt)
     this.cariño = clamp01(this.cariño - this.rate.cariño * dt)
     // El baño sube solo, despacio. Comer y tomar agua lo empujan aparte.
-    this.bano = clamp01(this.bano + dt / (9 * 3600))
+    this.bano = clamp01(this.bano + dt / (BANO_HORAS * 3600))
   }
 
   // ------------------------------------------------------------- satisfacer
