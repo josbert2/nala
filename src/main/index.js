@@ -443,7 +443,7 @@ function currentLook () {
 // ------------------------------------------------------------------- ajustes
 
 const DEFAULT_SETTINGS = {
-  displayMode: 'all',   // 'all' | 'primary'
+  displayMode: 'primary',   // 'all' | 'primary' — arranca en el monitor principal para que se la vea siempre
   look: null,           // null = la que venga por defecto en looks.json
   habitat: null         // null = el que venga por defecto en habitats.json
 }
