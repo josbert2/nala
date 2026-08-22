@@ -598,6 +598,8 @@ const HOVER_DELAY = 800   // cuanto hay que quedarse encima para que aparezca
  */
 function drawStats (now) {
   const over = forceStats || (cat && !grip && hit(pointer.x, pointer.y))
+  // Mouse encima de la gata: que haga el sprite de handler-click ('alert').
+  if (cat) cat.hovering = !grip && hit(pointer.x, pointer.y)
   if (!over) { hoverSince = 0; statsEl.dataset.show = '0'; return }
   if (!hoverSince) hoverSince = now
   if (now - hoverSince < HOVER_DELAY) { statsEl.dataset.show = '0'; return }
