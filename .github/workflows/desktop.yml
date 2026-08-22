@@ -1,0 +1,48 @@
+name: Desktop builds
+
+# Genera los instaladores de escritorio de Nala.
+# Se dispara manualmente (workflow_dispatch) o al pushear un tag v* (ej: v0.1.0).
+# El .exe de Windows se compila en un runner windows-latest, que es donde el
+# modulo nativo node-window-manager compila nativo (no se puede cross-compilar
+# desde Linux/WSL).
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: --win nsis portable
+          - os: ubuntu-latest
+            target: --linux AppImage
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Package with electron-builder
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder ${{ matrix.target }} --publish never
+
+      - name: Upload installers
+        uses: actions/upload-artifact@v4
+        with:
+          name: nala-${{ matrix.os }}
+          path: |
+            dist/*.exe
+            dist/*.AppImage
+          if-no-files-found: ignore

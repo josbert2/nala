@@ -95,7 +95,7 @@ LOOKS = [
     },
 ]
 
-DEFAULT_LOOK = "v3"
+DEFAULT_LOOK = "v4"
 
 # La arena de su arenero y el plastico de la bandeja.
 SAND    = (222, 205, 176, 255)
