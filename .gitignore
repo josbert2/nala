@@ -6,3 +6,6 @@ assets/palette-preview.png
 __pycache__/
 debug-shot.png
 .superpowers/
+
+# artefactos descargados de CI
+dist-ci/
