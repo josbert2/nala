@@ -594,7 +594,64 @@ async function loadSpriteSources () {
   }
 }
 
+/**
+ * Recorre las conexiones y arma las cadenas completas para mostrar arriba,
+ * tipo "idle -> loaf -> sleep -> idle". Si un nodo tiene mas de una salida,
+ * cada rama sale como su propia linea. Si vuelve a un nodo ya visitado en esa
+ * misma linea, corta ahi y lo marca como loop en vez de seguir infinito.
+ */
+function buildFlowChains (edges) {
+  if (!edges.length) return []
+  const outMap = {}
+  for (const { from, to } of edges) {
+    if (!outMap[from]) outMap[from] = []
+    outMap[from].push(to)
+  }
+  const tienenEntrada = new Set(edges.map((e) => e.to))
+  const heads = Object.keys(outMap).filter((n) => !tienenEntrada.has(n))
+  const arranques = heads.length ? heads : Object.keys(outMap)
+
+  const chains = []
+  const walk = (node, visited, path) => {
+    if (visited.has(node)) {
+      chains.push([...path, { node, loop: true }])
+      return
+    }
+    const nextVisited = new Set(visited).add(node)
+    const outs = outMap[node]
+    if (!outs || !outs.length) {
+      chains.push([...path, { node, loop: false }])
+      return
+    }
+    for (const next of outs) walk(next, nextVisited, [...path, { node, loop: false }])
+  }
+  for (const head of arranques) walk(head, new Set(), [])
+  return chains
+}
+
+function renderFlowChains () {
+  const el = document.getElementById('flowChainResult')
+  const chains = buildFlowChains(flowEdges)
+  if (!chains.length) {
+    el.innerHTML = ''
+    el.className = 'empty'
+    el.textContent = 'Sin conexiones todavia.'
+    return
+  }
+  el.className = ''
+  el.innerHTML = chains.map((chain) => {
+    const partes = chain.map((step) => {
+      const label = escapeHtml(NOMBRES_SPRITE[step.node] || step.node)
+      return step.loop
+        ? `<span class="flow-chain-loop">${label} (repite)</span>`
+        : `<span class="flow-chain-node">${label}</span>`
+    })
+    return `<div class="flow-chain-line">${partes.join(' → ')}</div>`
+  }).join('')
+}
+
 function renderFlowEdges () {
+  renderFlowChains()
   const el = document.getElementById('flowEdgeList')
   el.innerHTML = ''
   if (!flowEdges.length) {
