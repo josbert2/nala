@@ -924,8 +924,6 @@ if (!singleInstance) {
       e.preventDefault()
       diaryWin.hide()
     })
-    // Arranca mostrando el diario por defecto (esconde a la gata via 'show').
-    diaryWin.once('ready-to-show', () => diaryWin.show())
     buildTray()
     startGeometryPolling()
     startPointerPolling()
