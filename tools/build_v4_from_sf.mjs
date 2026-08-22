@@ -28,7 +28,38 @@ const MAP = {
   dig: 'aruñando-el-piso',
   angry: 'enojada',
   alert: 'handler-click',
-  blep: 'beso-respirando'
+  blep: 'beso-respirando',
+  // las alternativas/extras, al mejor estado libre que calza
+  frotar: 'asicalar',
+  olfatear: 'lamer-pata-2',
+  amasar: 'dormida-2',
+  crouch: 'pan-colita-2',
+  stretch: 'respirar-sentada-full',
+  yawn: 'respirar-sentada-pestañeando',
+  eat: 'trabajando'
+}
+
+// Borra el fondo conectado a los bordes: un pixel es "fondo" si ya es
+// transparente o si es oscuro (los 3 canales <= 45). El contorno de la gata
+// (~70) frena el flood, asi el interior (pupilas, sombras) no se toca.
+const floodClearBackground = (img) => {
+  const { data, width, height } = img.bitmap
+  const dark = (idx) => data[idx] <= 45 && data[idx + 1] <= 45 && data[idx + 2] <= 45
+  const stack = []
+  const push = (x, y) => { if (x >= 0 && x < width && y >= 0 && y < height) stack.push(y * width + x) }
+  for (let x = 0; x < width; x++) { push(x, 0); push(x, height - 1) }
+  for (let y = 0; y < height; y++) { push(0, y); push(width - 1, y) }
+  const seen = new Uint8Array(width * height)
+  while (stack.length) {
+    const p = stack.pop()
+    if (seen[p]) continue
+    seen[p] = 1
+    const idx = p * 4
+    if (data[idx + 3] !== 0 && !dark(idx)) continue   // pared: pixel de la gata
+    data[idx + 3] = 0
+    const x = p % width, y = (p - x) / width
+    push(x + 1, y); push(x - 1, y); push(x, y + 1); push(x, y - 1)
+  }
 }
 
 const run = async () => {
@@ -54,19 +85,23 @@ const run = async () => {
     const fh = src.bitmap.height
     const row = meta.animations[anim].row
 
-    // limpiar la fila entera (transparente) antes de pegar
-    const blank = new Jimp(CELL * COLS, CELL, 0x00000000)
-    sheet.composite(blank, 0, row * CELL)
+    // borrar la fila entera de verdad (poner RGBA en 0). Ojo: composite de una
+    // imagen transparente NO borra (alpha 0 = no cambia el destino), por eso
+    // antes se colaba el negro viejo por debajo del sprite nuevo.
+    sheet.scan(0, row * CELL, CELL * COLS, CELL, (x, y, idx) => {
+      sheet.bitmap.data[idx] = 0
+      sheet.bitmap.data[idx + 1] = 0
+      sheet.bitmap.data[idx + 2] = 0
+      sheet.bitmap.data[idx + 3] = 0
+    })
 
     for (let i = 0; i < frames && i < COLS; i++) {
       const frame = src.clone().crop(i * fw, 0, fw, fh)
-      // Algunas hojas vienen con fondo negro opaco (1,1,1). Lo volvemos
-      // transparente. Umbral <=10 en los 3 canales: saca el fondo pero
-      // conserva el contorno (70,58,48) y la pupila (13,17,25).
-      frame.scan(0, 0, frame.bitmap.width, frame.bitmap.height, (x, y, idx) => {
-        const d = frame.bitmap.data
-        if (d[idx] <= 10 && d[idx + 1] <= 10 && d[idx + 2] <= 10) d[idx + 3] = 0
-      })
+      // Algunas hojas traen fondo opaco oscuro (negro puro 1,1,1 o marron
+      // oscuro 30,17,16). Lo sacamos con flood-fill desde los bordes: solo
+      // borra el fondo CONECTADO al borde, asi el contorno (70,58,48) hace de
+      // pared y las pupilas del interior (13,17,25) quedan intactas.
+      floodClearBackground(frame)
       frame.resize(CELL, CELL, Jimp.RESIZE_BICUBIC)
       sheet.composite(frame, i * CELL, row * CELL)
     }
