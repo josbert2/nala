@@ -361,9 +361,13 @@ export class Cat {
       case 'llevaRegalo':
       case 'seVa':
       case 'trot': {
-        if (!this.target) { this._arrive(); break }
+        if (!this.target) { this.vx = 0; this._arrive(); break }
         const dx = this.target.x - this.x
-        if (Math.abs(dx) < 5) { this.vx = 0; this._arrive(); break }
+        // Si el objetivo quedo contra el borde, frena y se acomoda en vez de
+        // caminar contra la pared para siempre (era el "se queda pegada").
+        const m = 40 * this.scale
+        const atWall = (this.x <= m && dx < 0) || (this.x >= this.world.width - m && dx > 0)
+        if (Math.abs(dx) < 5 || atWall) { this.vx = 0; this._arrive(); break }
         this.facing = Math.sign(dx)
         // El trote es para cruzar de monitor: a paso de gata tardaria minutos.
         this.vx = this.facing * (this.state === 'trot' ? TROT_SPEED : WALK_SPEED)
@@ -600,6 +604,9 @@ export class Cat {
   /** Gravedad, bordes y aterrizaje. */
   _physics (dt, useSurfaces) {
     this.x += this.vx * dt
+    // No dejar que se salga del monitor (medio cuerpo afuera o trabada en el borde).
+    const edge = 40 * this.scale
+    this.x = Math.max(edge, Math.min(this.world.width - edge, this.x))
 
     if (this.airborne) {
       // Agarrada con el mouse: no le aplicamos gravedad, la posiciona el puntero.
