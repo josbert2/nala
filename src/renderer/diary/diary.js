@@ -41,6 +41,9 @@ let currentDate = null
 let repoLinks = {}
 let spritesLoaded = false
 let spriteSourcesLoaded = false
+let flowLoaded = false
+let flowAnimNames = []
+let flowEdges = []
 
 const NOMBRES_SPRITE = {
   idle: 'respirando',
@@ -591,6 +594,88 @@ async function loadSpriteSources () {
   }
 }
 
+function renderFlowEdges () {
+  const el = document.getElementById('flowEdgeList')
+  el.innerHTML = ''
+  if (!flowEdges.length) {
+    el.innerHTML = '<div class="empty">Sin conexiones todavia.</div>'
+    return
+  }
+  flowEdges.forEach((edge, i) => {
+    const row = document.createElement('div')
+    row.className = 'flow-edge-row'
+    row.innerHTML = `
+      <strong>${escapeHtml(edge.from)}</strong> ${icon('arrowRight', 12)} <strong>${escapeHtml(edge.to)}</strong>
+      <button type="button" class="flow-edge-delete" data-i="${i}" title="Borrar">${icon('close', 12)}</button>
+    `
+    el.appendChild(row)
+  })
+}
+
+function populateFlowSelects () {
+  const opts = flowAnimNames.map((n) => `<option value="${escapeHtml(n)}">${escapeHtml(NOMBRES_SPRITE[n] || n)}</option>`).join('')
+  document.getElementById('flowFrom').innerHTML = opts
+  document.getElementById('flowTo').innerHTML = opts
+}
+
+async function saveFlowEdges () {
+  try {
+    await window.diary.saveFlow({ edges: flowEdges })
+  } catch (err) {
+    console.error('[diary] no pude guardar el flujo:', err)
+  }
+}
+
+async function loadFlowEditor () {
+  if (flowLoaded) return
+  flowLoaded = true
+  const grid = document.getElementById('flowNodeGrid')
+
+  try {
+    const [meta, image, flow] = await Promise.all([
+      fetch('../../../assets/sprites/v4/cat.json').then((r) => r.json()),
+      new Promise((resolve, reject) => {
+        const img = new Image()
+        img.onload = () => resolve(img)
+        img.onerror = reject
+        img.src = '../../../assets/sprites/v4/cat.png'
+      }),
+      window.diary.getFlow()
+    ])
+
+    const cw = meta.cell[0]
+    const ch = meta.cell[1]
+    flowEdges = (flow && Array.isArray(flow.edges)) ? flow.edges : []
+    flowAnimNames = []
+
+    for (const [name, a] of Object.entries(meta.animations)) {
+      if (isSpriteRowBlank(image, a.row, a.frames, cw, ch)) continue
+      flowAnimNames.push(name)
+
+      const cell = document.createElement('div')
+      cell.className = 'sprite-cell'
+
+      const canvas = document.createElement('canvas')
+      canvas.width = 96
+      canvas.height = 96
+      cell.appendChild(canvas)
+
+      const label = document.createElement('div')
+      label.className = 'sprite-name'
+      label.textContent = NOMBRES_SPRITE[name] || name
+      cell.appendChild(label)
+
+      grid.appendChild(cell)
+      animateSprite(canvas, image, a, cw, ch)
+    }
+
+    populateFlowSelects()
+    renderFlowEdges()
+  } catch (err) {
+    console.error('[diary] no pude cargar el editor de flujo:', err)
+  }
+}
+
 let pickedFilePath = null
 
 function fmtShareDate (createdAt) {
@@ -730,6 +815,8 @@ document.querySelectorAll('.tab[data-flujotab]').forEach((tab) => {
     tab.classList.add('active')
     document.getElementById('flujoTabArquitectura').classList.toggle('hidden', tab.dataset.flujotab !== 'arquitectura')
     document.getElementById('flujoTabSprites').classList.toggle('hidden', tab.dataset.flujotab !== 'sprites')
+    document.getElementById('flujoTabSecuencia').classList.toggle('hidden', tab.dataset.flujotab !== 'secuencia')
+    if (tab.dataset.flujotab === 'secuencia') loadFlowEditor()
   })
 })
 
@@ -985,6 +1072,33 @@ document.getElementById('taskComments').addEventListener('click', async (e) => {
   } catch (err) {
     console.error('[diary] no pude borrar el comentario:', err)
   }
+})
+
+document.getElementById('flowEdgeForm').addEventListener('submit', async (e) => {
+  e.preventDefault()
+  const from = document.getElementById('flowFrom').value
+  const to = document.getElementById('flowTo').value
+  if (!from || !to) return
+  if (flowEdges.some((ed) => ed.from === from && ed.to === to)) return
+  flowEdges.push({ from, to })
+  renderFlowEdges()
+  await saveFlowEdges()
+})
+
+document.getElementById('flowEdgeList').addEventListener('click', async (e) => {
+  const btn = e.target.closest('.flow-edge-delete')
+  if (!btn) return
+  flowEdges.splice(Number(btn.dataset.i), 1)
+  renderFlowEdges()
+  await saveFlowEdges()
+})
+
+document.getElementById('flowReset').addEventListener('click', async () => {
+  if (!flowEdges.length) return
+  if (!confirm('¿Borrar todas las conexiones? La gata vuelve a su comportamiento de siempre.')) return
+  flowEdges = []
+  renderFlowEdges()
+  await saveFlowEdges()
 })
 
 applyTheme(localStorage.getItem(THEME_KEY) || 'light')

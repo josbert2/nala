@@ -701,6 +701,19 @@ export class Cat {
     if (this._lastSleepAt == null) this._lastSleepAt = 0
     const sleepReady = now - this._lastSleepAt > 5 * 60 * 1000
 
+    // Si armaron un flujo a mano (pestana FLUJO del Dev Diary) y el estado que
+    // termino tiene salidas definidas, seguimos esas conexiones en vez de la
+    // tabla de pesos de siempre. Sin salidas para este estado, cae al default.
+    const edges = this.flow && Array.isArray(this.flow.edges)
+      ? this.flow.edges.filter((e) => e.from === this.state)
+      : []
+    if (edges.length) {
+      const next = edges[Math.floor(Math.random() * edges.length)].to
+      if (next === 'sleep') this._lastSleepAt = now
+      this.setState(next, next === 'idle' ? 8000 + Math.random() * 17000 : undefined)
+      return
+    }
+
     const options = [
       ['idle', 40], ['alert', 8], ['loaf', 6], ['groom', 8],
       ['stalk', 6], ['play', 5], ['crouch', 6]

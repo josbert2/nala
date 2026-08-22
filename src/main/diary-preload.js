@@ -29,5 +29,7 @@ contextBridge.exposeInMainWorld('diary', {
   getComments: (taskId) => ipcRenderer.invoke('diary:get-comments', taskId),
   addComment: (taskId, texto) => ipcRenderer.invoke('diary:add-comment', taskId, texto),
   deleteComment: (taskId, commentId) => ipcRenderer.invoke('diary:delete-comment', taskId, commentId),
-  pathForFile: (file) => webUtils.getPathForFile(file)
+  pathForFile: (file) => webUtils.getPathForFile(file),
+  getFlow: () => ipcRenderer.invoke('diary:get-flow'),
+  saveFlow: (flow) => ipcRenderer.invoke('diary:save-flow', flow)
 })

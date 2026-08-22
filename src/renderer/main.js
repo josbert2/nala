@@ -220,7 +220,7 @@ function resize () {
   if (world) world.resize(window.innerWidth, window.innerHeight, displays)
 }
 
-window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, estado, debug }) => {
+window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, estado, debug, flow }) => {
   origin = { x: display.x, y: display.y }
   displays = display.displays
 
@@ -237,6 +237,7 @@ window.nala.onBoot(async ({ config, display, look, looks, habitat, habitats, est
 
   world = new World(window.innerWidth, window.innerHeight, displays)
   cat = new Cat(world, sheet, config.scale || 2)
+  cat.flow = flow
   bowl = new Bowl(world, config.bowlAt != null ? config.bowlAt : 0.12,
                   config.bowlDisplay != null ? config.bowlDisplay : null)
   ball = new Ball(world)
@@ -363,6 +364,10 @@ window.nala.onCommand((cmd) => {
   if (cmd.type === 'toy') cat.goToToy()
   if (cmd.type === 'free') { cat.target = null; cat.after = null; cat.setState('idle', 500) }
 })
+
+// La pestana FLUJO del Dev Diary guarda el grafo y nos avisa: se aplica ya,
+// sin tener que reiniciar la app.
+window.nala.onFlowUpdated((flow) => { if (cat) cat.flow = flow })
 
 window.addEventListener('resize', resize)
 

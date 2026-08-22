@@ -259,6 +259,7 @@
         <div class="tabs">
           <div class="tab active" data-flujotab="arquitectura">ARQUITECTURA</div>
           <div class="tab" data-flujotab="sprites">PIPELINE DE SPRITES</div>
+          <div class="tab" data-flujotab="secuencia">SECUENCIA DE ANIMACIONES</div>
         </div>
 
         <div id="flujoTabArquitectura">
@@ -348,6 +349,27 @@
             <div class="flow-node-sub">Visor para chequear que animaciones ya tienen arte real</div>
           </div>
         </div>
+        </div>
+
+        <div id="flujoTabSecuencia" class="hidden">
+          <div class="empty" style="margin-bottom: 16px;">
+            Elegi de donde a donde: cuando la gata termine "Desde", en vez de elegir al azar va a ir directo a "Hasta".
+            Sin conexiones, sigue con su comportamiento de siempre.
+          </div>
+
+          <form class="flow-edge-form" id="flowEdgeForm">
+            <select id="flowFrom"></select>
+            <span class="flow-edge-arrow">→</span>
+            <select id="flowTo"></select>
+            <button type="submit">Conectar</button>
+            <button type="button" id="flowReset" class="flow-reset-btn">Reiniciar todo</button>
+          </form>
+
+          <div class="section-label">CONEXIONES</div>
+          <div id="flowEdgeList" class="empty">Sin conexiones todavia.</div>
+
+          <div class="section-label" style="margin-top: 20px;">ANIMACIONES DISPONIBLES</div>
+          <div class="sprite-grid" id="flowNodeGrid"></div>
         </div>
       </section>
     </main>

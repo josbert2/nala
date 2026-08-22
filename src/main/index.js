@@ -30,6 +30,7 @@ const STATE_PATH = path.join(USER_DIR, 'estado.json')
 const PROYECTOS_PATH = path.join(USER_DIR, 'proyectos.json')
 const SERVIDOR_PATH = path.join(USER_DIR, 'servidor.json')
 const SCAN_STATE_PATH = path.join(USER_DIR, 'scan-state.json')
+const FLOW_PATH = path.join(USER_DIR, 'flow.json')
 
 // Wayland no le permite a una app posicionarse sola en pantalla, y sin eso la
 // gata no puede caminar por el escritorio. Forzamos XWayland, que si lo permite.
@@ -62,6 +63,27 @@ function loadConfig () {
       return { name: 'Nala', scale: 2, moments: [], notes: [] }
     }
   }
+}
+
+/**
+ * El flujo de animaciones (que sprite sigue a cual) que se arma a mano desde
+ * la pestana FLUJO del Dev Diary. Sin conexiones definidas, _decideLimited
+ * en cat.js sigue con su tabla de pesos de siempre.
+ */
+function loadFlow () {
+  try {
+    if (!fs.existsSync(FLOW_PATH)) return { edges: [] }
+    return JSON.parse(fs.readFileSync(FLOW_PATH, 'utf8'))
+  } catch (err) {
+    console.error('[nala] no pude leer flow.json:', err.message)
+    return { edges: [] }
+  }
+}
+
+function saveFlow (flow) {
+  fs.mkdirSync(USER_DIR, { recursive: true })
+  fs.writeFileSync(FLOW_PATH, JSON.stringify(flow, null, 2))
+  if (win && !win.isDestroyed()) win.webContents.send('flow-updated', flow)
 }
 
 // ------------------------------------------------------------------- diario
@@ -595,7 +617,8 @@ function createWindow () {
       habitat: currentHabitat(),
       habitats: HABITATS.habitats.map((h) => ({ id: h.id, label: h.label })),
       platform: process.platform,
-      debug: DEBUG
+      debug: DEBUG,
+      flow: loadFlow()
     })
   })
 
@@ -841,6 +864,8 @@ ipcMain.handle('diary:get-data', () => getDiaryData())
 ipcMain.handle('diary:add-note', (_e, note) => addDiaryNote(note))
 ipcMain.handle('diary:get-repo-links', () => githubUrlsByProject(loadProyectos()))
 ipcMain.handle('diary:get-sprite-sources', () => listSpriteSources(SF_SPRITE_DIR))
+ipcMain.handle('diary:get-flow', () => loadFlow())
+ipcMain.handle('diary:save-flow', (_e, flow) => { saveFlow(flow); return true })
 ipcMain.handle('diary:get-cards', () => getCards())
 ipcMain.handle('diary:create-card', (_e, card) => createCard(card))
 ipcMain.handle('diary:update-card', (_e, id, changes) => updateCard(id, changes))
