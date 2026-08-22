@@ -129,6 +129,48 @@ body {
 }
 .back-to-cat:hover { filter: brightness(1.08); }
 
+/* ---------------------------------------------------------------------------
+ * Pasada de diseño: más prolijo y cohesivo en todas las vistas. Solo cosmético
+ * (transiciones, scrollbars, hovers, esquinas, foco) para no tocar el layout.
+ * ------------------------------------------------------------------------- */
+:root { --radius: 10px; --radius-sm: 7px; --shadow: 0 1px 2px rgba(0,0,0,.06), 0 6px 16px rgba(0,0,0,.06); }
+
+.nav-item, .theme-toggle, .back-to-cat, .btn-nueva-tarea, .group-add-btn,
+.today-btn, .day-nav button, .flow-reset-btn, .titlebar-cat, .titlebar-close,
+.gh-link, .project-pill, .card, .task-rows tr {
+  transition: background .15s ease, color .15s ease, border-color .15s ease,
+              box-shadow .15s ease, transform .06s ease;
+}
+
+/* botones: leve feedback al click */
+button:active:not(:disabled) { transform: translateY(1px); }
+
+/* items de navegación: hover suave y activo con acento */
+.nav-item:hover:not(.disabled):not(.active) { background: var(--border); }
+.nav-item.active { background: var(--accent); color: #fff; }
+
+/* tarjetas y paneles: esquinas suaves + sombra sutil */
+.card, .task-detail, .flow-node, .sprite-card {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.card:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,.08), 0 10px 24px rgba(0,0,0,.08); }
+
+/* scrollbars finos y discretos */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb {
+  background: var(--border); border-radius: 999px;
+  border: 2px solid transparent; background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* foco accesible con teclado */
+button:focus-visible, .nav-item:focus-visible, input:focus-visible,
+textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+
 main {
   flex: 1;
   min-width: 0;
