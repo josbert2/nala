@@ -7,9 +7,9 @@ import '@xyflow/react/dist/style.css'
 import './flow.css'
 
 const PREV = 64
+const BAR = 72
 const STORE = 'nala-flow-graph'
 
-// animación -> carpeta de sf-sprite para el preview del nodo
 const FOLDER = {
   idle: 'normal', walk: 'caminar', sit: 'respirar-sentada', stretch: 'respirar-sentada-full',
   yawn: 'respirar-sentada-pestañeando', sleep: 'dormida', amasar: 'dormida-2', loaf: 'pan-colita',
@@ -25,28 +25,48 @@ const LABEL = {
   dig: 'Arañar piso', angry: 'Enojada', alert: 'Alzada', blep: 'Beso', eat: 'Trabajando'
 }
 
-function keyOut (g, w, h) {
+// metadata compartida: anim -> { frames, fps, durMs, img }
+const META = {}
+
+function keyOutCanvas (g, w, h) {
   const d = g.getImageData(0, 0, w, h); const p = d.data
   for (let i = 0; i < p.length; i += 4) if (p[i] <= 45 && p[i + 1] <= 45 && p[i + 2] <= 45 && p[i] >= p[i + 2]) p[i + 3] = 0
   g.putImageData(d, 0, 0)
 }
 
-// Nodo: preview de la animación (frame 0) + nombre. Handles para conectar.
+function loadMeta (anim) {
+  if (META[anim]) return Promise.resolve(META[anim])
+  const enc = encodeURIComponent(FOLDER[anim])
+  return fetch(`/sf-sprite-nala/${enc}/metadata.json`).then((r) => r.json()).then((m) => new Promise((res) => {
+    const frames = m.frame_count || 8
+    const fps = m.fps || 8
+    const img = new Image()
+    img.onload = () => { META[anim] = { frames, fps, durMs: Math.round(frames / fps * 1000), img }; res(META[anim]) }
+    img.onerror = () => { META[anim] = { frames, fps, durMs: Math.round(frames / fps * 1000), img: null }; res(META[anim]) }
+    img.src = `/sf-sprite-nala/${enc}/spritesheet.png`
+  }))
+}
+
 function AnimNode ({ data }) {
   const ref = useRef(null)
   useEffect(() => {
-    const folder = FOLDER[data.anim]
-    const im = new Image()
-    im.onload = () => {
-      const c = ref.current; if (!c) return
-      const fw = Math.floor(im.width / (data.frames || 8))
-      const g = c.getContext('2d'); g.imageSmoothingEnabled = false
-      g.clearRect(0, 0, PREV, PREV)
-      g.drawImage(im, 0, 0, fw, im.height, 0, 0, PREV, PREV)
-      keyOut(g, PREV, PREV)
-    }
-    im.src = `/sf-sprite-nala/${encodeURIComponent(folder)}/spritesheet.png`
-  }, [data.anim, data.frames])
+    let raf = 0, start = performance.now()
+    loadMeta(data.anim).then((m) => {
+      if (!m.img) return
+      const fw = Math.floor(m.img.width / m.frames)
+      const tick = (now) => {
+        const c = ref.current; if (!c) return
+        const f = Math.floor((now - start) / 1000 * m.fps) % m.frames
+        const g = c.getContext('2d'); g.imageSmoothingEnabled = false
+        g.clearRect(0, 0, PREV, PREV)
+        g.drawImage(m.img, f * fw, 0, fw, m.img.height, 0, 0, PREV, PREV)
+        keyOutCanvas(g, PREV, PREV)
+        raf = requestAnimationFrame(tick)
+      }
+      raf = requestAnimationFrame(tick)
+    })
+    return () => cancelAnimationFrame(raf)
+  }, [data.anim])
   return (
     <div className={`fn-node${data.playing ? ' fn-playing' : ''}`}>
       <Handle type="target" position={Position.Left} />
@@ -59,14 +79,14 @@ function AnimNode ({ data }) {
 const nodeTypes = { anim: AnimNode }
 
 function defaultGraph () {
-  const seq = ['idle', 'walk', 'sit', 'sleep']
+  const seq = ['idle', 'walk', 'sit', 'groom', 'loaf', 'sleep']
   const nodes = ANIMS.map((anim, i) => ({
     id: anim, type: 'anim', data: { anim },
-    position: { x: 40 + (i % 4) * 200, y: 40 + Math.floor(i / 4) * 150 }
+    position: { x: 40 + (i % 5) * 190, y: 40 + Math.floor(i / 5) * 150 }
   }))
   const edges = []
   for (let i = 0; i < seq.length - 1; i++) {
-    edges.push({ id: `${seq[i]}-${seq[i + 1]}`, source: seq[i], target: seq[i + 1], label: '1500 ms', data: { ms: 1500 }, animated: true })
+    edges.push({ id: `${seq[i]}-${seq[i + 1]}`, source: seq[i], target: seq[i + 1], animated: true })
   }
   return { nodes, edges }
 }
@@ -74,27 +94,41 @@ function defaultGraph () {
 export default function FlowEditor ({ onClose }) {
   const init = (() => { try { return JSON.parse(localStorage.getItem(STORE)) } catch (_) { return null } })() || defaultGraph()
   const [nodes, setNodes, onNodesChange] = useNodesState(init.nodes)
-  const [edges, setEdges, onEdgesChange] = useEdgesState(init.edges)
+  const [edges, setEdges, onEdgesChange] = useEdgesState((init.edges || []).map((e) => ({ ...e, label: undefined, animated: true })))
   const [playing, setPlaying] = useState(false)
+  const [current, setCurrent] = useState(null)   // anim que suena ahora, para el preview de la barra
   const stopRef = useRef(false)
+  const barRef = useRef(null)
 
-  const onConnect = useCallback((c) => {
-    setEdges((eds) => addEdge({ ...c, label: '1500 ms', data: { ms: 1500 }, animated: true }, eds))
-  }, [setEdges])
-
-  const onEdgeDoubleClick = useCallback((_e, edge) => {
-    const val = prompt('Tiempo antes de pasar a la siguiente (ms):', edge.data?.ms ?? 1500)
-    if (val == null) return
-    const ms = Math.max(0, parseInt(val, 10) || 0)
-    setEdges((eds) => eds.map((e) => e.id === edge.id ? { ...e, label: `${ms} ms`, data: { ...e.data, ms } } : e))
-  }, [setEdges])
+  const onConnect = useCallback((c) => setEdges((eds) => addEdge({ ...c, animated: true }, eds)), [setEdges])
 
   useEffect(() => {
     localStorage.setItem(STORE, JSON.stringify({
       nodes: nodes.map((n) => ({ id: n.id, type: n.type, data: { anim: n.data.anim }, position: n.position })),
-      edges: edges.map((e) => ({ id: e.id, source: e.source, target: e.target, label: e.label, data: e.data, animated: true }))
+      edges: edges.map((e) => ({ id: e.id, source: e.source, target: e.target }))
     }))
   }, [nodes, edges])
+
+  // Preview de la barra: dibuja la animación actual mientras reproduce.
+  useEffect(() => {
+    if (!current) return
+    let raf = 0; const start = performance.now()
+    loadMeta(current).then((m) => {
+      if (!m.img) return
+      const fw = Math.floor(m.img.width / m.frames)
+      const tick = (now) => {
+        const c = barRef.current; if (!c) return
+        const f = Math.floor((now - start) / 1000 * m.fps) % m.frames
+        const g = c.getContext('2d'); g.imageSmoothingEnabled = false
+        g.clearRect(0, 0, BAR, BAR)
+        g.drawImage(m.img, f * fw, 0, fw, m.img.height, 0, 0, BAR, BAR)
+        keyOutCanvas(g, BAR, BAR)
+        raf = requestAnimationFrame(tick)
+      }
+      raf = requestAnimationFrame(tick)
+    })
+    return () => cancelAnimationFrame(raf)
+  }, [current])
 
   const setPlayingNode = (id, on) => setNodes((ns) => ns.map((n) => n.id === id ? { ...n, data: { ...n.data, playing: on } } : n))
 
@@ -107,24 +141,31 @@ export default function FlowEditor ({ onClose }) {
     const seen = new Set()
     while (cur && !stopRef.current) {
       setPlayingNode(cur.id, true)
+      setCurrent(cur.data.anim)
       window.nala?.sendCommand?.({ type: 'anim', name: cur.data.anim, hold: 60000 })
-      const out = edges.find((e) => e.source === cur.id)
-      const ms = out?.data?.ms ?? 1500
-      await new Promise((r) => setTimeout(r, ms))
+      const m = await loadMeta(cur.data.anim)
+      // dura lo que dura la animacion de verdad (minimo 1s para que se aprecie)
+      await new Promise((r) => setTimeout(r, Math.max(m.durMs || 1200, 1000)))
       setPlayingNode(cur.id, false)
+      const out = edges.find((e) => e.source === cur.id)
       if (!out || seen.has(out.id)) break
       seen.add(out.id)
       cur = nodes.find((n) => n.id === out.target)
     }
-    setPlaying(false); stopRef.current = false
+    setPlaying(false); stopRef.current = false; setCurrent(null)
     window.nala?.sendCommand?.({ type: 'free' })
   }
 
   return (
     <div className="fe-wrap">
       <div className="fe-bar">
-        <strong>Flujo de animaciones</strong>
-        <span className="fe-hint">Arrastrá de un nodo a otro para conectar · doble click en una flecha = tiempo</span>
+        {playing
+          ? <canvas className="fe-prev" ref={barRef} width={BAR} height={BAR} />
+          : <span className="fe-prev fe-prev-off">🐱</span>}
+        <div className="fe-title-wrap">
+          <strong>Flujo de animaciones</strong>
+          <span className="fe-hint">Conectá los nodos en el orden que quieras · cada uno dura lo que dura su animación</span>
+        </div>
         <div className="fe-actions">
           <button className={`fe-btn${playing ? ' fe-stop' : ''}`} onClick={play}>{playing ? '■ Detener' : '▶ Reproducir'}</button>
           <button className="fe-btn" onClick={() => { localStorage.removeItem(STORE); const g = defaultGraph(); setNodes(g.nodes); setEdges(g.edges) }}>Reiniciar</button>
@@ -135,7 +176,7 @@ export default function FlowEditor ({ onClose }) {
         <ReactFlow
           nodes={nodes} edges={edges}
           onNodesChange={onNodesChange} onEdgesChange={onEdgesChange}
-          onConnect={onConnect} onEdgeDoubleClick={onEdgeDoubleClick}
+          onConnect={onConnect}
           nodeTypes={nodeTypes} fitView
           proOptions={{ hideAttribution: true }}
         >
