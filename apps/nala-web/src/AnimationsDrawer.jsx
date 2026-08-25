@@ -1,48 +1,87 @@
 import { useEffect, useRef, useState } from 'react'
 import './drawer.css'
 
-const CELL = 128
 const PREVIEW = 96
 
-// Nombres lindos para las animaciones (cae al id si no está).
-const LABELS = {
-  idle: 'Tranqui', walk: 'Caminando', sit: 'Sentada', sleep: 'Durmiendo',
-  loaf: 'Pan', groom: 'Lamiéndose', scratch: 'Rascando', rascarse: 'Rascándose',
-  dig: 'Escarbando', angry: 'Enojada', alert: 'Atenta', blep: 'Blep',
-  frotar: 'Restregándose', olfatear: 'Olfateando', amasar: 'Amasando',
-  crouch: 'Agazapada', stretch: 'Estirándose', yawn: 'Bostezando', eat: 'Trabajando',
-  run: 'Corriendo', fall: 'Cayendo', climb: 'Trepando', stalk: 'Acechando',
-  rear: 'Manoteando', sacudirse: 'Sacudiéndose', startle: 'Sobresalto',
-  pounce: 'Salto', play: 'Jugando', slide: 'Derrapando'
+// Las 19 carpetas de sf-sprite-nala, con el estado del motor que dispara cada
+// una y una etiqueta linda. El orden es el del drawer.
+const FOLDERS = [
+  { folder: 'normal', state: 'idle', label: 'Normal' },
+  { folder: 'caminar', state: 'walk', label: 'Caminar' },
+  { folder: 'respirar-sentada', state: 'sit', label: 'Sentada' },
+  { folder: 'respirar-sentada-full', state: 'stretch', label: 'Sentada full' },
+  { folder: 'respirar-sentada-pestañeando', state: 'yawn', label: 'Sentada (parpadeo)' },
+  { folder: 'dormida', state: 'sleep', label: 'Dormida' },
+  { folder: 'dormida-2', state: 'amasar', label: 'Dormida 2' },
+  { folder: 'pan-colita', state: 'loaf', label: 'Pan' },
+  { folder: 'pan-colita-2', state: 'crouch', label: 'Pan 2' },
+  { folder: 'lamer-pata', state: 'groom', label: 'Lamer pata' },
+  { folder: 'lamer-pata-2', state: 'olfatear', label: 'Lamer pata 2' },
+  { folder: 'asicalar', state: 'frotar', label: 'Asicalar' },
+  { folder: 'rascandose', state: 'rascarse', label: 'Rascándose' },
+  { folder: 'aruñando-a-dos-patas', state: 'scratch', label: 'Arañar (2 patas)' },
+  { folder: 'aruñando-el-piso', state: 'dig', label: 'Arañar piso' },
+  { folder: 'enojada', state: 'angry', label: 'Enojada' },
+  { folder: 'handler-click', state: 'alert', label: 'Alzada' },
+  { folder: 'beso-respirando', state: 'blep', label: 'Beso' },
+  { folder: 'trabajando', state: 'eat', label: 'Trabajando' }
+]
+
+// Saca el fondo opaco oscuro (negro puro o marrón) conservando contorno y
+// pupila. Se corre una vez por frame al pre-renderizar, no en cada rAF.
+function keyOut (imgData) {
+  const d = imgData.data
+  for (let i = 0; i < d.length; i += 4) {
+    if (d[i] <= 45 && d[i + 1] <= 45 && d[i + 2] <= 45 && d[i] >= d[i + 2]) d[i + 3] = 0
+  }
+  return imgData
+}
+
+async function loadFolder (item) {
+  const enc = encodeURIComponent(item.folder)
+  const meta = await fetch(`/sf-sprite-nala/${enc}/metadata.json`).then((r) => r.json())
+  const frames = meta.frame_count || 8
+  const fps = meta.fps || 8
+  const img = await new Promise((res, rej) => {
+    const im = new Image()
+    im.onload = () => res(im); im.onerror = rej
+    im.src = `/sf-sprite-nala/${enc}/spritesheet.png`
+  })
+  const fw = Math.floor(img.width / frames)
+  const fh = img.height
+  // Pre-render de cada frame a PREVIEW px, con el fondo limpiado.
+  const canvases = []
+  for (let i = 0; i < frames; i++) {
+    const c = document.createElement('canvas')
+    c.width = PREVIEW; c.height = PREVIEW
+    const g = c.getContext('2d')
+    g.imageSmoothingEnabled = false
+    g.drawImage(img, i * fw, 0, fw, fh, 0, 0, PREVIEW, PREVIEW)
+    g.putImageData(keyOut(g.getImageData(0, 0, PREVIEW, PREVIEW)), 0, 0)
+    canvases.push(c)
+  }
+  return { ...item, frames: canvases, fps }
 }
 
 export default function AnimationsDrawer () {
   const [open, setOpen] = useState(false)
-  const [anims, setAnims] = useState([])   // [{name, row, frames, fps}]
   const [active, setActive] = useState(null)
-  const sheetRef = useRef(null)            // Image de cat.png
-  const canvasesRef = useRef({})           // name -> canvas
+  const dataRef = useRef({})       // folder -> {frames:[canvas], fps}
+  const viewRef = useRef({})       // folder -> visible canvas
 
-  // Cargar las animaciones del look actual una sola vez.
   useEffect(() => {
-    const look = localStorage.getItem('nala-look') || 'v4'
-    const base = `/assets/sprites/${look}`
-    fetch(`${base}/cat.json`).then((r) => r.json()).then((meta) => {
-      const list = Object.entries(meta.animations || {}).map(([name, a]) => ({
-        name, row: a.row, frames: a.frames || 1, fps: a.fps || 8
-      }))
-      setAnims(list)
-      const img = new Image()
-      img.onload = () => { sheetRef.current = img }
-      img.src = `${base}/cat.png`
-    }).catch(() => {})
+    let alive = true
+    Promise.all(FOLDERS.map((it) => loadFolder(it).catch(() => null))).then((res) => {
+      if (!alive) return
+      for (const r of res) if (r) dataRef.current[r.folder] = r
+    })
+    return () => { alive = false }
   }, [])
 
-  // Click derecho en cualquier lado abre/cierra el drawer.
   useEffect(() => {
     const onCtx = (e) => { e.preventDefault(); setOpen((v) => !v) }
-    window.addEventListener('contextmenu', onCtx)
     const onKey = (e) => { if (e.key === 'Escape') setOpen(false) }
+    window.addEventListener('contextmenu', onCtx)
     window.addEventListener('keydown', onKey)
     return () => {
       window.removeEventListener('contextmenu', onCtx)
@@ -50,35 +89,31 @@ export default function AnimationsDrawer () {
     }
   }, [])
 
-  // Previews animados: un solo rAF dibuja el frame actual de cada animación.
   useEffect(() => {
     if (!open) return
     let raf = 0
     const start = performance.now()
     const tick = (now) => {
-      const img = sheetRef.current
-      if (img) {
-        const t = (now - start) / 1000
-        for (const a of anims) {
-          const cv = canvasesRef.current[a.name]
-          if (!cv) continue
-          const g = cv.getContext('2d')
-          const f = Math.floor(t * a.fps) % a.frames
-          g.clearRect(0, 0, PREVIEW, PREVIEW)
-          g.imageSmoothingEnabled = false
-          g.drawImage(img, f * CELL, a.row * CELL, CELL, CELL, 0, 0, PREVIEW, PREVIEW)
-        }
+      const t = (now - start) / 1000
+      for (const it of FOLDERS) {
+        const data = dataRef.current[it.folder]
+        const cv = viewRef.current[it.folder]
+        if (!data || !cv) continue
+        const f = Math.floor(t * data.fps) % data.frames.length
+        const g = cv.getContext('2d')
+        g.clearRect(0, 0, PREVIEW, PREVIEW)
+        g.drawImage(data.frames[f], 0, 0)
       }
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [open, anims])
+  }, [open])
 
-  const play = (name) => {
-    setActive(name)
+  const play = (it) => {
+    setActive(it.folder)
     if (window.nala && window.nala.sendCommand) {
-      window.nala.sendCommand({ type: 'anim', name, hold: 6000 })
+      window.nala.sendCommand({ type: 'anim', name: it.state, hold: 6000 })
     }
   }
 
@@ -89,24 +124,24 @@ export default function AnimationsDrawer () {
         <header className="nd-head">
           <div>
             <div className="nd-title">Sus animaciones</div>
-            <div className="nd-sub">{anims.length} · tocá una para que la haga</div>
+            <div className="nd-sub">sf-sprite-nala · {FOLDERS.length} · tocá una</div>
           </div>
           <button className="nd-close" onClick={() => setOpen(false)} aria-label="Cerrar">✕</button>
         </header>
         <div className="nd-grid">
-          {anims.map((a) => (
+          {FOLDERS.map((it) => (
             <button
-              key={a.name}
-              className={`nd-card${active === a.name ? ' nd-active' : ''}`}
-              onClick={() => play(a.name)}
-              title={a.name}
+              key={it.folder}
+              className={`nd-card${active === it.folder ? ' nd-active' : ''}`}
+              onClick={() => play(it)}
+              title={it.folder}
             >
               <canvas
                 width={PREVIEW}
                 height={PREVIEW}
-                ref={(el) => { if (el) canvasesRef.current[a.name] = el }}
+                ref={(el) => { if (el) viewRef.current[it.folder] = el }}
               />
-              <span className="nd-label">{LABELS[a.name] || a.name}</span>
+              <span className="nd-label">{it.label}</span>
             </button>
           ))}
         </div>
