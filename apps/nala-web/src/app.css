@@ -1,0 +1,9 @@
+:root { color-scheme: light; }
+html, body, #root { margin: 0; height: 100%; }
+body {
+  overflow: hidden;
+  background:
+    radial-gradient(1200px 500px at 50% -10%, #fbf8f2 0%, rgba(251,248,242,0) 60%),
+    linear-gradient(180deg, #eef1f4 0%, #e7ded0 78%, #ddd1bf 100%);
+}
+#stage { display: block; width: 100vw; height: 100vh; }
