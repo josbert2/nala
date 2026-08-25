@@ -8,6 +8,7 @@ import './flow.css'
 
 const PREV = 64
 const BAR = 72
+const BIG = 176
 const STORE = 'nala-flow-graph'
 
 const FOLDER = {
@@ -99,6 +100,7 @@ export default function FlowEditor ({ onClose }) {
   const [current, setCurrent] = useState(null)   // anim que suena ahora, para el preview de la barra
   const stopRef = useRef(false)
   const barRef = useRef(null)
+  const bigRef = useRef(null)   // preview grande de abajo
 
   const onConnect = useCallback((c) => setEdges((eds) => addEdge({ ...c, animated: true }, eds)), [setEdges])
 
@@ -109,26 +111,27 @@ export default function FlowEditor ({ onClose }) {
     }))
   }, [nodes, edges])
 
-  // Preview de la barra: dibuja la animación actual mientras reproduce.
+  // Preview: mientras reproduce muestra la animación actual; si no, la del
+  // primer nodo. Dibuja en el recuadro chico de la barra y en el grande de abajo.
+  const previewAnim = current || (nodes[0] && nodes[0].data.anim) || 'idle'
   useEffect(() => {
-    if (!current) return
     let raf = 0; const start = performance.now()
-    loadMeta(current).then((m) => {
+    loadMeta(previewAnim).then((m) => {
       if (!m.img) return
       const fw = Math.floor(m.img.width / m.frames)
-      const tick = (now) => {
-        const c = barRef.current; if (!c) return
+      const draw = (c, size, now) => {
+        if (!c) return
         const f = Math.floor((now - start) / 1000 * m.fps) % m.frames
         const g = c.getContext('2d'); g.imageSmoothingEnabled = false
-        g.clearRect(0, 0, BAR, BAR)
-        g.drawImage(m.img, f * fw, 0, fw, m.img.height, 0, 0, BAR, BAR)
-        keyOutCanvas(g, BAR, BAR)
-        raf = requestAnimationFrame(tick)
+        g.clearRect(0, 0, size, size)
+        g.drawImage(m.img, f * fw, 0, fw, m.img.height, 0, 0, size, size)
+        keyOutCanvas(g, size, size)
       }
+      const tick = (now) => { draw(bigRef.current, BIG, now); draw(barRef.current, BAR, now); raf = requestAnimationFrame(tick) }
       raf = requestAnimationFrame(tick)
     })
     return () => cancelAnimationFrame(raf)
-  }, [current])
+  }, [previewAnim])
 
   const setPlayingNode = (id, on) => setNodes((ns) => ns.map((n) => n.id === id ? { ...n, data: { ...n.data, playing: on } } : n))
 
@@ -184,6 +187,14 @@ export default function FlowEditor ({ onClose }) {
           <Controls />
           <MiniMap pannable zoomable />
         </ReactFlow>
+      </div>
+      <div className="fe-preview">
+        <canvas ref={bigRef} width={BIG} height={BIG} />
+        <div className="fe-preview-info">
+          <div className="fe-preview-title">{playing ? '▶ Reproduciendo' : 'Vista previa'}</div>
+          <div className="fe-preview-anim">{LABEL[previewAnim] || previewAnim}</div>
+          {!playing && <div className="fe-preview-hint">Dale ▶ Reproducir para ver la secuencia completa</div>}
+        </div>
       </div>
     </div>
   )

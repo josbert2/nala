@@ -27,6 +27,20 @@
 .fe-close { color: #8d8178; }
 .fe-canvas { flex: 1; min-height: 0; }
 
+/* preview grande de abajo */
+.fe-preview {
+  flex: none; display: flex; align-items: center; gap: 20px;
+  padding: 14px 22px; border-top: 1px solid #e6ddce; background: #efe9dd;
+}
+.fe-preview canvas {
+  width: 176px; height: 176px; image-rendering: pixelated;
+  background: #e3dccd; border-radius: 14px; border: 1.5px solid #e0d6c6;
+}
+.fe-preview-info { display: flex; flex-direction: column; gap: 4px; }
+.fe-preview-title { font-size: 11px; font-weight: 700; color: #8d8178; letter-spacing: .06em; text-transform: uppercase; }
+.fe-preview-anim { font-size: 22px; font-weight: 800; color: #463a30; }
+.fe-preview-hint { font-size: 12px; color: #8d8178; }
+
 .fn-node {
   background: #fbf8f2; border: 1.5px solid #eadfce; border-radius: 12px;
   padding: 6px; display: flex; flex-direction: column; align-items: center; gap: 4px;
@@ -42,5 +56,6 @@
   border: 1.5px solid #e0d6c6; background: rgba(251, 248, 242, .92); color: #463a30;
   font: 700 13px -apple-system, 'Segoe UI', sans-serif; padding: 9px 14px;
   border-radius: 10px; cursor: pointer; box-shadow: 0 4px 14px rgba(40, 32, 25, .12);
+  text-decoration: none; display: inline-block;
 }
 .fe-open:hover { border-color: #dd9b88; }
