@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Nala — web</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* En Electron la ventana es transparente; en web le damos un fondo suave
+       tipo cuarto para que Nala no quede en el vacío. */
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #e9e2d6; }
+    body {
+      background:
+        radial-gradient(1200px 500px at 50% -10%, #fbf8f2 0%, rgba(251,248,242,0) 60%),
+        linear-gradient(180deg, #eef1f4 0%, #e7ded0 78%, #ddd1bf 100%);
+    }
+    #stage { display: block; width: 100vw; height: 100vh; }
+  </style>
+</head>
+<body>
+  <canvas id="stage"></canvas>
+  <div id="tip" class="tip" hidden></div>
+  <div id="stats" class="stats" hidden></div>
+  <div id="bubble" class="bubble" hidden></div>
+  <!-- CLÁSICO: define window.nala antes de que corra el módulo del engine -->
+  <script src="web-shim.js"></script>
+  <script type="module" src="main.js"></script>
+</body>
+</html>
