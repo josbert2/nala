@@ -7,20 +7,22 @@ function installShim () {
   let bootCb = null
   let bootData = null
   let pointerCb = null
+  let commandCb = null
   const noop = () => {}
   const fireBoot = () => { if (bootCb && bootData) bootCb(bootData) }
 
   window.nala = {
     onBoot (cb) { bootCb = cb; fireBoot() },
     onWindows (cb) { cb([]) },
-    onCommand: noop,
+    onCommand (cb) { commandCb = cb },
+    sendCommand (cmd) { if (commandCb) commandCb(cmd) },   // el drawer dispara animaciones
     onPointer (cb) { pointerCb = cb },
     onFlowUpdated: noop,
     setHotRects: noop,
     saveEstado (e) {
       try { localStorage.setItem('nala-estado', JSON.stringify({ ...e, at: Date.now() })) } catch (_) {}
     },
-    toggleDiary () { window.open('/diary', 'nala-diary') },
+    toggleDiary () { /* en web el click derecho abre el drawer de animaciones */ },
     setLook (id) { try { localStorage.setItem('nala-look', id) } catch (_) {} location.reload() },
     setHabitat (id) { try { localStorage.setItem('nala-habitat', id) } catch (_) {} location.reload() }
   }

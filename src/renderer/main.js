@@ -411,6 +411,13 @@ window.nala.onCommand((cmd) => {
   }
   if (cmd.type === 'toy') cat.goToToy()
   if (cmd.type === 'free') { cat.target = null; cat.after = null; cat.setState('idle', 500) }
+  // Reproducir una animación puntual (desde el drawer web). El nombre de la
+  // animación se usa como estado; _animFor cae al mismo nombre por defecto.
+  if (cmd.type === 'anim' && cmd.name) {
+    cat.target = null
+    cat.after = null
+    cat.setState(cmd.name, cmd.hold != null ? cmd.hold : 5000)
+  }
 })
 
 // La pestana FLUJO del Dev Diary guarda el grafo y nos avisa: se aplica ya,
