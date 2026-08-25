@@ -98,11 +98,12 @@ export default function AnimationsDrawer () {
       for (const it of FOLDERS) {
         const data = dataRef.current[it.folder]
         const cv = viewRef.current[it.folder]
-        if (!data || !cv) continue
-        const f = Math.floor(t * data.fps) % data.frames.length
+        if (!data || !cv || !data.frames.length) continue
+        const frame = data.frames[Math.floor(t * data.fps) % data.frames.length]
+        if (!frame) continue          // frame aún no listo: lo saltamos, no rompemos el loop
         const g = cv.getContext('2d')
         g.clearRect(0, 0, PREVIEW, PREVIEW)
-        g.drawImage(data.frames[f], 0, 0)
+        g.drawImage(frame, 0, 0)
       }
       raf = requestAnimationFrame(tick)
     }
