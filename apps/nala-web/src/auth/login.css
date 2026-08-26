@@ -1,0 +1,124 @@
+/* Réplica del sign-in de Clerk (dark) con su paleta exacta:
+   gray-1400 #1b1b1f · gray-1300 #232328 · gray-1200 #2b2b34 · gray-100 #f6f6f7
+   purple-600 #846bff (brand) · purple-500 #9280ff (links) · --spacing .25rem */
+.lg-wrap {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  background: #1b1b1f;
+  color: #f6f6f7;
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 24px 16px;   /* py-6 px-4 */
+}
+/* Columna 400px que llena el alto, centra el main y deja el footer abajo. */
+.lg-col { position: relative; display: flex; flex-direction: column; width: 100%; max-width: 400px; flex: 1; justify-content: center; gap: 24px; }
+.lg-main { position: relative; display: grid; flex: 1; align-content: center; }
+.lg-cardwrap { position: relative; z-index: 20; min-height: 34.06rem; display: grid; align-content: center; }
+
+/* ---------------------------------------------------------------- decoración */
+.lg-deco { position: absolute; inset: 0; pointer-events: none; }
+.lg-arch {
+  position: absolute; top: 64px; width: 18rem; height: auto;   /* top-16 w-72 */
+  color: rgba(255, 255, 255, .04);
+  filter: drop-shadow(0 0 1.25px rgba(0, 0, 0, .3));
+  -webkit-mask-image: radial-gradient(circle at top left, #000, transparent 18rem);
+  mask-image: radial-gradient(circle at top left, #000, transparent 18rem);
+}
+.lg-arch-l { left: 100%; margin-left: 8px; }              /* left-full ml-2 */
+.lg-arch-r { right: 100%; margin-right: 8px; transform: scaleX(-1); }  /* right-full mr-2 -scale-x-100 */
+.lg-topline-wrap {
+  position: absolute; top: 40px; left: 50%; transform: translateX(-50%);   /* top-10 */
+  height: 9.25rem; width: calc(100% + (10.125rem * 2)); overflow: hidden;
+}
+.lg-topline { position: absolute; left: 50%; transform: translateX(-50%); height: 111px; width: 1216px; }
+.lg-topline path { stroke: rgba(255, 255, 255, .05); stroke-width: 1; fill: none; }
+
+/* ---------------------------------------------------------------------- card */
+.lg-card {
+  width: 100%;
+  background: #232328;
+  border: 1px solid #2b2b34;
+  border-radius: 18px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 16px 40px rgba(0, 0, 0, .38);
+  padding: 30px 32px 22px;
+  animation: lg-fade .25s ease;
+}
+@keyframes lg-fade { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
+
+.lg-header { text-align: center; margin-bottom: 24px; }
+.lg-logoBox { display: flex; justify-content: center; margin-bottom: 18px; }
+.lg-logo { width: 36px; height: 36px; border-radius: 9px; background: url('/nala-logo.png') center/contain no-repeat; }
+.lg-title { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 5px; color: #f6f6f7; }
+.lg-sub { font-size: 14px; color: #9a9ba4; margin: 0; }
+
+.lg-social { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.lg-oauth {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 9px 14px; border: 1px solid #2b2b34; border-radius: 9px;
+  background: #1e1e22; color: #f6f6f7; font: 500 13.5px inherit; cursor: pointer;
+  transition: background .12s ease, border-color .12s ease;
+}
+.lg-oauth:hover { background: #26262c; border-color: #3a3a43; }
+.lg-oauth svg { flex: none; }
+
+.lg-divider { display: flex; align-items: center; gap: 12px; color: #7c7e88; font-size: 13px; margin: 0 0 20px; }
+.lg-divider::before, .lg-divider::after { content: ''; flex: 1; height: 1px; background: #2b2b34; }
+
+.lg-form { display: flex; flex-direction: column; }
+.lg-label { font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #f6f6f7; }
+.lg-input {
+  padding: 9px 12px; border: 1px solid #2b2b34; border-radius: 9px;
+  font: inherit; color: #f6f6f7; background: #1b1b1f; margin-bottom: 18px;
+  transition: border-color .12s ease, box-shadow .12s ease;
+}
+.lg-input::placeholder { color: #6c6e78; }
+.lg-input:focus { outline: none; border-color: #55555f; box-shadow: 0 0 0 3px rgba(255, 255, 255, .06); }
+
+.lg-identifier {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 8px 12px; margin-bottom: 16px;
+  border: 1px solid #2b2b34; border-radius: 9px; background: #1b1b1f;
+}
+.lg-identifier-mail { font-size: 13px; color: #cfcfd4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lg-identifier-edit { background: none; border: 0; color: #9280ff; font: 500 12.5px inherit; cursor: pointer; flex: none; }
+.lg-identifier-edit:hover { color: #a695ff; }
+
+.lg-error {
+  font-size: 12.5px; color: #f97066; background: rgba(249, 112, 102, .08);
+  border: 1px solid rgba(249, 112, 102, .22); border-radius: 8px;
+  padding: 8px 11px; margin: 0 0 14px;
+}
+
+.lg-continue {
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  padding: 10px 14px; border: 0; border-radius: 9px;
+  background: #846bff; color: #1b1b1f; font: 600 14px inherit; cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2);
+  transition: background .12s ease;
+}
+.lg-continue:hover { background: #9280ff; }
+.lg-continue svg { transition: transform .15s ease; }
+.lg-continue:hover svg { transform: translateX(2px); }
+
+.lg-passkey { display: block; text-align: center; font-size: 13px; color: #9280ff; font-weight: 500; text-decoration: none; margin-top: 18px; }
+.lg-passkey:hover { color: #a695ff; }
+
+.lg-footer { margin-top: 20px; border-top: 1px solid #26262c; padding-top: 18px; text-align: center; }
+.lg-footer-action { font-size: 13.5px; color: #9a9ba4; margin: 0 0 14px; }
+.lg-footer-action a { color: #9280ff; font-weight: 600; text-decoration: none; }
+.lg-footer-action a:hover { color: #a695ff; }
+.lg-secured { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #7c7e88; }
+.lg-secured b { color: #a9abb5; font-weight: 600; }
+
+/* ---------------------------------------------------------------- page foot */
+.lg-page-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 4px; font-size: 12.5px; color: #7c7e88;
+}
+.lg-page-foot p { margin: 0; }
+.lg-page-foot ul { display: flex; gap: 12px; list-style: none; margin: 0; padding: 0; }
+.lg-page-foot a { color: #7c7e88; text-decoration: none; }
+.lg-page-foot a:hover { color: #f6f6f7; }

@@ -1,0 +1,3259 @@
+[
+  {
+    "id": "sv1603866490",
+    "name": "Transitions Dev",
+    "author": "Jakubantalik",
+    "owner": "Jakubantalik",
+    "desc": "Production-ready CSS transitions for web apps. Use when implementing notification badges, dropdowns, modals, panel reveals, page transitions, card resizes, number pop-ins, text swaps, icon swaps, success checks, avatar g",
+    "url": "https://github.com/Jakubantalik/transitions.dev/tree/main/skills/transitions-dev",
+    "install": "npx skills add https://github.com/Jakubantalik/transitions.dev --skill transitions-dev",
+    "source": "github",
+    "tags": [
+      "motion"
+    ]
+  },
+  {
+    "id": "sv4078425884",
+    "name": "Typescript Magician",
+    "author": "mcollina",
+    "owner": "mcollina",
+    "desc": "",
+    "url": "https://www.skills.sh/mcollina/skills/typescript-magician",
+    "install": "npx skills add https://github.com/mcollina/skills --skill typescript-magician"
+  },
+  {
+    "id": "ui3678352171",
+    "name": "Baseline UI",
+    "author": "ibelick",
+    "desc": "Quickly deslop UI code by fixing spacing, hierarchy, typography, and small layout issues. Use when the interface needs a fast cleanup or polish pass.",
+    "url": "https://www.ui-skills.com/skills/ibelick/baseline-ui"
+  },
+  {
+    "id": "ui34888990282",
+    "name": "Design Lab",
+    "author": "0xdesign",
+    "desc": "Interactive design exploration workflow: conduct interviews, generate variants, and refine UI designs through feedback.",
+    "url": "https://www.ui-skills.com/skills/0xdesign/design-lab"
+  },
+  {
+    "id": "ui26992184703",
+    "name": "Humanize",
+    "author": "aashaexo",
+    "desc": "Remove signs of AI-generated writing from prose and audit docs folders for slop across content, language, style, and rhetoric.",
+    "url": "https://www.ui-skills.com/skills/aashaexo/humanize"
+  },
+  {
+    "id": "ui17478176494",
+    "name": "Humanizer",
+    "author": "Aboudjem",
+    "desc": "Detect 53 AI writing patterns and rewrite text in five voice profiles, with optional scoring and in-place Markdown editing.",
+    "url": "https://www.ui-skills.com/skills/aboudjem/humanizer"
+  },
+  {
+    "id": "ui5477568635",
+    "name": "Accessibility Diff",
+    "author": "AccessLint",
+    "desc": "Regression check that diffs a live page's accessibility violations against a baseline from uncommitted changes or a branch.",
+    "url": "https://www.ui-skills.com/skills/accesslint/accessibility-diff"
+  },
+  {
+    "id": "ui5481978156",
+    "name": "Accessibility Scan",
+    "author": "AccessLint",
+    "desc": "Run the AccessLint rule engine against a live page and return a worklist of WCAG 2.2 violations grounded to DOM selectors and source locations.",
+    "url": "https://www.ui-skills.com/skills/accesslint/accessibility-scan"
+  },
+  {
+    "id": "ui40780150717",
+    "name": "Audit And Fix",
+    "author": "AccessLint",
+    "desc": "Accessibility auditing and remediation workflow that combines detection, prioritization, and practical fixes for WCAG issues.",
+    "url": "https://www.ui-skills.com/skills/accesslint/audit-and-fix"
+  },
+  {
+    "id": "ui23687593598",
+    "name": "Contrast Checker",
+    "author": "AccessLint",
+    "desc": "Compatibility listing for contrast-checker installs from AccessLint's marketplace skill set.",
+    "url": "https://www.ui-skills.com/skills/accesslint/contrast-checker"
+  },
+  {
+    "id": "ui24296685129",
+    "name": "Link Purpose",
+    "author": "AccessLint",
+    "desc": "Compatibility listing for link-purpose installs from AccessLint's marketplace skill set.",
+    "url": "https://www.ui-skills.com/skills/accesslint/link-purpose"
+  },
+  {
+    "id": "ui198551319410",
+    "name": "Refactor",
+    "author": "AccessLint",
+    "desc": "Compatibility listing for refactor installs from AccessLint's marketplace skill set.",
+    "url": "https://www.ui-skills.com/skills/accesslint/refactor"
+  },
+  {
+    "id": "ui20111871511",
+    "name": "Use Of Color",
+    "author": "AccessLint",
+    "desc": "Compatibility listing for use-of-color installs from AccessLint's marketplace skill set.",
+    "url": "https://www.ui-skills.com/skills/accesslint/use-of-color"
+  },
+  {
+    "id": "ui108002570612",
+    "name": "Accessibility",
+    "author": "addyosmani",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/addyosmani/accessibility"
+  },
+  {
+    "id": "ui91618246413",
+    "name": "Best Practices",
+    "author": "addyosmani",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/addyosmani/best-practices"
+  },
+  {
+    "id": "ui55482404814",
+    "name": "Core Web Vitals",
+    "author": "addyosmani",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/addyosmani/core-web-vitals"
+  },
+  {
+    "id": "ui173639614515",
+    "name": "Frontend UI Engineering",
+    "author": "addyosmani",
+    "desc": "Frontend UI engineering guidance covering component architecture, responsive design, accessibility, and maintainable implementation patterns.",
+    "url": "https://www.ui-skills.com/skills/addyosmani/frontend-ui-engineering"
+  },
+  {
+    "id": "ui37570362816",
+    "name": "Performance",
+    "author": "addyosmani",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/addyosmani/performance"
+  },
+  {
+    "id": "ui295248293717",
+    "name": "Seo",
+    "author": "addyosmani",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/addyosmani/seo"
+  },
+  {
+    "id": "ui418796461818",
+    "name": "Web Quality Audit",
+    "author": "addyosmani",
+    "desc": "Web quality auditing skill for Lighthouse-style analysis across performance, accessibility, best practices, and SEO signals.",
+    "url": "https://www.ui-skills.com/skills/addyosmani/web-quality-audit"
+  },
+  {
+    "id": "ui51123021319",
+    "name": "Simple English",
+    "author": "AminBlg",
+    "desc": "Write or rewrite technical text with ASD-STE100 Simplified Technical English for clear, unambiguous, translation-friendly documentation and interface copy.",
+    "url": "https://www.ui-skills.com/skills/aminblg/simple-english"
+  },
+  {
+    "id": "ui201169474920",
+    "name": "Antfu",
+    "author": "antfu",
+    "desc": "Anthony Fu's opinionated tooling and conventions for JavaScript/TypeScript projects.",
+    "url": "https://www.ui-skills.com/skills/antfu/antfu"
+  },
+  {
+    "id": "ui262451420921",
+    "name": "Antfu Design",
+    "author": "antfu",
+    "desc": "antfu-style design conventions, broadened. UnoCSS-first, class-based semantic tokens with dual light/dark for tooling and devtools UIs, plus design-read, anti-slop, and micro-interaction polish for landing pages and product surfaces. Use when building or refactoring any interface with UnoCSS.",
+    "url": "https://www.ui-skills.com/skills/antfu/antfu-design"
+  },
+  {
+    "id": "ui202355193322",
+    "name": "Nitro",
+    "author": "antfu",
+    "desc": "Nitro is the framework-agnostic server toolkit (powering Nuxt) for building and deploying web servers anywhere. Use when working with nitro.config, server routes/event handlers, route rules, caching, storage, tasks, websockets, or deploying to Node/Bun/Deno/Cloudflare/Vercel.",
+    "url": "https://www.ui-skills.com/skills/antfu/nitro"
+  },
+  {
+    "id": "ui89657151623",
+    "name": "Nuxt",
+    "author": "antfu",
+    "desc": "Nuxt full-stack Vue framework guidance for SSR, auto-imports, file-based routing, and server routes.",
+    "url": "https://www.ui-skills.com/skills/antfu/nuxt"
+  },
+  {
+    "id": "ui202539291624",
+    "name": "Pinia",
+    "author": "antfu",
+    "desc": "Pinia state management best practices for type-safe Vue stores, getters, and actions.",
+    "url": "https://www.ui-skills.com/skills/antfu/pinia"
+  },
+  {
+    "id": "ui89662411625",
+    "name": "Pnpm",
+    "author": "antfu",
+    "desc": "pnpm package manager guidance for strict dependency resolution, workspaces, catalogs, patches, and overrides.",
+    "url": "https://www.ui-skills.com/skills/antfu/pnpm"
+  },
+  {
+    "id": "ui274614275026",
+    "name": "Slidev",
+    "author": "antfu",
+    "desc": "Create developer slide decks with Slidev using Markdown, Vue components, code highlighting, and animations.",
+    "url": "https://www.ui-skills.com/skills/antfu/slidev"
+  },
+  {
+    "id": "ui278109871427",
+    "name": "Tsdown",
+    "author": "antfu",
+    "desc": "Bundle TypeScript and JavaScript libraries with tsdown, including declarations and multi-format builds.",
+    "url": "https://www.ui-skills.com/skills/antfu/tsdown"
+  },
+  {
+    "id": "ui14410463128",
+    "name": "Turborepo",
+    "author": "antfu",
+    "desc": "Turborepo monorepo build system guidance for pipelines, caching, filtering, CI, and package boundaries.",
+    "url": "https://www.ui-skills.com/skills/antfu/turborepo"
+  },
+  {
+    "id": "ui280542631029",
+    "name": "Unocss",
+    "author": "antfu",
+    "desc": "UnoCSS atomic CSS engine guidance for rules, shortcuts, and presets like Wind, Icons, and Attributify.",
+    "url": "https://www.ui-skills.com/skills/antfu/unocss"
+  },
+  {
+    "id": "ui89679817330",
+    "name": "Vite",
+    "author": "antfu",
+    "desc": "Vite configuration and plugin guidance, including SSR and Vite 8 Rolldown migration patterns.",
+    "url": "https://www.ui-skills.com/skills/antfu/vite"
+  },
+  {
+    "id": "ui324709389431",
+    "name": "Vitepress",
+    "author": "antfu",
+    "desc": "VitePress documentation site guidance for configuration, theming, and Markdown plus Vue content.",
+    "url": "https://www.ui-skills.com/skills/antfu/vitepress"
+  },
+  {
+    "id": "ui282958873432",
+    "name": "Vitest",
+    "author": "antfu",
+    "desc": "Vitest testing best practices for unit tests, mocking, coverage, fixtures, and test filtering.",
+    "url": "https://www.ui-skills.com/skills/antfu/vitest"
+  },
+  {
+    "id": "ui210713930933",
+    "name": "Vue",
+    "author": "antfu",
+    "desc": "Vue 3 Composition API and reactivity guidance for SFCs, script setup macros, and built-in components.",
+    "url": "https://www.ui-skills.com/skills/antfu/vue"
+  },
+  {
+    "id": "ui232722404734",
+    "name": "Vue Best Practices",
+    "author": "antfu",
+    "desc": "Vue.js best practices emphasizing Composition API with script setup and TypeScript.",
+    "url": "https://www.ui-skills.com/skills/antfu/vue-best-practices"
+  },
+  {
+    "id": "ui45170742435",
+    "name": "Vue Router Best Practices",
+    "author": "antfu",
+    "desc": "Vue Router 4 patterns covering navigation guards, route params, and route lifecycle interactions.",
+    "url": "https://www.ui-skills.com/skills/antfu/vue-router-best-practices"
+  },
+  {
+    "id": "ui97000243136",
+    "name": "Vue Testing Best Practices",
+    "author": "antfu",
+    "desc": "Vue testing guidance using Vitest, Vue Test Utils, component testing, mocking, and Playwright E2E.",
+    "url": "https://www.ui-skills.com/skills/antfu/vue-testing-best-practices"
+  },
+  {
+    "id": "ui342600715737",
+    "name": "Vueuse Functions",
+    "author": "antfu",
+    "desc": "Apply VueUse composables to build concise, maintainable Vue and Nuxt features.",
+    "url": "https://www.ui-skills.com/skills/antfu/vueuse-functions"
+  },
+  {
+    "id": "ui162593766438",
+    "name": "Web Design Guidelines",
+    "author": "antfu",
+    "desc": "Review UI code for web interface guideline compliance, including accessibility and UX best practices.",
+    "url": "https://www.ui-skills.com/skills/antfu/web-design-guidelines"
+  },
+  {
+    "id": "ui339149926239",
+    "name": "Canvas Design",
+    "author": "anthropics",
+    "desc": "Create original visual designs and art on digital canvases using design philosophy, focusing on form, space, and color.",
+    "url": "https://www.ui-skills.com/skills/anthropics/canvas-design"
+  },
+  {
+    "id": "ui42801152440",
+    "name": "Frontend Design",
+    "author": "anthropics",
+    "desc": "Create distinctive, production-grade frontend interfaces with high design quality. Generates creative, polished code and UI design that avoids generic AI aesthetics.",
+    "url": "https://www.ui-skills.com/skills/anthropics/frontend-design"
+  },
+  {
+    "id": "ui389979252241",
+    "name": "Slide Wright",
+    "author": "arifszn",
+    "desc": "Create beautiful, animated web presentations from a topic, rough notes, or an outline. Generates a custom theme and a short two-slide preview, then builds the full deck only once the user confirms the direction. Use when the user wants to make slides, a presentation, a talk deck, or a pitch deck.",
+    "url": "https://www.ui-skills.com/skills/arifszn/slide-wright"
+  },
+  {
+    "id": "ui409408220942",
+    "name": "I Have Adhd",
+    "author": "ayghri",
+    "desc": "Shape output for a reader with ADHD by leading with the next action, numbering steps, suppressing tangents, and making progress visible.",
+    "url": "https://www.ui-skills.com/skills/ayghri/i-have-adhd"
+  },
+  {
+    "id": "ui51865039443",
+    "name": "Bencium Innovative Ux Designer",
+    "author": "bencium",
+    "desc": "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, or applications. Generates creative, polished code that avoids generic AI aesthetics.",
+    "url": "https://www.ui-skills.com/skills/bencium/bencium-innovative-ux-designer"
+  },
+  {
+    "id": "ui44544098244",
+    "name": "Humanizer",
+    "author": "blader",
+    "desc": "Rewrite AI-sounding text so it reads naturally without changing meaning, based on Wikipedia's signs of AI writing.",
+    "url": "https://www.ui-skills.com/skills/blader/humanizer"
+  },
+  {
+    "id": "ui201447319845",
+    "name": "Signal Geometry",
+    "author": "CaliCastle",
+    "desc": "Create sparse geometric illustrations and posters from concepts or briefs, using precise spatial systems, restrained contrast, and matte paper texture.",
+    "url": "https://www.ui-skills.com/skills/calicastle/signal-geometry"
+  },
+  {
+    "id": "ui48232644446",
+    "name": "React Native Best Practices",
+    "author": "callstackincubator",
+    "desc": "React Native performance optimization guidelines for FPS, TTI, bundle size, memory leaks, re-renders, and animations.",
+    "url": "https://www.ui-skills.com/skills/callstackincubator/react-native-best-practices"
+  },
+  {
+    "id": "ui21546278847",
+    "name": "Threejs Animation",
+    "author": "cloudai-x",
+    "desc": "Three.js animation guidance for keyframes, skeletal animation, morph targets, and animation blending.",
+    "url": "https://www.ui-skills.com/skills/cloudai-x/threejs-animation"
+  },
+  {
+    "id": "ui348933063848",
+    "name": "Threejs Fundamentals",
+    "author": "cloudai-x",
+    "desc": "Three.js scene setup guidance for cameras, renderer configuration, object hierarchy, and transforms.",
+    "url": "https://www.ui-skills.com/skills/cloudai-x/threejs-fundamentals"
+  },
+  {
+    "id": "ui375655230649",
+    "name": "Threejs Geometry",
+    "author": "cloudai-x",
+    "desc": "Three.js geometry patterns for built-in shapes, BufferGeometry, custom meshes, and instancing.",
+    "url": "https://www.ui-skills.com/skills/cloudai-x/threejs-geometry"
+  },
+  {
+    "id": "ui159917006650",
+    "name": "Threejs Interaction",
+    "author": "cloudai-x",
+    "desc": "Three.js interaction patterns for raycasting, controls, pointer input, and object selection.",
+    "url": "https://www.ui-skills.com/skills/cloudai-x/threejs-interaction"
+  },
+  {
+    "id": "ui290250215651",
+    "name": "Threejs Lighting",
+    "author": "cloudai-x",
+    "desc": "Three.js lighting guidance for light types, shadows, environment lighting, and performance tuning.",
+    "url": "https://www.ui-skills.com/skills/cloudai-x/threejs-lighting"
+  },
+  {
+    "id": "ui81391891252",
+    "name": "Threejs Loaders",
+    "author": "cloudai-x",
+    "desc": "Three.js asset loading patterns for GLTF, textures, HDR assets, async loading, and progress handling.",
+    "url": "https://www.ui-skills.com/skills/cloudai-x/threejs-loaders"
+  },
+  {
+    "id": "ui407305220453",
+    "name": "Threejs Materials",
+    "author": "cloudai-x",
+    "desc": "Three.js material guidance for PBR, classic materials, shader materials, and material optimization.",
+    "url": "https://www.ui-skills.com/skills/cloudai-x/threejs-materials"
+  },
+  {
+    "id": "ui139899077154",
+    "name": "Threejs Postprocessing",
+    "author": "cloudai-x",
+    "desc": "Three.js post-processing techniques with EffectComposer, bloom, depth of field, and screen-space effects.",
+    "url": "https://www.ui-skills.com/skills/cloudai-x/threejs-postprocessing"
+  },
+  {
+    "id": "ui253107332655",
+    "name": "Threejs Shaders",
+    "author": "cloudai-x",
+    "desc": "Three.js shader guidance for GLSL, ShaderMaterial, uniforms, and custom vertex and fragment effects.",
+    "url": "https://www.ui-skills.com/skills/cloudai-x/threejs-shaders"
+  },
+  {
+    "id": "ui90788421656",
+    "name": "Threejs Textures",
+    "author": "cloudai-x",
+    "desc": "Three.js texture workflows for maps, UV mapping, environment maps, and texture configuration.",
+    "url": "https://www.ui-skills.com/skills/cloudai-x/threejs-textures"
+  },
+  {
+    "id": "ui123608273457",
+    "name": "Thermo Nuclear Code Quality Review",
+    "author": "cursor",
+    "desc": "Run an extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth.",
+    "url": "https://www.ui-skills.com/skills/cursor/thermo-nuclear-code-quality-review"
+  },
+  {
+    "id": "ui368807242858",
+    "name": "Unslop",
+    "author": "cursor",
+    "desc": "Cut AI tells from any writing by editing text to remove machine patterns and restore a more human voice.",
+    "url": "https://www.ui-skills.com/skills/cursor/unslop"
+  },
+  {
+    "id": "ui416988459659",
+    "name": "Interface Design",
+    "author": "Dammyjay93",
+    "desc": "Specialized skill for interface design: dashboards, admin panels, and SaaS apps. Focused on craft and consistency.",
+    "url": "https://www.ui-skills.com/skills/dammyjay93/interface-design"
+  },
+  {
+    "id": "ui64817642460",
+    "name": "Compact Landing",
+    "author": "Danilaa1",
+    "desc": "Build compact premium landing pages with clear CTA hierarchy, quiet typography, and minimal visual noise.",
+    "url": "https://www.ui-skills.com/skills/danilaa1/compact-landing"
+  },
+  {
+    "id": "ui420847216561",
+    "name": "Text To Lottie",
+    "author": "diffusionstudio",
+    "desc": "Turn text prompts into polished Lottie animations for motion-heavy UI work.",
+    "url": "https://www.ui-skills.com/skills/diffusionstudio/text-to-lottie"
+  },
+  {
+    "id": "ui9098335662",
+    "name": "Swiftui UI Patterns",
+    "author": "dimillian",
+    "desc": "Best practices and example-driven guidance for building SwiftUI views and components. Includes tab architecture and screen composition.",
+    "url": "https://www.ui-skills.com/skills/dimillian/swiftui-ui-patterns"
+  },
+  {
+    "id": "ui14398089163",
+    "name": "Apply Design System",
+    "author": "edenspiekermann",
+    "desc": "Reconnect an existing Figma design to published design system components instead of detached layers, local wrappers, or one-off assets.",
+    "url": "https://www.ui-skills.com/skills/edenspiekermann/apply-design-system"
+  },
+  {
+    "id": "ui297751732064",
+    "name": "Audit Design System",
+    "author": "edenspiekermann",
+    "desc": "Audit a Figma screen or component for design-system drift, including missing shared components, local overrides, and unbound tokens.",
+    "url": "https://www.ui-skills.com/skills/edenspiekermann/audit-design-system"
+  },
+  {
+    "id": "ui219255506765",
+    "name": "Slopbeth",
+    "author": "ehmo",
+    "desc": "Remove AI-writing tells from prose while preserving meaning, voice, and density during drafting, editing, or review.",
+    "url": "https://www.ui-skills.com/skills/ehmo/slopbeth"
+  },
+  {
+    "id": "ui343085688766",
+    "name": "Landing Page Design",
+    "author": "elayadesign",
+    "desc": "Build high-converting landing pages with intake questions, page structure, conversion copy, SEO, and a disciplined visual system.",
+    "url": "https://www.ui-skills.com/skills/elayadesign/landing-page-design"
+  },
+  {
+    "id": "ui150508293467",
+    "name": "Anti Slop",
+    "author": "elithrar",
+    "desc": "Detect and remove AI writing tells from prose while preserving the author's voice in blogs, docs, emails, and reports.",
+    "url": "https://www.ui-skills.com/skills/elithrar/anti-slop"
+  },
+  {
+    "id": "ui59473304068",
+    "name": "Animate",
+    "author": "emilkowalski",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/emilkowalski/animate"
+  },
+  {
+    "id": "ui427420675469",
+    "name": "Animate Expo",
+    "author": "emilkowalski",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/emilkowalski/animate-expo"
+  },
+  {
+    "id": "ui21084117170",
+    "name": "Animation Vocabulary",
+    "author": "emilkowalski",
+    "desc": "Sharpen motion language so animation choices feel deliberate and consistent.",
+    "url": "https://www.ui-skills.com/skills/emilkowalski/animation-vocabulary"
+  },
+  {
+    "id": "ui228806901371",
+    "name": "Apple Design",
+    "author": "emilkowalski",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/emilkowalski/apple-design"
+  },
+  {
+    "id": "ui58799177772",
+    "name": "Ask Sonner",
+    "author": "emilkowalski",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/emilkowalski/ask-sonner"
+  },
+  {
+    "id": "ui348025881673",
+    "name": "Emil Design Eng",
+    "author": "emilkowalski",
+    "desc": "Emil Kowalski's design-engineering philosophy for UI polish, components, animation, and production-ready frontend craft.",
+    "url": "https://www.ui-skills.com/skills/emilkowalski/emil-design-eng"
+  },
+  {
+    "id": "ui101220147174",
+    "name": "Find Animation Opportunities",
+    "author": "emilkowalski",
+    "desc": "Find high-conviction opportunities for useful interface motion while rejecting animation that adds noise or slows users down.",
+    "url": "https://www.ui-skills.com/skills/emilkowalski/find-animation-opportunities"
+  },
+  {
+    "id": "ui340071901675",
+    "name": "Improve Animations",
+    "author": "emilkowalski",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/emilkowalski/improve-animations"
+  },
+  {
+    "id": "ui5323842976",
+    "name": "Pick UI Library",
+    "author": "emilkowalski",
+    "desc": "Choose an opinionated, trusted library for common frontend tasks including components, motion, charts, interaction, state, and styling.",
+    "url": "https://www.ui-skills.com/skills/emilkowalski/pick-ui-library"
+  },
+  {
+    "id": "ui288547288177",
+    "name": "Prototype",
+    "author": "emilkowalski",
+    "desc": "Build multiple genuinely different UI variants behind a visual picker so the strongest direction can be evaluated and promoted.",
+    "url": "https://www.ui-skills.com/skills/emilkowalski/prototype"
+  },
+  {
+    "id": "ui68256499878",
+    "name": "Review Animations",
+    "author": "emilkowalski",
+    "desc": "Review animation quality, timing, and motion consistency with a production-critical eye.",
+    "url": "https://www.ui-skills.com/skills/emilkowalski/review-animations"
+  },
+  {
+    "id": "ui255129091379",
+    "name": "Write Swift",
+    "author": "emilkowalski",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/emilkowalski/write-swift"
+  },
+  {
+    "id": "ui413386972780",
+    "name": "Scandinavian Design",
+    "author": "ericzakariasson",
+    "desc": "Apply a refined Scandinavian visual system with a neutral black-and-white foundation, restrained sans-serif typography, purposeful product imagery, generous spacing, clear page chapters, and minimal decoration. Use when the user invokes /scandinavian-design or requests a Nordic, monochrome, calm, spacious, restrained, or minimalist interface.",
+    "url": "https://www.ui-skills.com/skills/ericzakariasson/scandinavian-design"
+  },
+  {
+    "id": "ui142979663081",
+    "name": "Figma Code Connect",
+    "author": "figma",
+    "desc": "Creates and maintains Figma Code Connect template files that map Figma components to code snippets. Use when the user mentions Code Connect, Figma component mapping, design-to-code translation, or asks to create/update .figma.ts or .figma.js files.",
+    "url": "https://www.ui-skills.com/skills/figma/figma-code-connect"
+  },
+  {
+    "id": "ui65175369782",
+    "name": "Figma Create New File",
+    "author": "figma",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/figma/figma-create-new-file"
+  },
+  {
+    "id": "ui239407761583",
+    "name": "Figma Design To Code",
+    "author": "figma",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/figma/figma-design-to-code"
+  },
+  {
+    "id": "ui102918273084",
+    "name": "Figma Generate Design",
+    "author": "figma",
+    "desc": "Translate pages and multi-section layouts into Figma by discovering design system components, variables, and assembling screens section by section.",
+    "url": "https://www.ui-skills.com/skills/figma/figma-generate-design"
+  },
+  {
+    "id": "ui193773747985",
+    "name": "Figma Generate Diagram",
+    "author": "figma",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/figma/figma-generate-diagram"
+  },
+  {
+    "id": "ui44906775986",
+    "name": "Figma Generate Library",
+    "author": "figma",
+    "desc": "Build or update a professional design system in Figma from a codebase, including tokens, variant sets, theming, and component libraries.",
+    "url": "https://www.ui-skills.com/skills/figma/figma-generate-library"
+  },
+  {
+    "id": "ui369033400287",
+    "name": "Figma Implement Motion",
+    "author": "figma",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/figma/figma-implement-motion"
+  },
+  {
+    "id": "ui186089552888",
+    "name": "Figma Swiftui",
+    "author": "figma",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/figma/figma-swiftui"
+  },
+  {
+    "id": "ui284449108089",
+    "name": "Figma Use",
+    "author": "figma",
+    "desc": "Mandatory prerequisite before every use_figma call — plugin API rules for creating, editing, and inspecting Figma files through MCP.",
+    "url": "https://www.ui-skills.com/skills/figma/figma-use"
+  },
+  {
+    "id": "ui25377418690",
+    "name": "Figma Use Figjam",
+    "author": "figma",
+    "desc": "This skill helps agents use Figma's use_figma MCP tool in the FigJam context. Can be used alongside figma-use which has foundational context for using the use_figma tool.",
+    "url": "https://www.ui-skills.com/skills/figma/figma-use-figjam"
+  },
+  {
+    "id": "ui46010612691",
+    "name": "Figma Use Motion",
+    "author": "figma",
+    "desc": "Motion / animation context for the `use_figma` MCP tool — animating Figma nodes via manual keyframes, animation styles, easing, and timeline duration. Load alongside figma-use whenever a task involves adding, editing, or inspecting animation on a node.",
+    "url": "https://www.ui-skills.com/skills/figma/figma-use-motion"
+  },
+  {
+    "id": "ui62877765892",
+    "name": "Figma Use Slides",
+    "author": "figma",
+    "desc": "This skill helps agents use Figma's use_figma MCP tool in the Slides context. Can be used alongside figma-use which has foundational context for using the use_figma tool.",
+    "url": "https://www.ui-skills.com/skills/figma/figma-use-slides"
+  },
+  {
+    "id": "ui217737686893",
+    "name": "Generate Project Plan",
+    "author": "figma",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/figma/generate-project-plan"
+  },
+  {
+    "id": "ui237589130794",
+    "name": "Video Interaction Mapper",
+    "author": "figma",
+    "desc": "Analyze a UI screen recording and map interaction states into an annotated Figma Design storyboard with extracted before/after frames.",
+    "url": "https://www.ui-skills.com/skills/figma/video-interaction-mapper"
+  },
+  {
+    "id": "ui311520432495",
+    "name": "Sync Figma Token",
+    "author": "firebenders",
+    "desc": "Sync design tokens between code and Figma variables with drift reporting, approval gates, safe delta apply, and persisted reports.",
+    "url": "https://www.ui-skills.com/skills/firebenders/sync-figma-token"
+  },
+  {
+    "id": "ui83119647996",
+    "name": "Prefer Container Queries",
+    "author": "flornkm",
+    "desc": "Enforce Tailwind container queries over viewport breakpoints for responsive components. Use when writing or reviewing responsive Tailwind code, when a component needs to adapt to its available space (cards, sidebars, lists, panels, anything reused in different layouts), or when migrating sm:/md:/lg: classes to @container variants.",
+    "url": "https://www.ui-skills.com/skills/flornkm/prefer-container-queries"
+  },
+  {
+    "id": "ui216107936697",
+    "name": "Smooth Shadow Ring",
+    "author": "flornkm",
+    "desc": "Style elevated surfaces with smooth shadow ring utilities instead of combining borders or rings with shadows and creating double edges.",
+    "url": "https://www.ui-skills.com/skills/flornkm/smooth-shadow-ring"
+  },
+  {
+    "id": "ui56290890198",
+    "name": "Webgl Components",
+    "author": "flornkm",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/flornkm/webgl-components"
+  },
+  {
+    "id": "ui131307397399",
+    "name": "Gh Stack",
+    "author": "github",
+    "desc": "Manage stacked branches and dependent pull requests with the gh stack GitHub CLI extension.",
+    "url": "https://www.ui-skills.com/skills/github/gh-stack"
+  },
+  {
+    "id": "ui3297790908100",
+    "name": "Gsap Core",
+    "author": "greensock",
+    "desc": "Official GSAP core API guidance for gsap.to(), from(), easing, stagger, matchMedia, and responsive or reduced-motion animation patterns.",
+    "url": "https://www.ui-skills.com/skills/greensock/gsap-core"
+  },
+  {
+    "id": "ui1929486482101",
+    "name": "Gsap Frameworks",
+    "author": "greensock",
+    "desc": "Official GSAP guidance for Vue, Nuxt, Svelte, and SvelteKit lifecycle setup, scoped selectors, and cleanup on unmount.",
+    "url": "https://www.ui-skills.com/skills/greensock/gsap-frameworks"
+  },
+  {
+    "id": "ui1612450163102",
+    "name": "Gsap Performance",
+    "author": "greensock",
+    "desc": "Official GSAP performance guidance for compositor-friendly transforms, quickTo, stagger batching, and smooth 60fps animation.",
+    "url": "https://www.ui-skills.com/skills/greensock/gsap-performance"
+  },
+  {
+    "id": "ui4271671907103",
+    "name": "Gsap Plugins",
+    "author": "greensock",
+    "desc": "Official GSAP plugin guidance for Flip, Draggable, ScrollSmoother, SplitText, SVG tools, CustomEase, and gsap.registerPlugin() usage.",
+    "url": "https://www.ui-skills.com/skills/greensock/gsap-plugins"
+  },
+  {
+    "id": "ui3460808962104",
+    "name": "Gsap React",
+    "author": "greensock",
+    "desc": "Official GSAP guidance for React and Next.js with useGSAP, refs, gsap.context(), contextSafe callbacks, and SSR-safe cleanup.",
+    "url": "https://www.ui-skills.com/skills/greensock/gsap-react"
+  },
+  {
+    "id": "ui2129613518105",
+    "name": "Gsap Scrolltrigger",
+    "author": "greensock",
+    "desc": "Official ScrollTrigger guidance for scroll-linked animation, pinning, scrub, batch triggers, and horizontal containerAnimation patterns.",
+    "url": "https://www.ui-skills.com/skills/greensock/gsap-scrolltrigger"
+  },
+  {
+    "id": "ui3355777502106",
+    "name": "Gsap Timeline",
+    "author": "greensock",
+    "desc": "Official GSAP timeline guidance for sequencing, position parameters, labels, nesting, and playback control with gsap.timeline().",
+    "url": "https://www.ui-skills.com/skills/greensock/gsap-timeline"
+  },
+  {
+    "id": "ui3464034356107",
+    "name": "Gsap Utils",
+    "author": "greensock",
+    "desc": "Official gsap.utils guidance for clamp, mapRange, snap, distribute, selector scoping, and other animation math helpers.",
+    "url": "https://www.ui-skills.com/skills/greensock/gsap-utils"
+  },
+  {
+    "id": "ui2029630277108",
+    "name": "Stop Slop",
+    "author": "hardikpandya",
+    "desc": "Remove AI writing patterns from prose when drafting, editing, or reviewing text to eliminate predictable AI tells.",
+    "url": "https://www.ui-skills.com/skills/hardikpandya/stop-slop"
+  },
+  {
+    "id": "ui4234360434109",
+    "name": "Seo",
+    "author": "iannuttall",
+    "desc": "Use for SEO audits, rankings, keyword research, indexing, metadata, Search Console, GA4, and AI search visibility. Routes to evidence-backed reports through the local SEO CLI and MCP server.",
+    "url": "https://www.ui-skills.com/skills/iannuttall/seo"
+  },
+  {
+    "id": "ui2089051135110",
+    "name": "60fps Animation",
+    "author": "iart-ai",
+    "desc": "Web animation performance guidance for avoiding layout thrashing and reaching smooth 60/120fps motion with compositor-friendly techniques.",
+    "url": "https://www.ui-skills.com/skills/iart-ai/60fps-animation"
+  },
+  {
+    "id": "ui2919187374111",
+    "name": "Accessible Animation",
+    "author": "iart-ai",
+    "desc": "Tiered reduced-motion patterns for CSS, GSAP, Framer Motion, Lenis, and other web animation systems.",
+    "url": "https://www.ui-skills.com/skills/iart-ai/accessible-animation"
+  },
+  {
+    "id": "ui3742854369112",
+    "name": "Ascii Animation",
+    "author": "iart-ai",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/iart-ai/ascii-animation"
+  },
+  {
+    "id": "ui2072301667113",
+    "name": "Glassmorphism",
+    "author": "iart-ai",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/iart-ai/glassmorphism"
+  },
+  {
+    "id": "ui2742153699114",
+    "name": "Gsap Web",
+    "author": "iart-ai",
+    "desc": "GSAP guidance for code-driven web motion, including timelines, ScrollTrigger, SplitText, Flip, and smooth-scroll synchronization.",
+    "url": "https://www.ui-skills.com/skills/iart-ai/gsap-web"
+  },
+  {
+    "id": "ui1741541975115",
+    "name": "Lottie Animation",
+    "author": "iart-ai",
+    "desc": "Lottie and dotLottie integration guidance for playback control, interactivity, runtime theming, and cross-platform export workflows.",
+    "url": "https://www.ui-skills.com/skills/iart-ai/lottie-animation"
+  },
+  {
+    "id": "ui548026146116",
+    "name": "Micro Interaction",
+    "author": "iart-ai",
+    "desc": "UI motion guidance for hover and press feedback, toggles, toasts, drawers, modals, list transitions, and shared-element interactions.",
+    "url": "https://www.ui-skills.com/skills/iart-ai/micro-interaction"
+  },
+  {
+    "id": "ui704572374117",
+    "name": "Page Transition Animation",
+    "author": "iart-ai",
+    "desc": "Page and route transition patterns using the View Transitions API and Framer Motion, including reliable Next.js App Router exits.",
+    "url": "https://www.ui-skills.com/skills/iart-ai/page-transition-animation"
+  },
+  {
+    "id": "ui4101761844118",
+    "name": "Svg Animation",
+    "author": "iart-ai",
+    "desc": "SVG animation techniques for stroke draw-on effects, path morphing, motion paths, animated icons, gradients, and filters.",
+    "url": "https://www.ui-skills.com/skills/iart-ai/svg-animation"
+  },
+  {
+    "id": "ui2341319763119",
+    "name": "Create Design Md",
+    "author": "ibelick",
+    "desc": "Create or update a DESIGN.md from an existing product repository or public website, with evidence-based design tokens and guidance.",
+    "url": "https://www.ui-skills.com/skills/ibelick/create-design-md"
+  },
+  {
+    "id": "ui4027859545120",
+    "name": "Fixing Accessibility",
+    "author": "ibelick",
+    "desc": "Audit and fix HTML accessibility issues including ARIA labels, keyboard navigation, focus management, color contrast, and form errors. Use when adding interactive controls, forms, dialogs, or reviewing WCAG compliance.",
+    "url": "https://www.ui-skills.com/skills/ibelick/fixing-accessibility"
+  },
+  {
+    "id": "ui913653572121",
+    "name": "Fixing Metadata",
+    "author": "ibelick",
+    "desc": "Audit and fix page metadata including titles, meta descriptions, Open Graph, Twitter cards, canonical URLs, and JSON-LD structured data. Use when shipping new pages or fixing SEO and social preview issues.",
+    "url": "https://www.ui-skills.com/skills/ibelick/fixing-metadata"
+  },
+  {
+    "id": "ui3127904411122",
+    "name": "Fixing Motion Performance",
+    "author": "ibelick",
+    "desc": "Audit and fix animation performance issues including layout thrashing, compositor properties, scroll-linked motion, and blur effects. Use when animations stutter, transitions jank, or reviewing CSS/JS animation performance.",
+    "url": "https://www.ui-skills.com/skills/ibelick/fixing-motion-performance"
+  },
+  {
+    "id": "ui3997048314123",
+    "name": "Improve UI",
+    "author": "ibelick",
+    "desc": "Audit an existing product surface against its own design evidence, identify verified UI problems, and write self-contained implementation plans for another agent without modifying product source.",
+    "url": "https://www.ui-skills.com/skills/ibelick/improve-ui"
+  },
+  {
+    "id": "ui4098121955124",
+    "name": "Refine Live",
+    "author": "Jakubantalik",
+    "desc": "Iteratively refine UI in live sessions with a focus on motion, polish, and interaction detail.",
+    "url": "https://www.ui-skills.com/skills/jakubantalik/refine-live"
+  },
+  {
+    "id": "ui2323153623125",
+    "name": "Transitions Dev",
+    "author": "Jakubantalik",
+    "desc": "Production-ready CSS transition patterns for web apps, with drop-in snippets for cards, modals, dropdowns, panels, and page transitions.",
+    "url": "https://www.ui-skills.com/skills/jakubantalik/transitions-dev"
+  },
+  {
+    "id": "ui4023616443126",
+    "name": "Better Accessibility",
+    "author": "jakubkrehel",
+    "desc": "Review and improve focus states, keyboard support, ARIA, forms, screen readers, hit areas, and motion accessibility.",
+    "url": "https://www.ui-skills.com/skills/jakubkrehel/better-accessibility"
+  },
+  {
+    "id": "ui777726883127",
+    "name": "Better Colors",
+    "author": "jakubkrehel",
+    "desc": "OKLCH color space for web projects. Convert hex/rgb/hsl to oklch, generate palettes, check contrast, handle gamut boundaries, and theme with Tailwind v4. Triggers on oklch, color conversion, palette generation, contrast ratio, gamut, display p3, design tokens, hue drift, chroma, dark mode colors.",
+    "url": "https://www.ui-skills.com/skills/jakubkrehel/better-colors"
+  },
+  {
+    "id": "ui728854054128",
+    "name": "Better Interface",
+    "author": "jakubkrehel",
+    "desc": "Run a holistic interface review across accessibility, layout, writing, typography, color, and visual polish.",
+    "url": "https://www.ui-skills.com/skills/jakubkrehel/better-interface"
+  },
+  {
+    "id": "ui1022847325129",
+    "name": "Better Layout",
+    "author": "jakubkrehel",
+    "desc": "Improve interface structure through grouping, alignment, reading order, progressive disclosure, and adaptive responsive layouts.",
+    "url": "https://www.ui-skills.com/skills/jakubkrehel/better-layout"
+  },
+  {
+    "id": "ui2150797794130",
+    "name": "Better Typography",
+    "author": "jakubkrehel",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/jakubkrehel/better-typography"
+  },
+  {
+    "id": "ui739872327131",
+    "name": "Better UI",
+    "author": "jakubkrehel",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/jakubkrehel/better-ui"
+  },
+  {
+    "id": "ui3288158473132",
+    "name": "Better Writing",
+    "author": "jakubkrehel",
+    "desc": "Improve UX writing for interface labels, errors, empty states, settings, notifications, and product voice consistency.",
+    "url": "https://www.ui-skills.com/skills/jakubkrehel/better-writing"
+  },
+  {
+    "id": "ui3128577538133",
+    "name": "Break",
+    "author": "jakubkrehel",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/jakubkrehel/break"
+  },
+  {
+    "id": "ui3774895571134",
+    "name": "Explain Interface",
+    "author": "jakubkrehel",
+    "desc": "Answers how was this built about an interface. Give it a URL and name the thing you're curious about, and it reads the layers that produce the effect. Reads the whole frontend instead when you don't name a thing. From a screenshot it reconstructs rather than reads and says so.",
+    "url": "https://www.ui-skills.com/skills/jakubkrehel/explain-interface"
+  },
+  {
+    "id": "ui2396597052135",
+    "name": "Interface Review",
+    "author": "jakubkrehel",
+    "desc": "Interface review of a change rather than a screen: uncommitted work, the current branch, or a pull request. Covers interface quality, not correctness, tests, or security.",
+    "url": "https://www.ui-skills.com/skills/jakubkrehel/interface-review"
+  },
+  {
+    "id": "ui3021090841136",
+    "name": "Make Interfaces Feel Better",
+    "author": "jakubkrehel",
+    "desc": "Design engineering principles for making interfaces feel polished, with focus on micro-interactions, typography, and visual details.",
+    "url": "https://www.ui-skills.com/skills/jakubkrehel/make-interfaces-feel-better"
+  },
+  {
+    "id": "ui1686097833137",
+    "name": "Oklch Skill",
+    "author": "jakubkrehel",
+    "desc": "Practical OKLCH color workflow skill for building consistent, accessible, and tunable color systems in modern UIs.",
+    "url": "https://www.ui-skills.com/skills/jakubkrehel/oklch-skill"
+  },
+  {
+    "id": "ui181653704138",
+    "name": "Variant",
+    "author": "jakubkrehel",
+    "desc": "Answers which of these rather than is this right. Builds several genuinely different versions of one piece of UI behind a picker in the real page, so you can flip between them and promote the one that wins.",
+    "url": "https://www.ui-skills.com/skills/jakubkrehel/variant"
+  },
+  {
+    "id": "ui4059744438139",
+    "name": "Anti Ai Slop Writing",
+    "author": "jalaalrd",
+    "desc": "Produce human-sounding text that avoids detectable AI patterns with banned vocabulary, structural variety, and voice calibration.",
+    "url": "https://www.ui-skills.com/skills/jalaalrd/anti-ai-slop-writing"
+  },
+  {
+    "id": "ui1106474445140",
+    "name": "Web Clone",
+    "author": "Jane-xiaoer",
+    "desc": "网站复刻 / 克隆方法论。Use when the user says to clone, reproduce, or recreate a website or WebGL/Canvas/Three.js effect. Covers source-first reconstruction, repo scaffolding, reverse engineering, implementation paths, and verification for static sites, content sites, and heavy front-end experiences.",
+    "url": "https://www.ui-skills.com/skills/jane-xiaoer/web-clone"
+  },
+  {
+    "id": "ui3639588497141",
+    "name": "Effect",
+    "author": "kitlangton",
+    "desc": "Opinionated guidance for building production TypeScript applications with Effect v4, including workflows, services, layers, schemas, configuration, scheduling, caching, streams, HTTP clients, and tests.",
+    "url": "https://www.ui-skills.com/skills/kitlangton/effect"
+  },
+  {
+    "id": "ui1697585079142",
+    "name": "Brag",
+    "author": "latent-spaces",
+    "desc": "Turn a finished project into a short shareable launch video with motion, music, and copy.",
+    "url": "https://www.ui-skills.com/skills/latent-spaces/brag"
+  },
+  {
+    "id": "ui3384917768143",
+    "name": "Brandkit",
+    "author": "Leonxlnx",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/leonxlnx/brandkit"
+  },
+  {
+    "id": "ui1647245778144",
+    "name": "Industrial Brutalist UI",
+    "author": "Leonxlnx",
+    "desc": "Raw, mechanical interface direction mixing Swiss print structure with terminal-inspired brutalist aesthetics.",
+    "url": "https://www.ui-skills.com/skills/leonxlnx/brutalist-skill"
+  },
+  {
+    "id": "ui3974327017145",
+    "name": "Gpt Taste",
+    "author": "Leonxlnx",
+    "desc": "High-agency UX/UI skill with strict layout variance, typography, and GSAP motion engineering constraints.",
+    "url": "https://www.ui-skills.com/skills/leonxlnx/gpt-tasteskill"
+  },
+  {
+    "id": "ui4278231141146",
+    "name": "Image To Code Skill",
+    "author": "Leonxlnx",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/leonxlnx/image-to-code-skill"
+  },
+  {
+    "id": "ui166134654147",
+    "name": "Imagegen Frontend Mobile",
+    "author": "Leonxlnx",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/leonxlnx/imagegen-frontend-mobile"
+  },
+  {
+    "id": "ui1818863096148",
+    "name": "Imagegen Frontend Web",
+    "author": "Leonxlnx",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/leonxlnx/imagegen-frontend-web"
+  },
+  {
+    "id": "ui2697467218149",
+    "name": "Minimalist UI",
+    "author": "Leonxlnx",
+    "desc": "Editorial minimal interfaces with monochrome palettes, typographic contrast, and restrained visuals.",
+    "url": "https://www.ui-skills.com/skills/leonxlnx/minimalist-skill"
+  },
+  {
+    "id": "ui2461094553150",
+    "name": "Full Output Enforcement",
+    "author": "Leonxlnx",
+    "desc": "Enforces complete, non-truncated code output and blocks placeholder or half-finished responses.",
+    "url": "https://www.ui-skills.com/skills/leonxlnx/output-skill"
+  },
+  {
+    "id": "ui3990994841151",
+    "name": "Redesign Existing Projects",
+    "author": "Leonxlnx",
+    "desc": "Audit and upgrade existing interfaces to premium visual quality while preserving product functionality.",
+    "url": "https://www.ui-skills.com/skills/leonxlnx/redesign-skill"
+  },
+  {
+    "id": "ui3531531892152",
+    "name": "High End Visual Design",
+    "author": "Leonxlnx",
+    "desc": "High-end visual design guidance for premium typography, spacing, depth, and animation systems.",
+    "url": "https://www.ui-skills.com/skills/leonxlnx/soft-skill"
+  },
+  {
+    "id": "ui2630642699153",
+    "name": "Stitch Design Taste",
+    "author": "Leonxlnx",
+    "desc": "Semantic design-system skill for Google Stitch with strict anti-generic UI generation rules.",
+    "url": "https://www.ui-skills.com/skills/leonxlnx/stitch-skill"
+  },
+  {
+    "id": "ui939532708154",
+    "name": "Design Taste Frontend",
+    "author": "Leonxlnx",
+    "desc": "Senior UI/UX frontend skill that enforces anti-slop design decisions, motion quality, and architecture discipline.",
+    "url": "https://www.ui-skills.com/skills/leonxlnx/taste-skill"
+  },
+  {
+    "id": "ui2775048812155",
+    "name": "Taste Skill V1",
+    "author": "Leonxlnx",
+    "desc": "The original v1 taste-skill, preserved for projects depending on its exact behavior. The current default is `design-taste-frontend` (v2 experimental), which is a substantial rewrite. Use this v1 install name only if you need exact backward compatibility.",
+    "url": "https://www.ui-skills.com/skills/leonxlnx/taste-skill-v1"
+  },
+  {
+    "id": "ui2206665958156",
+    "name": "Unlazy",
+    "author": "Leonxlnx",
+    "desc": "Anti-laziness execution discipline that finishes substantial tasks through gate files and runnable checks instead of premature done reports.",
+    "url": "https://www.ui-skills.com/skills/leonxlnx/unlazy"
+  },
+  {
+    "id": "ui1268459364157",
+    "name": "Gc Minimal Zine Poster V0 1",
+    "author": "LiamGvchi",
+    "desc": "Generate quiet minimal zine-style editorial poster prompts and matching raster images from themes, moods, objects, photos, or content briefs.",
+    "url": "https://www.ui-skills.com/skills/liamgvchi/gc-minimal-zine-poster-v0-1"
+  },
+  {
+    "id": "ui2420879997158",
+    "name": "Bro",
+    "author": "luchasarie",
+    "desc": "Re-explain the previous assistant message in a much simpler, plain-language version when the last answer was too dense.",
+    "url": "https://www.ui-skills.com/skills/luchasarie/bro"
+  },
+  {
+    "id": "ui1639807235159",
+    "name": "Ask Matt",
+    "author": "mattpocock",
+    "desc": "Router that picks the right Matt Pocock engineering flow for the current task.",
+    "url": "https://www.ui-skills.com/skills/mattpocock/ask-matt"
+  },
+  {
+    "id": "ui1005546552160",
+    "name": "Codebase Design",
+    "author": "mattpocock",
+    "desc": "Guidance for designing deep modules with small interfaces and clean seams.",
+    "url": "https://www.ui-skills.com/skills/mattpocock/codebase-design"
+  },
+  {
+    "id": "ui2753842396161",
+    "name": "Diagnosing Bugs",
+    "author": "mattpocock",
+    "desc": "Systematic bug diagnosis through reproduce, minimize, hypothesize, instrument, and fix.",
+    "url": "https://www.ui-skills.com/skills/mattpocock/diagnosing-bugs"
+  },
+  {
+    "id": "ui3548226125162",
+    "name": "Domain Modeling",
+    "author": "mattpocock",
+    "desc": "Builds and sharpens project domain models and terminology.",
+    "url": "https://www.ui-skills.com/skills/mattpocock/domain-modeling"
+  },
+  {
+    "id": "ui928241003163",
+    "name": "Engineering",
+    "author": "mattpocock",
+    "desc": "Routing bundle for code work covering planning, debugging, TDD, architecture, and execution flows.",
+    "url": "https://www.ui-skills.com/skills/mattpocock/engineering"
+  },
+  {
+    "id": "ui1087147243164",
+    "name": "Grill With Docs",
+    "author": "mattpocock",
+    "desc": "Sharpens the domain model and updates supporting docs while grilling through design choices.",
+    "url": "https://www.ui-skills.com/skills/mattpocock/grill-with-docs"
+  },
+  {
+    "id": "ui1793471909165",
+    "name": "Improve Codebase Architecture",
+    "author": "mattpocock",
+    "desc": "Scans a codebase for deepening opportunities and turns them into a prioritized visual report.",
+    "url": "https://www.ui-skills.com/skills/mattpocock/improve-codebase-architecture"
+  },
+  {
+    "id": "ui2166874490166",
+    "name": "Prototype",
+    "author": "mattpocock",
+    "desc": "Builds throwaway prototypes to answer design or logic questions quickly.",
+    "url": "https://www.ui-skills.com/skills/mattpocock/prototype"
+  },
+  {
+    "id": "ui3122990030167",
+    "name": "Setup Matt Pocock Skills",
+    "author": "mattpocock",
+    "desc": "One-time repo setup for the engineering skill workflow and related conventions.",
+    "url": "https://www.ui-skills.com/skills/mattpocock/setup-matt-pocock-skills"
+  },
+  {
+    "id": "ui1943313996168",
+    "name": "Tdd",
+    "author": "mattpocock",
+    "desc": "Red-green-refactor workflow for building features and fixes one slice at a time.",
+    "url": "https://www.ui-skills.com/skills/mattpocock/tdd"
+  },
+  {
+    "id": "ui888952919169",
+    "name": "To Issues",
+    "author": "mattpocock",
+    "desc": "Breaks a plan or PRD into independently actionable issues.",
+    "url": "https://www.ui-skills.com/skills/mattpocock/to-issues"
+  },
+  {
+    "id": "ui1411316261170",
+    "name": "To Prd",
+    "author": "mattpocock",
+    "desc": "Turns a conversation into a PRD and publishes it to the issue tracker.",
+    "url": "https://www.ui-skills.com/skills/mattpocock/to-prd"
+  },
+  {
+    "id": "ui1416246812171",
+    "name": "Triage",
+    "author": "mattpocock",
+    "desc": "Moves issues through a structured triage state machine.",
+    "url": "https://www.ui-skills.com/skills/mattpocock/triage"
+  },
+  {
+    "id": "ui4006777743172",
+    "name": "Animation On Scroll",
+    "author": "MengTo",
+    "desc": "Use when you need scroll-driven motion that feels intentional instead of noisy or overdone.",
+    "url": "https://www.ui-skills.com/skills/mengto/animation-on-scroll"
+  },
+  {
+    "id": "ui1367020485173",
+    "name": "Animation Systems",
+    "author": "MengTo",
+    "desc": "Use when building a coherent animation system instead of one-off motion tweaks.",
+    "url": "https://www.ui-skills.com/skills/mengto/animation-systems"
+  },
+  {
+    "id": "ui128518145174",
+    "name": "Beautiful Shadows",
+    "author": "MengTo",
+    "desc": "Use when a UI needs better depth, elevation, and shadow treatment without looking muddy.",
+    "url": "https://www.ui-skills.com/skills/mengto/beautiful-shadows"
+  },
+  {
+    "id": "ui2044003099175",
+    "name": "Cobejs",
+    "author": "MengTo",
+    "desc": "Use when building lightweight animated globe or orb visuals with Cobe.",
+    "url": "https://www.ui-skills.com/skills/mengto/cobejs"
+  },
+  {
+    "id": "ui965878146176",
+    "name": "Company Logos",
+    "author": "MengTo",
+    "desc": "Use when laying out logos, trust rows, or brand collections in a clean and balanced way.",
+    "url": "https://www.ui-skills.com/skills/mengto/company-logos"
+  },
+  {
+    "id": "ui3171205661177",
+    "name": "Container Lines",
+    "author": "MengTo",
+    "desc": "Use when using borders and container structure as part of the visual system.",
+    "url": "https://www.ui-skills.com/skills/mengto/container-lines"
+  },
+  {
+    "id": "ui2772675009178",
+    "name": "Design First UI Prompting",
+    "author": "MengTo",
+    "desc": "Use when you want to turn a product goal into a design-first UI prompt with clear layout, type, color, and constraint choices.",
+    "url": "https://www.ui-skills.com/skills/mengto/design-first-ui-prompting"
+  },
+  {
+    "id": "ui4292747966179",
+    "name": "Gsap",
+    "author": "MengTo",
+    "desc": "Use when implementing motion with GSAP and you want practical animation structure and sequencing guidance.",
+    "url": "https://www.ui-skills.com/skills/mengto/gsap"
+  },
+  {
+    "id": "ui4074575443180",
+    "name": "Gsap Scrolltrigger Storytelling",
+    "author": "MengTo",
+    "desc": "Use when building scroll-based storytelling sections with GSAP ScrollTrigger.",
+    "url": "https://www.ui-skills.com/skills/mengto/gsap-scrolltrigger-storytelling"
+  },
+  {
+    "id": "ui2387808411181",
+    "name": "Landing Page",
+    "author": "MengTo",
+    "desc": "Use when designing or implementing a landing page with strong hierarchy, conversion flow, and visual pacing.",
+    "url": "https://www.ui-skills.com/skills/mengto/landing-page"
+  },
+  {
+    "id": "ui3987658117182",
+    "name": "Marquee Loop",
+    "author": "MengTo",
+    "desc": "Use when building looping marquees that need steady rhythm, spacing, and performance awareness.",
+    "url": "https://www.ui-skills.com/skills/mengto/marquee-loop"
+  },
+  {
+    "id": "ui1085249471183",
+    "name": "Masked Reveal",
+    "author": "MengTo",
+    "desc": "Use when revealing content with masked motion, clipped transitions, or layered entrances.",
+    "url": "https://www.ui-skills.com/skills/mengto/masked-reveal"
+  },
+  {
+    "id": "ui2724039405184",
+    "name": "Matterjs",
+    "author": "MengTo",
+    "desc": "Use when building physics-driven interactions and layout behaviors with Matter.js.",
+    "url": "https://www.ui-skills.com/skills/mengto/matterjs"
+  },
+  {
+    "id": "ui915791948185",
+    "name": "Pricing Page",
+    "author": "MengTo",
+    "desc": "Use when building a pricing page with clear plan comparison, emphasis, and conversion-oriented layout.",
+    "url": "https://www.ui-skills.com/skills/mengto/pricing-page"
+  },
+  {
+    "id": "ui1234979839186",
+    "name": "Progressive Blur",
+    "author": "MengTo",
+    "desc": "Use when applying blur transitions or layered depth effects that need to feel smooth and controlled.",
+    "url": "https://www.ui-skills.com/skills/mengto/progressive-blur"
+  },
+  {
+    "id": "ui3237495976187",
+    "name": "Tailwindcss",
+    "author": "MengTo",
+    "desc": "Use when you are implementing UI with Tailwind and want reusable, practical utility-first patterns.",
+    "url": "https://www.ui-skills.com/skills/mengto/tailwindcss"
+  },
+  {
+    "id": "ui956614628188",
+    "name": "Threejs",
+    "author": "MengTo",
+    "desc": "Use when building 3D scenes, interactions, or WebGL-backed interface moments in Three.js.",
+    "url": "https://www.ui-skills.com/skills/mengto/threejs"
+  },
+  {
+    "id": "ui1748250692189",
+    "name": "Webgl Landing Steering",
+    "author": "MengTo",
+    "desc": "Use when steering a landing page around a WebGL centerpiece or hero experience.",
+    "url": "https://www.ui-skills.com/skills/mengto/webgl-landing-steering"
+  },
+  {
+    "id": "ui790145018190",
+    "name": "Playwright Cli",
+    "author": "microsoft",
+    "desc": "Official Playwright CLI skill for browser automation, test generation, tracing, and session-driven end-to-end testing workflows.",
+    "url": "https://www.ui-skills.com/skills/microsoft/playwright-cli"
+  },
+  {
+    "id": "ui3915449880191",
+    "name": "Budge",
+    "author": "millionco",
+    "desc": "Use when making single-property CSS or Tailwind visual changes in Next.js App Router projects. Presents a floating control widget for live tuning before persisting.",
+    "url": "https://www.ui-skills.com/skills/millionco/budge"
+  },
+  {
+    "id": "ui61538528192",
+    "name": "Improve React",
+    "author": "millionco",
+    "desc": "Survey a React codebase using React Doctor's findings, then produce prioritized audits and self-contained implementation plans without modifying source code.",
+    "url": "https://www.ui-skills.com/skills/millionco/improve-react"
+  },
+  {
+    "id": "ui1584538551193",
+    "name": "React Doctor",
+    "author": "millionco",
+    "desc": "Run React Doctor to detect regressions in security, performance, correctness, and architecture, with score-based quality checks.",
+    "url": "https://www.ui-skills.com/skills/millionco/react-doctor"
+  },
+  {
+    "id": "ui678082676194",
+    "name": "Balise Ux Writing",
+    "author": "mrstev3n",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/mrstev3n/balise-ux-writing"
+  },
+  {
+    "id": "ui3152607725195",
+    "name": "Banner Design",
+    "author": "nextlevelbuilder",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/nextlevelbuilder/banner-design"
+  },
+  {
+    "id": "ui3218517826196",
+    "name": "Brand",
+    "author": "nextlevelbuilder",
+    "desc": "Brand voice, visual identity, messaging frameworks, asset management, brand consistency. Activate for branded content, tone of voice, marketing assets, brand compliance, style guides.",
+    "url": "https://www.ui-skills.com/skills/nextlevelbuilder/brand"
+  },
+  {
+    "id": "ui1035588963197",
+    "name": "Design",
+    "author": "nextlevelbuilder",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/nextlevelbuilder/design"
+  },
+  {
+    "id": "ui2121580428198",
+    "name": "Design System",
+    "author": "nextlevelbuilder",
+    "desc": "Token architecture, component specifications, and slide generation. Three-layer tokens (primitive→semantic→component), CSS variables, spacing/typography scales, component specs, strategic slide creation. Use for design tokens, systematic design, brand-compliant presentations.",
+    "url": "https://www.ui-skills.com/skills/nextlevelbuilder/design-system"
+  },
+  {
+    "id": "ui1471188103199",
+    "name": "Slides",
+    "author": "nextlevelbuilder",
+    "desc": "Create strategic HTML presentations with Chart.js, design tokens, responsive layouts, copywriting formulas, and contextual slide strategies.",
+    "url": "https://www.ui-skills.com/skills/nextlevelbuilder/slides"
+  },
+  {
+    "id": "ui2082873799200",
+    "name": "UI Styling",
+    "author": "nextlevelbuilder",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/nextlevelbuilder/ui-styling"
+  },
+  {
+    "id": "ui1488239291201",
+    "name": "UI Ux Pro Max",
+    "author": "nextlevelbuilder",
+    "desc": "Comprehensive UI/UX design intelligence with 50+ styles, 97 palettes, and 9 technology stacks for building professional interfaces.",
+    "url": "https://www.ui-skills.com/skills/nextlevelbuilder/ui-ux-pro-max"
+  },
+  {
+    "id": "ui3761171919202",
+    "name": "Rad Spacing",
+    "author": "nolanperk",
+    "desc": "Apply hierarchical spacing variables across Figma layouts using proximity-based 4px and 8px increments from the file's library.",
+    "url": "https://www.ui-skills.com/skills/nolanperk/rad-spacing"
+  },
+  {
+    "id": "ui558559707203",
+    "name": "Cc Figma Component",
+    "author": "nvillapiano",
+    "desc": "Generate variable-bound Figma component sets from component-contract definitions after the token collections exist.",
+    "url": "https://www.ui-skills.com/skills/nvillapiano/cc-figma-component"
+  },
+  {
+    "id": "ui3500805500204",
+    "name": "Cc Figma Tokens",
+    "author": "nvillapiano",
+    "desc": "Build or update Figma Primitive and Semantic variable collections from component-contracts token files.",
+    "url": "https://www.ui-skills.com/skills/nvillapiano/cc-figma-tokens"
+  },
+  {
+    "id": "ui2499034043205",
+    "name": "Define Goal",
+    "author": "openai",
+    "desc": "Help the user define a concrete, measurable goal before starting work, especially when they ask to use the goal tool, create a goal, set an objective, clarify success criteria, or turn a fuzzy intention into a quantitative outcome. Use this skill for goal creation and goal refinement only; it does not manage durable snapshots, decision logs, or long-running execution artifacts.",
+    "url": "https://www.ui-skills.com/skills/openai/define-goal"
+  },
+  {
+    "id": "ui1371380263206",
+    "name": "Scroll World",
+    "author": "oso95",
+    "desc": "Build an immersive scroll-scrubbed 3D world landing page for any brand with Higgsfield-generated scenes, seamless camera clips, and a portable scroll-scrub engine.",
+    "url": "https://www.ui-skills.com/skills/oso95/scroll-world"
+  },
+  {
+    "id": "ui2443965878207",
+    "name": "Adapt",
+    "author": "pbakaus",
+    "desc": "Adapt designs across breakpoints, device contexts, and platform constraints with responsive interaction quality.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/adapt"
+  },
+  {
+    "id": "ui3892640885208",
+    "name": "Animate",
+    "author": "pbakaus",
+    "desc": "Enhance UX with purposeful animation and micro-interactions that support usability and delight.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/animate"
+  },
+  {
+    "id": "ui2444474991209",
+    "name": "Audit",
+    "author": "pbakaus",
+    "desc": "Run technical UI quality audits across accessibility, performance, theming, responsive behavior, and anti-patterns.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/audit"
+  },
+  {
+    "id": "ui2787601886210",
+    "name": "Bolder",
+    "author": "pbakaus",
+    "desc": "Increase visual impact and personality for interfaces that feel too safe, bland, or generic.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/bolder"
+  },
+  {
+    "id": "ui1308190710211",
+    "name": "Clarify",
+    "author": "pbakaus",
+    "desc": "Improve labels, microcopy, and UX messaging so interface text is clearer and easier to act on.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/clarify"
+  },
+  {
+    "id": "ui579171325212",
+    "name": "Colorize",
+    "author": "pbakaus",
+    "desc": "Introduce strategic color systems to interfaces that feel dull, monochrome, or visually flat.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/colorize"
+  },
+  {
+    "id": "ui3160151934213",
+    "name": "Critique",
+    "author": "pbakaus",
+    "desc": "Evaluate design quality with structured UX scoring, persona checks, and actionable remediation guidance.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/critique"
+  },
+  {
+    "id": "ui2005179081214",
+    "name": "Delight",
+    "author": "pbakaus",
+    "desc": "Add personality and memorable moments through thoughtful interaction details and emotional UX touches.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/delight"
+  },
+  {
+    "id": "ui2126490071215",
+    "name": "Distill",
+    "author": "pbakaus",
+    "desc": "Simplify noisy interfaces by removing non-essential complexity and restoring clear visual focus.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/distill"
+  },
+  {
+    "id": "ui2946626240216",
+    "name": "Harden",
+    "author": "pbakaus",
+    "desc": "Make interfaces production-ready with robust empty states, edge cases, errors, onboarding, and i18n resilience.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/harden"
+  },
+  {
+    "id": "ui2629171967217",
+    "name": "Impeccable",
+    "author": "pbakaus",
+    "desc": "Flagship design skill for production-grade, anti-generic frontend interfaces with strong craft and consistency.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/impeccable"
+  },
+  {
+    "id": "ui3061362454218",
+    "name": "Layout",
+    "author": "pbakaus",
+    "desc": "Fix spacing, composition, and hierarchy rhythm when UI layout feels crowded, flat, or misaligned.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/layout"
+  },
+  {
+    "id": "ui1128905673219",
+    "name": "Optimize",
+    "author": "pbakaus",
+    "desc": "Diagnose and improve interface performance across rendering, motion smoothness, assets, and load speed.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/optimize"
+  },
+  {
+    "id": "ui2325214666220",
+    "name": "Overdrive",
+    "author": "pbakaus",
+    "desc": "Push interfaces into high-impact territory with advanced animation, shaders, and ambitious interaction systems.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/overdrive"
+  },
+  {
+    "id": "ui3188415229221",
+    "name": "Polish",
+    "author": "pbakaus",
+    "desc": "Final quality pass for spacing, alignment, and consistency to prepare UI for launch.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/polish"
+  },
+  {
+    "id": "ui1113014133222",
+    "name": "Quieter",
+    "author": "pbakaus",
+    "desc": "Tone down overly intense designs while keeping quality high and preserving hierarchy.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/quieter"
+  },
+  {
+    "id": "ui2460708405223",
+    "name": "Shape",
+    "author": "pbakaus",
+    "desc": "Plan feature UX before coding via a structured design interview that produces an actionable design brief.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/shape"
+  },
+  {
+    "id": "ui3896505468224",
+    "name": "Typeset",
+    "author": "pbakaus",
+    "desc": "Improve typography systems, hierarchy, readability, and text cadence for more intentional interfaces.",
+    "url": "https://www.ui-skills.com/skills/pbakaus/typeset"
+  },
+  {
+    "id": "ui2450308030225",
+    "name": "Human Review",
+    "author": "petergyang",
+    "desc": "Open HTML, Markdown, or localhost pages in the browser so the user can edit text directly, leave anchored comments, and send all feedback back in one batch.",
+    "url": "https://www.ui-skills.com/skills/petergyang/human-review"
+  },
+  {
+    "id": "ui1210114662226",
+    "name": "No Ai Slop",
+    "author": "petergyang",
+    "desc": "Edit drafts into sharper, more human writing while preserving personal voice, or detect AI-slop patterns without rewriting.",
+    "url": "https://www.ui-skills.com/skills/petergyang/no-ai-slop"
+  },
+  {
+    "id": "ui2073524574227",
+    "name": "Build Primitive",
+    "author": "PrototyperAI",
+    "desc": "Build foundational UI primitives from scratch with strong ARIA, keyboard, focus, and state handling.",
+    "url": "https://www.ui-skills.com/skills/prototyperai/build-primitive"
+  },
+  {
+    "id": "ui2950403535228",
+    "name": "Rams",
+    "author": "rams",
+    "desc": "Real-time design feedback skill focused on accessibility, spacing, typography, contrast, and component quality.",
+    "url": "https://www.ui-skills.com/skills/rams/rams"
+  },
+  {
+    "id": "ui2345226777229",
+    "name": "12 Principles Of Animation",
+    "author": "raphaelsalaja",
+    "desc": "Apply Disney's 12 animation principles to web interfaces to make motion feel natural, organic, and human.",
+    "url": "https://www.ui-skills.com/skills/raphaelsalaja/12-principles-of-animation"
+  },
+  {
+    "id": "ui1302271424230",
+    "name": "Generating Sounds With Ai",
+    "author": "raphaelsalaja",
+    "desc": "Audit Web Audio API code for procedural sound synthesis quality, UX decisions, and parameter best practices.",
+    "url": "https://www.ui-skills.com/skills/raphaelsalaja/generating-sounds-with-ai"
+  },
+  {
+    "id": "ui938905806231",
+    "name": "Mastering Animate Presence",
+    "author": "raphaelsalaja",
+    "desc": "Audit Motion and Framer Motion exit/presence patterns with practical fixes for AnimatePresence usage.",
+    "url": "https://www.ui-skills.com/skills/raphaelsalaja/mastering-animate-presence"
+  },
+  {
+    "id": "ui1634471656232",
+    "name": "Morphing Icons",
+    "author": "raphaelsalaja",
+    "desc": "Build icon components that morph between SVG shapes with smooth, line-based transformation.",
+    "url": "https://www.ui-skills.com/skills/raphaelsalaja/morphing-icons"
+  },
+  {
+    "id": "ui2189975045233",
+    "name": "Pseudo Elements",
+    "author": "raphaelsalaja",
+    "desc": "Audit CSS pseudo-elements and View Transitions usage for hover effects, decorative layers, and transitions.",
+    "url": "https://www.ui-skills.com/skills/raphaelsalaja/pseudo-elements"
+  },
+  {
+    "id": "ui663174188234",
+    "name": "Sounds On The Web",
+    "author": "raphaelsalaja",
+    "desc": "Audit interface sound feedback for UX quality, accessibility, and practical implementation patterns.",
+    "url": "https://www.ui-skills.com/skills/raphaelsalaja/sounds-on-the-web"
+  },
+  {
+    "id": "ui2227418474235",
+    "name": "To Spring Or Not To Spring",
+    "author": "raphaelsalaja",
+    "desc": "Audit animation timing choices to decide when springs versus easing curves produce better motion.",
+    "url": "https://www.ui-skills.com/skills/raphaelsalaja/to-spring-or-not-to-spring"
+  },
+  {
+    "id": "ui2474751187236",
+    "name": "Create Anatomy",
+    "author": "redongreen",
+    "desc": "Generate a visual anatomy annotation in Figma showing numbered markers on a component instance with an attribute table. Use when the user mentions anatomy, anatomy annotation, component anatomy, create anatomy, or wants to annotate a component's structural elements.",
+    "url": "https://www.ui-skills.com/skills/redongreen/create-anatomy"
+  },
+  {
+    "id": "ui661111498237",
+    "name": "Create Voice",
+    "author": "redongreen",
+    "desc": "Generate VoiceOver, TalkBack, and ARIA screen reader specs in Figma with focus order, property tables, and announcements by component state.",
+    "url": "https://www.ui-skills.com/skills/redongreen/create-voice"
+  },
+  {
+    "id": "ui4167062611238",
+    "name": "React Router Framework Mode",
+    "author": "remix-run",
+    "desc": "React Router framework-mode patterns for loaders, actions, middleware, route modules, and full-stack rendering flows.",
+    "url": "https://www.ui-skills.com/skills/remix-run/react-router-framework-mode"
+  },
+  {
+    "id": "ui2786453653239",
+    "name": "Remotion Best Practices",
+    "author": "remotion-dev",
+    "desc": "Domain-specific knowledge base for building videos with Remotion and React.",
+    "url": "https://www.ui-skills.com/skills/remotion-dev/remotion-best-practices"
+  },
+  {
+    "id": "ui2276309387240",
+    "name": "Daisyui",
+    "author": "saadeghi",
+    "desc": "Official daisyUI component library skill, providing docs, class names, examples and code examples to generate better daisyUI code.",
+    "url": "https://www.ui-skills.com/skills/saadeghi/daisyui"
+  },
+  {
+    "id": "ui1506665940241",
+    "name": "Shadcn",
+    "author": "shadcn-ui",
+    "desc": "Project-aware shadcn/ui workflow for searching, adding, composing, and fixing components with correct patterns.",
+    "url": "https://www.ui-skills.com/skills/shadcn-ui/shadcn"
+  },
+  {
+    "id": "ui578139404242",
+    "name": "Improve",
+    "author": "shadcn",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/shadcn/improve"
+  },
+  {
+    "id": "ui1070649627243",
+    "name": "Deslop",
+    "author": "stephenturner",
+    "desc": "Remove AI writing patterns from prose so drafts, edits, and reviews sound like a specific human wrote them.",
+    "url": "https://www.ui-skills.com/skills/stephenturner/deslop"
+  },
+  {
+    "id": "ui1121022121244",
+    "name": "Design Review",
+    "author": "Superfuture",
+    "desc": "",
+    "url": "https://www.ui-skills.com/skills/superfuture/design-review"
+  },
+  {
+    "id": "ui1784520396245",
+    "name": "Svelte Code Writer",
+    "author": "sveltejs",
+    "desc": "Official Svelte code-writing skill focused on modern Svelte patterns, component composition, and production-ready implementations.",
+    "url": "https://www.ui-skills.com/skills/sveltejs/svelte-code-writer"
+  },
+  {
+    "id": "ui2603727421246",
+    "name": "Linear Discipline",
+    "author": "tjcages",
+    "desc": "Keep Linear tracking honest during development with search-before-create, lifecycle updates, and close-the-loop discipline.",
+    "url": "https://www.ui-skills.com/skills/tjcages/linear-discipline"
+  },
+  {
+    "id": "ui144505691247",
+    "name": "Linear Finish Install",
+    "author": "tjcages",
+    "desc": "Complete Linear tracking installation by writing always-on rules and verifying Linear MCP authentication.",
+    "url": "https://www.ui-skills.com/skills/tjcages/linear-finish-install"
+  },
+  {
+    "id": "ui4205528374248",
+    "name": "Linear Methodology",
+    "author": "tjcages",
+    "desc": "Route Linear tracking work through a methodology for setting up, syncing, monitoring, and maintaining honest project data.",
+    "url": "https://www.ui-skills.com/skills/tjcages/linear-methodology"
+  },
+  {
+    "id": "ui1889196461249",
+    "name": "Linear Monitor",
+    "author": "tjcages",
+    "desc": "Health-check Linear projects for slipping dates, stale in-progress work, orphan issues, and tracking anti-patterns.",
+    "url": "https://www.ui-skills.com/skills/tjcages/linear-monitor"
+  },
+  {
+    "id": "ui400510864250",
+    "name": "Linear Setup",
+    "author": "tjcages",
+    "desc": "Bootstrap or extend Linear project tracking with evidence-based backfill, milestones, dependencies, and repository discipline.",
+    "url": "https://www.ui-skills.com/skills/tjcages/linear-setup"
+  },
+  {
+    "id": "ui2506790696251",
+    "name": "Linear Sync",
+    "author": "tjcages",
+    "desc": "Audit and rescue an existing Linear project by reconciling its issues, milestones, dependencies, and tracking protocol with repository reality.",
+    "url": "https://www.ui-skills.com/skills/tjcages/linear-sync"
+  },
+  {
+    "id": "ui1364732170252",
+    "name": "Agent Browser",
+    "author": "vercel-labs",
+    "desc": "Browser automation CLI for AI agents for navigation, form actions, extraction, screenshots, QA, and app testing.",
+    "url": "https://www.ui-skills.com/skills/vercel-labs/agent-browser"
+  },
+  {
+    "id": "ui4315667253",
+    "name": "Vercel React Best Practices",
+    "author": "vercel-labs",
+    "desc": "Vercel React best practices for rendering performance, bundle efficiency, and scalable component architecture.",
+    "url": "https://www.ui-skills.com/skills/vercel-labs/react-best-practices"
+  },
+  {
+    "id": "ui2556317270254",
+    "name": "Web Design Guidelines",
+    "author": "vercel-labs",
+    "desc": "Review UI code for Web Interface Guidelines compliance. Audit design, accessibility, and UX against Vercel's best practices.",
+    "url": "https://www.ui-skills.com/skills/vercel-labs/web-design-guidelines"
+  },
+  {
+    "id": "ui1731524025255",
+    "name": "Next Cache Components",
+    "author": "vercel",
+    "desc": "Enable Cache Components in a Next.js app and resolve blocking routes surfaced during adoption.",
+    "url": "https://www.ui-skills.com/skills/vercel/next-cache-components"
+  },
+  {
+    "id": "ui1704660878256",
+    "name": "Next Cache Components Optimizer",
+    "author": "vercel",
+    "desc": "Drive a Next.js route to instant navigation under Cache Components using a failing Playwright test and an agentic fix loop.",
+    "url": "https://www.ui-skills.com/skills/vercel/next-cache-components-optimizer"
+  },
+  {
+    "id": "ui3162643372257",
+    "name": "Create Adaptable Composable",
+    "author": "vuejs-ai",
+    "desc": "Create library-grade Vue composables that support plain values, refs, and getters with predictable reactivity.",
+    "url": "https://www.ui-skills.com/skills/vuejs-ai/create-adaptable-composable"
+  },
+  {
+    "id": "ui3671203967258",
+    "name": "Vue Best Practices",
+    "author": "vuejs-ai",
+    "desc": "Core Vue development best practices for component architecture, reactivity, and maintainable code.",
+    "url": "https://www.ui-skills.com/skills/vuejs-ai/vue-best-practices"
+  },
+  {
+    "id": "ui3990224199259",
+    "name": "Vue Debug Guides",
+    "author": "vuejs-ai",
+    "desc": "Practical debugging workflows for diagnosing and fixing Vue reactivity, rendering, and state issues.",
+    "url": "https://www.ui-skills.com/skills/vuejs-ai/vue-debug-guides"
+  },
+  {
+    "id": "ui1867807472260",
+    "name": "Vue Jsx Best Practices",
+    "author": "vuejs-ai",
+    "desc": "Guidance for writing robust, type-safe, and readable Vue components using JSX.",
+    "url": "https://www.ui-skills.com/skills/vuejs-ai/vue-jsx-best-practices"
+  },
+  {
+    "id": "ui3735542663261",
+    "name": "Vue Options Api Best Practices",
+    "author": "vuejs-ai",
+    "desc": "Best practices for structuring and scaling Vue applications built with the Options API.",
+    "url": "https://www.ui-skills.com/skills/vuejs-ai/vue-options-api-best-practices"
+  },
+  {
+    "id": "ui4082888018262",
+    "name": "Vue Pinia Best Practices",
+    "author": "vuejs-ai",
+    "desc": "Patterns for clean, scalable state management in Vue apps using Pinia stores.",
+    "url": "https://www.ui-skills.com/skills/vuejs-ai/vue-pinia-best-practices"
+  },
+  {
+    "id": "ui1823940240263",
+    "name": "Vue Router Best Practices",
+    "author": "vuejs-ai",
+    "desc": "Routing architecture and navigation patterns for maintainable Vue Router applications.",
+    "url": "https://www.ui-skills.com/skills/vuejs-ai/vue-router-best-practices"
+  },
+  {
+    "id": "ui559546767264",
+    "name": "Vue Testing Best Practices",
+    "author": "vuejs-ai",
+    "desc": "Testing strategies for Vue applications, including component tests, integration tests, and reliability patterns.",
+    "url": "https://www.ui-skills.com/skills/vuejs-ai/vue-testing-best-practices"
+  },
+  {
+    "id": "ui3402047944265",
+    "name": "Interaction Design",
+    "author": "wshobson",
+    "desc": "Design and implement microinteractions, motion design, transitions, and user feedback patterns for delightful user experiences.",
+    "url": "https://www.ui-skills.com/skills/wshobson/interaction-design"
+  },
+  {
+    "id": "ui762046650266",
+    "name": "Wcag Audit Patterns",
+    "author": "wshobson",
+    "desc": "Conduct WCAG 2.2 accessibility audits with automated testing, manual verification, and remediation guidance. Use when auditing websites for accessibility, fixing WCAG violations, or implementing accessible design patterns.",
+    "url": "https://www.ui-skills.com/skills/wshobson/wcag-audit-patterns"
+  },
+  {
+    "id": "ui3326361425267",
+    "name": "Frontend Slides",
+    "author": "zarazhangrui",
+    "desc": "Create animation-rich HTML presentations from scratch or convert PPT/PPTX files into polished web slides.",
+    "url": "https://www.ui-skills.com/skills/zarazhangrui/frontend-slides"
+  },
+  {
+    "id": "ui1410757283268",
+    "name": "Swiss Design",
+    "author": "zeke",
+    "desc": "Swiss design system skill focused on grid discipline, typography hierarchy, and clean editorial interface composition.",
+    "url": "https://www.ui-skills.com/skills/zeke/swiss-design"
+  },
+  {
+    "id": "ui39429865160",
+    "name": "Higgsfield Product Photoshoot",
+    "author": "higgsfield-ai",
+    "desc": "Generate brand-quality product images through Higgsfield product-photoshoot\nprompt enhancement on GPT Image 2 / gpt_image_2. Entry point for…",
+    "url": "https://www.skills.sh/higgsfield-ai/skills/higgsfield-product-photoshoot",
+    "install": "npx skills add https://github.com/higgsfield-ai/skills --skill higgsfield-product-photoshoot",
+    "owner": "higgsfield-ai"
+  },
+  {
+    "id": "ui2600964891",
+    "name": "Orchestration",
+    "author": "stablyai",
+    "desc": "Use Orca orchestration for structured multi-agent coordination: threaded messages, blocking ask/reply flows, task dispatch, worker_done/escalation waits, task…",
+    "url": "https://www.skills.sh/stablyai/orca/orchestration",
+    "install": "npx skills add https://github.com/stablyai/orca --skill orchestration",
+    "owner": "stablyai"
+  },
+  {
+    "id": "ui22553342622",
+    "name": "Extract Design System",
+    "author": "arvindrk",
+    "desc": "Extract design primitives from a public website and generate starter token files for your project.",
+    "url": "https://www.skills.sh/arvindrk/extract-design-system/extract-design-system",
+    "install": "npx skills add https://github.com/arvindrk/extract-design-system --skill extract-design-system",
+    "owner": "arvindrk"
+  },
+  {
+    "id": "ui42825496473",
+    "name": "Sentry Cli",
+    "author": "sentry",
+    "desc": "Guide for using the Sentry CLI to interact with Sentry from the command line. Use when the user asks about viewing issues, events, projects, organizations,…",
+    "url": "https://www.skills.sh/sentry/dev/sentry-cli",
+    "install": "",
+    "owner": "sentry"
+  },
+  {
+    "id": "ui31253490614",
+    "name": "Content Strategy",
+    "author": "coreyhaines31",
+    "desc": "When the user wants to plan a content strategy, decide what content to create, or figure out what topics to cover. Also use when the user mentions \"content…",
+    "url": "https://www.skills.sh/coreyhaines31/marketingskills/content-strategy",
+    "install": "npx skills add https://github.com/coreyhaines31/marketingskills --skill content-strategy",
+    "owner": "coreyhaines31"
+  },
+  {
+    "id": "ui16648149105",
+    "name": "Programmatic Seo",
+    "author": "coreyhaines31",
+    "desc": "When the user wants to create SEO-driven pages at scale using templates and data. Also use when the user mentions \"programmatic SEO,\" \"template pages,\" \"pages…",
+    "url": "https://www.skills.sh/coreyhaines31/marketingskills/programmatic-seo",
+    "install": "npx skills add https://github.com/coreyhaines31/marketingskills --skill programmatic-seo",
+    "owner": "coreyhaines31"
+  },
+  {
+    "id": "ui42118600226",
+    "name": "Firebase Basics",
+    "author": "firebase",
+    "desc": "Provides foundational Firebase CLI setup, CLI installation, version checks (`firebase-tools@latest --version`), CLI login (including --no-localhost), project…",
+    "url": "https://www.skills.sh/firebase/agent-skills/firebase-basics",
+    "install": "npx skills add https://github.com/firebase/agent-skills --skill firebase-basics",
+    "owner": "firebase"
+  },
+  {
+    "id": "ui17336501517",
+    "name": "Wait What",
+    "author": "mattpocock",
+    "desc": "Stop. That last message did not land: re-pitch it.",
+    "url": "https://www.skills.sh/mattpocock/skills/wait-what",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill wait-what",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui14520980218",
+    "name": "Firebase Data Connect",
+    "author": "firebase",
+    "desc": "Builds and deploys Firebase SQL Connect (aka Firebase Data Connect) backends with PostgreSQL securely. Use when designing schemas with tables and relations,…",
+    "url": "https://www.skills.sh/firebase/agent-skills/firebase-data-connect",
+    "install": "npx skills add https://github.com/firebase/agent-skills --skill firebase-data-connect",
+    "owner": "firebase"
+  },
+  {
+    "id": "ui2217292949",
+    "name": "Marketing Psychology",
+    "author": "coreyhaines31",
+    "desc": "When the user wants to apply psychological principles, mental models, or behavioral science to marketing. Also use when the user mentions 'psychology,' 'mental…",
+    "url": "https://www.skills.sh/coreyhaines31/marketingskills/marketing-psychology",
+    "install": "npx skills add https://github.com/coreyhaines31/marketingskills --skill marketing-psychology",
+    "owner": "coreyhaines31"
+  },
+  {
+    "id": "ui55417421910",
+    "name": "Higgsfield Generate",
+    "author": "higgsfield-ai",
+    "desc": "Generate images/videos/3D assets/audio via Higgsfield AI. Defaults:\nGPT Image 2 for image/design/text, Seedance 2.0 for\nvideo, Nano Banana 2/Lite/Pro for…",
+    "url": "https://www.skills.sh/higgsfield-ai/skills/higgsfield-generate",
+    "install": "npx skills add https://github.com/higgsfield-ai/skills --skill higgsfield-generate",
+    "owner": "higgsfield-ai"
+  },
+  {
+    "id": "ui334356281811",
+    "name": "Ui Radar",
+    "author": "site",
+    "desc": "Install the ui-radar skill for your AI agent. Published on uizze.com.",
+    "url": "https://www.skills.sh/site/uizze.com/ui-radar",
+    "install": "",
+    "owner": "site"
+  },
+  {
+    "id": "ui69707216012",
+    "name": "Talking Head Recut",
+    "author": "heygen-com",
+    "desc": "Package an existing talking-head / interview / podcast video with timed, designed GRAPHIC OVERLAY cards — kinetic titles, lower-thirds, data callouts, quotes,…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/talking-head-recut",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill talking-head-recut",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui68483987713",
+    "name": "Webapp Testing",
+    "author": "anthropics",
+    "desc": "Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing…",
+    "url": "https://www.skills.sh/anthropics/skills/webapp-testing",
+    "install": "npx skills add https://github.com/anthropics/skills --skill webapp-testing",
+    "owner": "anthropics"
+  },
+  {
+    "id": "ui316885240114",
+    "name": "Writing For Agents",
+    "author": "mattpocock",
+    "desc": "Writing documents for agents. Use when creating or editing skills, or modifying AGENTS.md or CLAUDE.md.",
+    "url": "https://www.skills.sh/mattpocock/skills/writing-for-agents",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill writing-for-agents",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui209009790315",
+    "name": "Hyperframes Media",
+    "author": "heygen-com",
+    "desc": "Audio and media assets for HyperFrames compositions, produced by one shared audio engine (`scripts/audio.mjs`) — multi-provider TTS (HeyGen / ElevenLabs /…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/hyperframes-media",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill hyperframes-media",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui259171348816",
+    "name": "Python Appservice Deploy",
+    "author": "microsoft",
+    "desc": "Deploy Python (Flask/Django/FastAPI) code to Azure App Service Linux. WHEN: \"Flask App Service\", \"Django App Service\", \"FastAPI App Service\", \"deploy Python to…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/python-appservice-deploy",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill python-appservice-deploy",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui68661684117",
+    "name": "Setup Ts Deep Modules",
+    "author": "mattpocock",
+    "desc": "Wire dependency-cruiser into a TypeScript repo so each package is a deep module, with implementation hidden in subfolders and reachable only through its…",
+    "url": "https://www.skills.sh/mattpocock/skills/setup-ts-deep-modules",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill setup-ts-deep-modules",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui235244282318",
+    "name": "Slideshow",
+    "author": "heygen-com",
+    "desc": "Author a HyperFrames slideshow — a presentation, pitch deck, or interactive deck with discrete slides, fragment reveals, branching, hotspot navigation, and…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/slideshow",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill slideshow",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui388252962119",
+    "name": "Reddit Automation",
+    "author": "flowkit-labs",
+    "desc": "Find Reddit threads where people are genuinely asking for what you offer, then draft short, genuinely helpful replies — disclosing your affiliation honestly…",
+    "url": "https://www.skills.sh/flowkit-labs/skills/reddit-automation",
+    "install": "npx skills add https://github.com/flowkit-labs/skills --skill reddit-automation",
+    "owner": "flowkit-labs"
+  },
+  {
+    "id": "ui195973842420",
+    "name": "Music To Video",
+    "author": "heygen-com",
+    "desc": "Turn a music track (an audio file, a video to pull audio from, or a track generated from a mood brief) into a beat-synced video — lyric video, slideshow, or…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/music-to-video",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill music-to-video",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui100731260921",
+    "name": "Xlsx",
+    "author": "anthropics",
+    "desc": "Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, read, edit, or fix an existing…",
+    "url": "https://www.skills.sh/anthropics/skills/xlsx",
+    "install": "npx skills add https://github.com/anthropics/skills --skill xlsx",
+    "owner": "anthropics"
+  },
+  {
+    "id": "ui141811336922",
+    "name": "Orca Cli",
+    "author": "stablyai",
+    "desc": "Use the public `orca` CLI to operate Orca-managed worktrees, folder contexts, terminals, repos, automations, artifacts, skill sharing, worktree comments, and…",
+    "url": "https://www.skills.sh/stablyai/orca/orca-cli",
+    "install": "npx skills add https://github.com/stablyai/orca --skill orca-cli",
+    "owner": "stablyai"
+  },
+  {
+    "id": "ui89317903823",
+    "name": "Receiving Code Review",
+    "author": "obra",
+    "desc": "Use when receiving code review feedback, before implementing suggestions, especially if feedback seems unclear or technically questionable - requires technical…",
+    "url": "https://www.skills.sh/obra/superpowers/receiving-code-review",
+    "install": "npx skills add https://github.com/obra/superpowers --skill receiving-code-review",
+    "owner": "obra"
+  },
+  {
+    "id": "ui29853038124",
+    "name": "Pr To Video",
+    "author": "heygen-com",
+    "desc": "Turn a GitHub pull request (a PR URL, owner/repo#N, or 'this PR' in a checked-out repo) into a code-change explainer video — changelog, feature reveal, fix, or…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/pr-to-video",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill pr-to-video",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui158923082125",
+    "name": "Ai Video Generation",
+    "author": "genmedia-labs",
+    "desc": "Generate AI videos on RunComfy via the `runcomfy` CLI — a smart router across the full video-model catalog: HappyHorse 1.0 (Arena #1, native in-pass audio),…",
+    "url": "https://www.skills.sh/genmedia-labs/skills/ai-video-generation",
+    "install": "npx skills add https://github.com/genmedia-labs/skills --skill ai-video-generation",
+    "owner": "genmedia-labs"
+  },
+  {
+    "id": "ui100671917626",
+    "name": "Docx",
+    "author": "anthropics",
+    "desc": "Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files) or Word templates (.dotx files). Triggers include: any…",
+    "url": "https://www.skills.sh/anthropics/skills/docx",
+    "install": "npx skills add https://github.com/anthropics/skills --skill docx",
+    "owner": "anthropics"
+  },
+  {
+    "id": "ui405035863427",
+    "name": "Pdf",
+    "author": "anthropics",
+    "desc": "Use this skill whenever the user wants to do anything with PDF files. This includes reading or extracting text/tables from PDFs, combining or merging multiple…",
+    "url": "https://www.skills.sh/anthropics/skills/pdf",
+    "install": "npx skills add https://github.com/anthropics/skills --skill pdf",
+    "owner": "anthropics"
+  },
+  {
+    "id": "ui12433991028",
+    "name": "Claude Handoff",
+    "author": "mattpocock",
+    "desc": "Hand the current conversation off to a fresh background agent that picks up the work immediately.",
+    "url": "https://www.skills.sh/mattpocock/skills/claude-handoff",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill claude-handoff",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui13125974029",
+    "name": "Copywriting",
+    "author": "coreyhaines31",
+    "desc": "When the user wants to write, rewrite, or improve marketing copy for any page — including homepage, landing pages, pricing pages, feature pages, about pages,…",
+    "url": "https://www.skills.sh/coreyhaines31/marketingskills/copywriting",
+    "install": "npx skills add https://github.com/coreyhaines31/marketingskills --skill copywriting",
+    "owner": "coreyhaines31"
+  },
+  {
+    "id": "ui84472442130",
+    "name": "Verification Before Completion",
+    "author": "obra",
+    "desc": "Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output…",
+    "url": "https://www.skills.sh/obra/superpowers/verification-before-completion",
+    "install": "npx skills add https://github.com/obra/superpowers --skill verification-before-completion",
+    "owner": "obra"
+  },
+  {
+    "id": "ui58573923131",
+    "name": "Lark Note",
+    "author": "larksuite",
+    "desc": "仅当用户或上游配置显式指定 lark-note 时使用，相关请求统一交由 lark-meeting 技能处理。",
+    "url": "https://www.skills.sh/larksuite/cli/lark-note",
+    "install": "npx skills add https://github.com/larksuite/cli --skill lark-note",
+    "owner": "larksuite"
+  },
+  {
+    "id": "ui283237190032",
+    "name": "Embedded Captions",
+    "author": "heygen-com",
+    "desc": "Add captions or subtitles to an existing single-subject talking-head video without editing the footage. Use for plain verbatim captions, cinematic captions…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/embedded-captions",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill embedded-captions",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui24607262133",
+    "name": "Subagent Driven Development",
+    "author": "obra",
+    "desc": "Use when executing implementation plans with independent tasks in the current session",
+    "url": "https://www.skills.sh/obra/superpowers/subagent-driven-development",
+    "install": "npx skills add https://github.com/obra/superpowers --skill subagent-driven-development",
+    "owner": "obra"
+  },
+  {
+    "id": "ui361203775134",
+    "name": "Design Taste Frontend V1",
+    "author": "leonxlnx",
+    "desc": "The original v1 taste-skill, preserved for projects depending on its exact behavior. The current default is `design-taste-frontend` (v2 experimental), which is…",
+    "url": "https://www.skills.sh/leonxlnx/taste-skill/design-taste-frontend-v1",
+    "install": "npx skills add https://github.com/leonxlnx/taste-skill --skill design-taste-frontend-v1",
+    "owner": "leonxlnx"
+  },
+  {
+    "id": "ui339990295935",
+    "name": "Executing Plans",
+    "author": "obra",
+    "desc": "Use when you have a written implementation plan to execute in a separate session with review checkpoints",
+    "url": "https://www.skills.sh/obra/superpowers/executing-plans",
+    "install": "npx skills add https://github.com/obra/superpowers --skill executing-plans",
+    "owner": "obra"
+  },
+  {
+    "id": "ui44153819036",
+    "name": "Motion Graphics",
+    "author": "heygen-com",
+    "desc": "A short, design-led motion graphic where motion is the message — kinetic typography, stat count-up, chart/data-viz hit, logo sting / brand lockup, lower-third…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/motion-graphics",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill motion-graphics",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui288524010937",
+    "name": "Seo Audit",
+    "author": "coreyhaines31",
+    "desc": "When the user wants to audit, review, or diagnose SEO issues on their site. Also use when the user mentions \"SEO audit,\" \"technical SEO,\" \"why am I not…",
+    "url": "https://www.skills.sh/coreyhaines31/marketingskills/seo-audit",
+    "install": "npx skills add https://github.com/coreyhaines31/marketingskills --skill seo-audit",
+    "owner": "coreyhaines31"
+  },
+  {
+    "id": "ui324927608838",
+    "name": "Qa",
+    "author": "mattpocock",
+    "desc": "Interactive QA session where user reports bugs or issues conversationally, and the agent files GitHub issues. Explores the codebase in the background for…",
+    "url": "https://www.skills.sh/mattpocock/skills/qa",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill qa",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui355856558839",
+    "name": "Vercel React Native Skills",
+    "author": "vercel-labs",
+    "desc": "React Native and Expo best practices for building performant mobile apps. Use when building React Native components, optimizing list performance, implementing…",
+    "url": "https://www.skills.sh/vercel-labs/agent-skills/vercel-react-native-skills",
+    "install": "npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-native-skills",
+    "owner": "vercel-labs"
+  },
+  {
+    "id": "ui301672288040",
+    "name": "Test Driven Development",
+    "author": "obra",
+    "desc": "Use when implementing any feature or bugfix, before writing implementation code",
+    "url": "https://www.skills.sh/obra/superpowers/test-driven-development",
+    "install": "npx skills add https://github.com/obra/superpowers --skill test-driven-development",
+    "owner": "obra"
+  },
+  {
+    "id": "ui378990598541",
+    "name": "Faceless Explainer",
+    "author": "heygen-com",
+    "desc": "Turn arbitrary text — an article, notes, a topic, a brief — into a faceless explainer video: there is no site or footage to capture, so the visuals are…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/faceless-explainer",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill faceless-explainer",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui131537915042",
+    "name": "Request Refactor Plan",
+    "author": "mattpocock",
+    "desc": "Create a detailed refactor plan with tiny commits via user interview, then file it as a GitHub issue. Use when user wants to plan a refactor, create a…",
+    "url": "https://www.skills.sh/mattpocock/skills/request-refactor-plan",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill request-refactor-plan",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui267920029443",
+    "name": "Product Launch Video",
+    "author": "heygen-com",
+    "desc": "Turn a product or marketing URL, pasted script, or brief into a product launch / promo video — SaaS promos, feature reveals, product demos, app and company…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/product-launch-video",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill product-launch-video",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui335236542244",
+    "name": "Azure Cost Optimization",
+    "author": "microsoft",
+    "desc": "Identify Azure cost savings from usage and spending data. USE FOR: optimize Azure costs, reduce Azure spending/expenses, analyze Azure costs, find cost…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/azure-cost-optimization",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill azure-cost-optimization",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui236391601245",
+    "name": "Loop Me",
+    "author": "mattpocock",
+    "desc": "Grill me about specs for the workflows I want to build, within this workspace.",
+    "url": "https://www.skills.sh/mattpocock/skills/loop-me",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill loop-me",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui346708646446",
+    "name": "Design An Interface",
+    "author": "mattpocock",
+    "desc": "Generate multiple radically different interface designs for a module using parallel sub-agents. Use when user wants to design an API, explore interface…",
+    "url": "https://www.skills.sh/mattpocock/skills/design-an-interface",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill design-an-interface",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui273468732447",
+    "name": "General Video",
+    "author": "heygen-com",
+    "desc": "Author or edit a custom HyperFrames composition when no specialized workflow fits, or when BRIEF.md sets flow: companion. Use for longer or multi-scene pieces,…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/general-video",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill general-video",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui257171994148",
+    "name": "Caveman",
+    "author": "mattpocock",
+    "desc": "Ultra-compressed communication mode. Cuts token usage ~75% by dropping filler, articles, and pleasantries while keeping full technical accuracy. Use when user…",
+    "url": "https://www.skills.sh/mattpocock/skills/caveman",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill caveman",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui100707815649",
+    "name": "Pptx",
+    "author": "anthropics",
+    "desc": "Use this skill any time a .pptx or .potx file is involved in any way — as input, output, or both. This includes: creating slide decks, pitch decks, or…",
+    "url": "https://www.skills.sh/anthropics/skills/pptx",
+    "install": "npx skills add https://github.com/anthropics/skills --skill pptx",
+    "owner": "anthropics"
+  },
+  {
+    "id": "ui118905258750",
+    "name": "Requesting Code Review",
+    "author": "obra",
+    "desc": "Use when completing tasks, implementing major features, or before merging to verify work meets requirements",
+    "url": "https://www.skills.sh/obra/superpowers/requesting-code-review",
+    "install": "npx skills add https://github.com/obra/superpowers --skill requesting-code-review",
+    "owner": "obra"
+  },
+  {
+    "id": "ui24122473651",
+    "name": "Using Superpowers",
+    "author": "obra",
+    "desc": "Use when starting any conversation - establishes how to find and use skills, requiring skill invocation before ANY response including clarifying questions",
+    "url": "https://www.skills.sh/obra/superpowers/using-superpowers",
+    "install": "npx skills add https://github.com/obra/superpowers --skill using-superpowers",
+    "owner": "obra"
+  },
+  {
+    "id": "ui408530698352",
+    "name": "Prisma Postgres Setup",
+    "author": "prisma",
+    "desc": "Set up a new Prisma Postgres database and connect it to a local project using the Management API. Use when asked to \"set up a database\", \"create a Prisma…",
+    "url": "https://www.skills.sh/prisma/skills/prisma-postgres-setup",
+    "install": "npx skills add https://github.com/prisma/skills --skill prisma-postgres-setup",
+    "owner": "prisma"
+  },
+  {
+    "id": "ui345950495753",
+    "name": "Prisma Mongodb Upgrade",
+    "author": "prisma",
+    "desc": "Decision and migration guide for Prisma ORM MongoDB projects on v6, which have no upgrade path to v7. Use when a MongoDB project asks about upgrading Prisma,…",
+    "url": "https://www.skills.sh/prisma/skills/prisma-mongodb-upgrade",
+    "install": "npx skills add https://github.com/prisma/skills --skill prisma-mongodb-upgrade",
+    "owner": "prisma"
+  },
+  {
+    "id": "ui318869252154",
+    "name": "Zoom Out",
+    "author": "mattpocock",
+    "desc": "Tell the agent to zoom out and give broader context or a higher-level perspective. Use when you're unfamiliar with a section of code or need to understand how…",
+    "url": "https://www.skills.sh/mattpocock/skills/zoom-out",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill zoom-out",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui308033437855",
+    "name": "Prisma Driver Adapter Implementation",
+    "author": "prisma",
+    "desc": "Required reference for Prisma ORM 7 SQL driver adapter work. Use when implementing or modifying adapters, adding database drivers, or touching…",
+    "url": "https://www.skills.sh/prisma/skills/prisma-driver-adapter-implementation",
+    "install": "npx skills add https://github.com/prisma/skills --skill prisma-driver-adapter-implementation",
+    "owner": "prisma"
+  },
+  {
+    "id": "ui189586914256",
+    "name": "Prisma Upgrade V7",
+    "author": "prisma",
+    "desc": "Complete migration guide from Prisma ORM v6 to v7 covering all breaking changes. Use when upgrading Prisma versions, encountering v7 errors, or migrating…",
+    "url": "https://www.skills.sh/prisma/skills/prisma-upgrade-v7",
+    "install": "npx skills add https://github.com/prisma/skills --skill prisma-upgrade-v7",
+    "owner": "prisma"
+  },
+  {
+    "id": "ui44649218557",
+    "name": "Writing Plans",
+    "author": "obra",
+    "desc": "Use when you have a spec or requirements for a multi-step task, before touching code",
+    "url": "https://www.skills.sh/obra/superpowers/writing-plans",
+    "install": "npx skills add https://github.com/obra/superpowers --skill writing-plans",
+    "owner": "obra"
+  },
+  {
+    "id": "ui202514055258",
+    "name": "Azure Reliability",
+    "author": "microsoft",
+    "desc": "Assess and improve the reliability posture of PaaS Applications (Azure Functions and Azure App Service). Scans deployed resources for zone redundancy, ZRS…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/azure-reliability",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill azure-reliability",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui161079898659",
+    "name": "Prisma Postgres",
+    "author": "prisma",
+    "desc": "Prisma Postgres setup and operations guidance across Console, create-db CLI, Management API, and Management API SDK. Use when creating Prisma Postgres…",
+    "url": "https://www.skills.sh/prisma/skills/prisma-postgres",
+    "install": "npx skills add https://github.com/prisma/skills --skill prisma-postgres",
+    "owner": "prisma"
+  },
+  {
+    "id": "ui151880072060",
+    "name": "Hyperframes Keyframes",
+    "author": "heygen-com",
+    "desc": "Use when a HyperFrames composition needs a punch-in, punch-out, zoom, reframe, Ken Burns treatment, camera move, visual match/whip handoff, or other seek-safe…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/hyperframes-keyframes",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill hyperframes-keyframes",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui378788004761",
+    "name": "Prisma Cli",
+    "author": "prisma",
+    "desc": "Prisma ORM CLI commands reference covering init, generate, migrate, db, dev, complete, studio, validate, format, debug, and mcp. Use for ORM/database CLI…",
+    "url": "https://www.skills.sh/prisma/skills/prisma-cli",
+    "install": "npx skills add https://github.com/prisma/skills --skill prisma-cli",
+    "owner": "prisma"
+  },
+  {
+    "id": "ui42383719062",
+    "name": "Prisma Compute",
+    "author": "prisma",
+    "desc": "Prisma Compute deployment and hosting guide. Use whenever the user mentions Prisma Compute, `prisma.compute.ts`, `defineComputeConfig`, deploying or hosting a…",
+    "url": "https://www.skills.sh/prisma/skills/prisma-compute",
+    "install": "npx skills add https://github.com/prisma/skills --skill prisma-compute",
+    "owner": "prisma"
+  },
+  {
+    "id": "ui206749040663",
+    "name": "Diagnose",
+    "author": "mattpocock",
+    "desc": "Disciplined diagnosis loop for hard bugs and performance regressions. Reproduce → minimise → hypothesise → instrument → fix → regression-test. Use when user…",
+    "url": "https://www.skills.sh/mattpocock/skills/diagnose",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill diagnose",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui70099765464",
+    "name": "Prisma Client Api",
+    "author": "prisma",
+    "desc": "Prisma Client API reference covering model queries, filters, operators, and client methods. Use when writing database queries, using CRUD operations, filtering…",
+    "url": "https://www.skills.sh/prisma/skills/prisma-client-api",
+    "install": "npx skills add https://github.com/prisma/skills --skill prisma-client-api",
+    "owner": "prisma"
+  },
+  {
+    "id": "ui156359877565",
+    "name": "Systematic Debugging",
+    "author": "obra",
+    "desc": "Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes",
+    "url": "https://www.skills.sh/obra/superpowers/systematic-debugging",
+    "install": "npx skills add https://github.com/obra/superpowers --skill systematic-debugging",
+    "owner": "obra"
+  },
+  {
+    "id": "ui284470653766",
+    "name": "Write A Skill",
+    "author": "mattpocock",
+    "desc": "Create new agent skills with proper structure, progressive disclosure, and bundled resources. Use when user wants to create, write, or build a new skill.",
+    "url": "https://www.skills.sh/mattpocock/skills/write-a-skill",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill write-a-skill",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui202008445767",
+    "name": "Prisma Database Setup",
+    "author": "prisma",
+    "desc": "Guides for configuring Prisma with different database providers (PostgreSQL, MySQL, SQLite, MongoDB, etc.). Use when setting up a new project, changing…",
+    "url": "https://www.skills.sh/prisma/skills/prisma-database-setup",
+    "install": "npx skills add https://github.com/prisma/skills --skill prisma-database-setup",
+    "owner": "prisma"
+  },
+  {
+    "id": "ui231128516768",
+    "name": "Supabase",
+    "author": "supabase",
+    "desc": "Use when doing ANY task involving Supabase. Triggers: Supabase products (Database, Auth, Edge Functions, Realtime, Storage, Vectors, Cron, Queues); client…",
+    "url": "https://www.skills.sh/supabase/agent-skills/supabase",
+    "install": "npx skills add https://github.com/supabase/agent-skills --skill supabase",
+    "owner": "supabase"
+  },
+  {
+    "id": "ui149432936369",
+    "name": "Wizard",
+    "author": "mattpocock",
+    "desc": "Generate an interactive bash wizard that walks a human through steps only they can perform. Use when provisioning infrastructure, setting up credentials or CI…",
+    "url": "https://www.skills.sh/mattpocock/skills/wizard",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill wizard",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui420712309970",
+    "name": "Just Scrape",
+    "author": "scrapegraphai",
+    "desc": "Search, scrape, crawl, extract structured data, and monitor web pages via the ScrapeGraph AI CLI. Use when the user asks to search the web, scrape a webpage,…",
+    "url": "https://www.skills.sh/scrapegraphai/just-scrape/just-scrape",
+    "install": "npx skills add https://github.com/scrapegraphai/just-scrape --skill just-scrape",
+    "owner": "scrapegraphai"
+  },
+  {
+    "id": "ui333871286171",
+    "name": "Remotion To Hyperframes",
+    "author": "heygen-com",
+    "desc": "Port an existing Remotion (React) composition's source to HyperFrames HTML. Use ONLY on an explicit ask to port/convert/migrate/translate a Remotion source —…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/remotion-to-hyperframes",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill remotion-to-hyperframes",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui93699922072",
+    "name": "Image To Code",
+    "author": "leonxlnx",
+    "desc": "Elite website image-to-code skill for Codex. For visually important web tasks, it must first generate the design image(s) itself, deeply analyze them, then…",
+    "url": "https://www.skills.sh/leonxlnx/taste-skill/image-to-code",
+    "install": "npx skills add https://github.com/leonxlnx/taste-skill --skill image-to-code",
+    "owner": "leonxlnx"
+  },
+  {
+    "id": "ui76490972173",
+    "name": "Scaffold Exercises",
+    "author": "mattpocock",
+    "desc": "Create exercise directory structures with sections, problems, solutions, and explainers that pass linting. Use when user wants to scaffold exercises, create…",
+    "url": "https://www.skills.sh/mattpocock/skills/scaffold-exercises",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill scaffold-exercises",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui36510092774",
+    "name": "Setup Pre Commit",
+    "author": "mattpocock",
+    "desc": "Set up Husky pre-commit hooks with lint-staged (Prettier), type checking, and tests in the current repo. Use when user wants to add pre-commit hooks, set up…",
+    "url": "https://www.skills.sh/mattpocock/skills/setup-pre-commit",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill setup-pre-commit",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui36441666875",
+    "name": "Caveman Stats",
+    "author": "juliusbrussee",
+    "desc": "Show real token usage and estimated savings for the current session. Reads directly from the Claude Code session log — no AI estimation. Triggers on…",
+    "url": "https://www.skills.sh/juliusbrussee/caveman/caveman-stats",
+    "install": "npx skills add https://github.com/juliusbrussee/caveman --skill caveman-stats",
+    "owner": "juliusbrussee"
+  },
+  {
+    "id": "ui38501487776",
+    "name": "Entra Agent Id",
+    "author": "microsoft",
+    "desc": "Provision Microsoft Entra Agent Identity Blueprints, BlueprintPrincipals, and per-instance Agent Identities via Microsoft Graph, and configure OAuth 2.0 token…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/entra-agent-id",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill entra-agent-id",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui32621193777",
+    "name": "Git Guardrails Claude Code",
+    "author": "mattpocock",
+    "desc": "Set up Claude Code hooks to block dangerous git commands (push, reset --hard, clean, branch -D, etc.) before they execute. Use when user wants to prevent…",
+    "url": "https://www.skills.sh/mattpocock/skills/git-guardrails-claude-code",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill git-guardrails-claude-code",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui58535279978",
+    "name": "Lark Apps",
+    "author": "larksuite",
+    "desc": "妙搭（Spark/Miaoda）应用开发与托管：应用创建、本地全栈开发、云端生成迭代、创意设计（UI mockup / 可交互原型 / 线框图 / 落地页 / 仪表盘 / 幻灯片 deck / 视觉探索）、AI相关能力和飞书平台能力或者其他外部能力集成、日志/Trace/监控指标/PV/UV…",
+    "url": "https://www.skills.sh/larksuite/cli/lark-apps",
+    "install": "npx skills add https://github.com/larksuite/cli --skill lark-apps",
+    "owner": "larksuite"
+  },
+  {
+    "id": "ui308483467579",
+    "name": "Airunway Aks Setup",
+    "author": "microsoft",
+    "desc": "Set up AI Runway on AKS — from bare cluster to running model. Covers cluster verification, controller install, GPU assessment, provider setup, and first…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/airunway-aks-setup",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill airunway-aks-setup",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui72436102280",
+    "name": "Cavecrew",
+    "author": "juliusbrussee",
+    "desc": "Decision guide for delegating to caveman-style subagents. Tells the main thread WHEN to spawn `cavecrew-investigator` (locate code), `cavecrew-builder` (1-2…",
+    "url": "https://www.skills.sh/juliusbrussee/caveman/cavecrew",
+    "install": "npx skills add https://github.com/juliusbrussee/caveman --skill cavecrew",
+    "owner": "juliusbrussee"
+  },
+  {
+    "id": "ui361976692781",
+    "name": "Vercel Composition Patterns",
+    "author": "vercel-labs",
+    "desc": "React composition patterns that scale. Use when refactoring components with boolean prop proliferation, building flexible component libraries, or designing…",
+    "url": "https://www.skills.sh/vercel-labs/agent-skills/vercel-composition-patterns",
+    "install": "npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-composition-patterns",
+    "owner": "vercel-labs"
+  },
+  {
+    "id": "ui250526557282",
+    "name": "Caveman Help",
+    "author": "juliusbrussee",
+    "desc": "Quick-reference card for all caveman modes, skills, and commands. One-shot display, not a persistent mode. Trigger: /caveman-help, \"caveman help\", \"what…",
+    "url": "https://www.skills.sh/juliusbrussee/caveman/caveman-help",
+    "install": "npx skills add https://github.com/juliusbrussee/caveman --skill caveman-help",
+    "owner": "juliusbrussee"
+  },
+  {
+    "id": "ui82642054383",
+    "name": "Lark Vc Agent",
+    "author": "larksuite",
+    "desc": "仅当用户或上游配置显式指定 lark-vc-agent 时使用，相关请求统一交由 lark-meeting 技能处理。",
+    "url": "https://www.skills.sh/larksuite/cli/lark-vc-agent",
+    "install": "npx skills add https://github.com/larksuite/cli --skill lark-vc-agent",
+    "owner": "larksuite"
+  },
+  {
+    "id": "ui266511487584",
+    "name": "Caveman Review",
+    "author": "juliusbrussee",
+    "desc": "Ultra-compressed code review comments. Cuts noise from PR feedback while preserving the actionable signal. Each comment is one line: location, problem, fix.…",
+    "url": "https://www.skills.sh/juliusbrussee/caveman/caveman-review",
+    "install": "npx skills add https://github.com/juliusbrussee/caveman --skill caveman-review",
+    "owner": "juliusbrussee"
+  },
+  {
+    "id": "ui318765804885",
+    "name": "Ai Research Explore",
+    "author": "lllllllama",
+    "desc": "Rigor Explore compatible skill slug for meaningful and potentially novel deep learning research candidates. Use when the researcher has chosen the task family,…",
+    "url": "https://www.skills.sh/lllllllama/rigorpilot-skills/ai-research-explore",
+    "install": "npx skills add https://github.com/lllllllama/rigorpilot-skills --skill ai-research-explore",
+    "owner": "lllllllama"
+  },
+  {
+    "id": "ui103681338186",
+    "name": "Caveman Compress",
+    "author": "juliusbrussee",
+    "desc": "Compress natural language memory files (CLAUDE.md, todos, preferences) into caveman format to save input tokens. Preserves all technical substance, code, URLs,…",
+    "url": "https://www.skills.sh/juliusbrussee/caveman/caveman-compress",
+    "install": "npx skills add https://github.com/juliusbrussee/caveman --skill caveman-compress",
+    "owner": "juliusbrussee"
+  },
+  {
+    "id": "ui39206163687",
+    "name": "Hyperframes Creative",
+    "author": "heygen-com",
+    "desc": "Non-animation creative direction for HyperFrames videos. Use for design spec (frame.md / design.md) handling, palettes, typography, narration, beat planning,…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/hyperframes-creative",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill hyperframes-creative",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui76590556988",
+    "name": "Writing Great Skills",
+    "author": "mattpocock",
+    "desc": "Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable.",
+    "url": "https://www.skills.sh/mattpocock/skills/writing-great-skills",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill writing-great-skills",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui224464866689",
+    "name": "Caveman Commit",
+    "author": "juliusbrussee",
+    "desc": "Ultra-compressed commit message generator. Cuts noise from commit messages while preserving intent and reasoning. Conventional Commits format. Subject ≤50…",
+    "url": "https://www.skills.sh/juliusbrussee/caveman/caveman-commit",
+    "install": "npx skills add https://github.com/juliusbrussee/caveman --skill caveman-commit",
+    "owner": "juliusbrussee"
+  },
+  {
+    "id": "ui290273545290",
+    "name": "Lark Markdown",
+    "author": "larksuite",
+    "desc": "飞书 Markdown：查看、创建、上传、编辑和比较 Markdown 文件。当用户需要创建或编辑 Markdown 文件、读取、修改、局部 patch 或比较差异时使用。不负责将 Markdown 导入为飞书在线文档，也不负责文件搜索、权限、评论、移动、删除等云空间管理操作。",
+    "url": "https://www.skills.sh/larksuite/cli/lark-markdown",
+    "install": "npx skills add https://github.com/larksuite/cli --skill lark-markdown",
+    "owner": "larksuite"
+  },
+  {
+    "id": "ui99193776491",
+    "name": "Media Use",
+    "author": "heygen-com",
+    "desc": "Agent Media OS, the single skill for every media need in a HyperFrames project. Resolve BGM, SFX, image, icon, brand logo, voice, color grade, or LUT into a…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/media-use",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill media-use",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui20568197292",
+    "name": "Hyperframes Core",
+    "author": "heygen-com",
+    "desc": "The HyperFrames composition contract — build one renderable project. Use for composition structure, the `data-*` timing attributes, `class=\"clip\"`, tracks,…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/hyperframes-core",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill hyperframes-core",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui129703735293",
+    "name": "Ace Step",
+    "author": "prime-skills",
+    "desc": "Generate, inpaint, and outpaint music with ACE Step on RunComfy via the `runcomfy` CLI. ACE Step is StepFun-AI's open-weights music foundation model —…",
+    "url": "https://www.skills.sh/prime-skills/runcomfy-agent-skills/ace-step",
+    "install": "npx skills add https://github.com/prime-skills/runcomfy-agent-skills --skill ace-step",
+    "owner": "prime-skills"
+  },
+  {
+    "id": "ui226339104294",
+    "name": "Brainstorming",
+    "author": "obra",
+    "desc": "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent,…",
+    "url": "https://www.skills.sh/obra/superpowers/brainstorming",
+    "install": "npx skills add https://github.com/obra/superpowers --skill brainstorming",
+    "owner": "obra"
+  },
+  {
+    "id": "ui408397697595",
+    "name": "Hyperframes Animation",
+    "author": "heygen-com",
+    "desc": "All animation knowledge for HyperFrames — atomic motion rules, multi-phase scene blueprints, scene transitions, broader motion-design techniques, AND the seven…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/hyperframes-animation",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill hyperframes-animation",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui42285057296",
+    "name": "Ai Music",
+    "author": "prime-skills",
+    "desc": "Generate AI music on RunComfy via the `runcomfy` CLI — a smart router across the music-model catalog. Routes to ElevenLabs AI Music Generation (premium 44.1…",
+    "url": "https://www.skills.sh/prime-skills/runcomfy-agent-skills/ai-music",
+    "install": "npx skills add https://github.com/prime-skills/runcomfy-agent-skills --skill ai-music",
+    "owner": "prime-skills"
+  },
+  {
+    "id": "ui348442585597",
+    "name": "Azure Cost",
+    "author": "microsoft",
+    "desc": "Azure cost management: query costs, forecast spending, optimize to reduce waste. WHEN: \"Azure costs\", \"Azure bill\", \"cost breakdown\", \"how much am I spending\",…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/azure-cost",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill azure-cost",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui259760039798",
+    "name": "Video Inpainting",
+    "author": "prime-skills",
+    "desc": "Region edits across video frames on RunComfy via the `runcomfy` CLI — remove an object that appears across many frames, clean up wires or watermarks, replace a…",
+    "url": "https://www.skills.sh/prime-skills/runcomfy-agent-skills/video-inpainting",
+    "install": "npx skills add https://github.com/prime-skills/runcomfy-agent-skills --skill video-inpainting",
+    "owner": "prime-skills"
+  },
+  {
+    "id": "ui145235803899",
+    "name": "Ai Video Generation",
+    "author": "prime-skills",
+    "desc": "Generate AI videos on RunComfy via the `runcomfy` CLI — a smart router across the full video-model catalog: HappyHorse 1.0 (Arena #1, native in-pass audio),…",
+    "url": "https://www.skills.sh/prime-skills/runcomfy-agent-skills/ai-video-generation",
+    "install": "npx skills add https://github.com/prime-skills/runcomfy-agent-skills --skill ai-video-generation",
+    "owner": "prime-skills"
+  },
+  {
+    "id": "ui873650358100",
+    "name": "Ai Image Generation",
+    "author": "prime-skills",
+    "desc": "Generate and edit images on RunComfy via the `runcomfy` CLI — a smart router across the full image-model catalog: FLUX 2 (Klein 9B/4B, Pro, Dev, Flash, Turbo,…",
+    "url": "https://www.skills.sh/prime-skills/runcomfy-agent-skills/ai-image-generation",
+    "install": "npx skills add https://github.com/prime-skills/runcomfy-agent-skills --skill ai-image-generation",
+    "owner": "prime-skills"
+  },
+  {
+    "id": "ui3621126281101",
+    "name": "Lark Okr",
+    "author": "larksuite",
+    "desc": "飞书 OKR：管理目标与关键结果。查看和编辑 OKR 周期、目标、关键结果、对齐关系、量化指标和进展记录。当用户需要查看或创建 OKR、管理目标和关键结果、查看对齐关系时使用。不负责：待办任务管理（lark-task）、日程/会议安排（lark-calendar）、绩效评估",
+    "url": "https://www.skills.sh/larksuite/cli/lark-okr",
+    "install": "npx skills add https://github.com/larksuite/cli --skill lark-okr",
+    "owner": "larksuite"
+  },
+  {
+    "id": "ui2907339030102",
+    "name": "Lark Attendance",
+    "author": "larksuite",
+    "desc": "飞书考勤打卡：查询自己的考勤打卡记录",
+    "url": "https://www.skills.sh/larksuite/cli/lark-attendance",
+    "install": "npx skills add https://github.com/larksuite/cli --skill lark-attendance",
+    "owner": "larksuite"
+  },
+  {
+    "id": "ui3522277234103",
+    "name": "Supabase Postgres Best Practices",
+    "author": "supabase",
+    "desc": "Postgres best practices maintained by Supabase, for Postgres running anywhere. Load this skill BEFORE writing or changing anything that lives in a Postgres…",
+    "url": "https://www.skills.sh/supabase/agent-skills/supabase-postgres-best-practices",
+    "install": "npx skills add https://github.com/supabase/agent-skills --skill supabase-postgres-best-practices",
+    "owner": "supabase"
+  },
+  {
+    "id": "ui3008256730104",
+    "name": "Resolving Merge Conflicts",
+    "author": "mattpocock",
+    "desc": "Use when you need to resolve an in-progress git merge/rebase conflict.",
+    "url": "https://www.skills.sh/mattpocock/skills/resolving-merge-conflicts",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill resolving-merge-conflicts",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui2762431403105",
+    "name": "Codex Pet",
+    "author": "prime-skills",
+    "desc": "Codex Pet generator on RunComfy. Build a Codex-compatible Codex Pet spritesheet.webp + pet.json from a single reference image, drop it into…",
+    "url": "https://www.skills.sh/prime-skills/runcomfy-agent-skills/codex-pet",
+    "install": "npx skills add https://github.com/prime-skills/runcomfy-agent-skills --skill codex-pet",
+    "owner": "prime-skills"
+  },
+  {
+    "id": "ui2658977002106",
+    "name": "To Tickets",
+    "author": "mattpocock",
+    "desc": "Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the configured tracker…",
+    "url": "https://www.skills.sh/mattpocock/skills/to-tickets",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill to-tickets",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui754823125107",
+    "name": "Skill Creator",
+    "author": "anthropics",
+    "desc": "Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, edit, or optimize an…",
+    "url": "https://www.skills.sh/anthropics/skills/skill-creator",
+    "install": "npx skills add https://github.com/anthropics/skills --skill skill-creator",
+    "owner": "anthropics"
+  },
+  {
+    "id": "ui373083660108",
+    "name": "Twitter Automation",
+    "author": "skills-101",
+    "desc": "Automate Twitter/X with posting, engagement, and user management via inference.sh CLI. Apps: x/post-tweet, x/post-create (with media), x/post-like,…",
+    "url": "https://www.skills.sh/skills-101/superpowers/twitter-automation",
+    "install": "npx skills add https://github.com/skills-101/superpowers --skill twitter-automation",
+    "owner": "skills-101"
+  },
+  {
+    "id": "ui801218712109",
+    "name": "To Spec",
+    "author": "mattpocock",
+    "desc": "Turn the current conversation into a spec and publish it to the project issue tracker: no interview, just synthesis of what you've already discussed.",
+    "url": "https://www.skills.sh/mattpocock/skills/to-spec",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill to-spec",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui1779690616110",
+    "name": "Azure Kubernetes",
+    "author": "microsoft",
+    "desc": "Plan, create, and configure production-ready Azure Kubernetes Service (AKS) clusters. Covers Day-0 checklist, SKU selection (Automatic vs Standard), networking…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/azure-kubernetes",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill azure-kubernetes",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui3848689604111",
+    "name": "Ai Avatar Video",
+    "author": "skills-101",
+    "desc": "Create AI avatar and talking head videos via inference.sh CLI. Recommended: P-Video-Avatar (fastest, cheapest, built-in TTS). Also: OmniHuman, Fabric,…",
+    "url": "https://www.skills.sh/skills-101/superpowers/ai-avatar-video",
+    "install": "npx skills add https://github.com/skills-101/superpowers --skill ai-avatar-video",
+    "owner": "skills-101"
+  },
+  {
+    "id": "ui673222317112",
+    "name": "Ai Video Generation",
+    "author": "skills-101",
+    "desc": "Generate AI videos with Google Veo, Seedance 2.0, HappyHorse, Wan, Grok and 40+ models via inference.sh CLI. Models: Veo 3.1, Veo 3, Seedance 2.0, HappyHorse…",
+    "url": "https://www.skills.sh/skills-101/superpowers/ai-video-generation",
+    "install": "npx skills add https://github.com/skills-101/superpowers --skill ai-video-generation",
+    "owner": "skills-101"
+  },
+  {
+    "id": "ui638686661113",
+    "name": "Kling 3 0",
+    "author": "prime-skills",
+    "desc": "Kling 3.0 video generation on RunComfy. Kling 3.0 (also called Kling V3.0) is Kuaishou Technology's third-generation multi-shot video model with native…",
+    "url": "https://www.skills.sh/prime-skills/runcomfy-agent-skills/kling-3-0",
+    "install": "npx skills add https://github.com/prime-skills/runcomfy-agent-skills --skill kling-3-0",
+    "owner": "prime-skills"
+  },
+  {
+    "id": "ui394734991114",
+    "name": "Lark Slides",
+    "author": "larksuite",
+    "desc": "飞书幻灯片：创建和编辑幻灯片。创建演示文稿、读取幻灯片内容、管理幻灯片页面（创建、删除、读取、局部替换）。当用户需要创建或编辑幻灯片、读取或修改单个页面时使用。当用户给出 doubao.com 的 /slides/ URL/token 时，也应直接使用本 skill，不要因为域名不是飞书而回退到…",
+    "url": "https://www.skills.sh/larksuite/cli/lark-slides",
+    "install": "npx skills add https://github.com/larksuite/cli --skill lark-slides",
+    "owner": "larksuite"
+  },
+  {
+    "id": "ui1955076675115",
+    "name": "Research",
+    "author": "mattpocock",
+    "desc": "Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo. Use when the user wants a topic researched,…",
+    "url": "https://www.skills.sh/mattpocock/skills/research",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill research",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui2176394066116",
+    "name": "Hyperframes Registry",
+    "author": "heygen-com",
+    "desc": "Install, discover, and wire registry blocks and components into HyperFrames compositions. Use when running hyperframes add or hyperframes catalog, installing…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/hyperframes-registry",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill hyperframes-registry",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui2396576156117",
+    "name": "Lark Note",
+    "author": "site",
+    "desc": "Install the lark-note skill for your AI agent. Published on open.feishu.cn.",
+    "url": "https://www.skills.sh/site/open.feishu.cn/lark-note",
+    "install": "",
+    "owner": "site"
+  },
+  {
+    "id": "ui2715144237118",
+    "name": "Wayfinder",
+    "author": "mattpocock",
+    "desc": "Plan a huge chunk of work (more than one agent session can hold) as a shared map of decision tickets on your issue tracker, and resolve them one at a time…",
+    "url": "https://www.skills.sh/mattpocock/skills/wayfinder",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill wayfinder",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui3446418638119",
+    "name": "Wan 2 7",
+    "author": "prime-skills",
+    "desc": "Generate text-to-video with Wan 2.7 (Wan-AI's flagship motion model) on RunComfy. Documents Wan 2.7's strengths (multi-reference conditioning, audio-driven…",
+    "url": "https://www.skills.sh/prime-skills/runcomfy-agent-skills/wan-2-7",
+    "install": "npx skills add https://github.com/prime-skills/runcomfy-agent-skills --skill wan-2-7",
+    "owner": "prime-skills"
+  },
+  {
+    "id": "ui3841041328120",
+    "name": "Lark Approval",
+    "author": "larksuite",
+    "desc": "飞书审批：查询和处理审批待办/已办/实例，搜索可发起审批定义、查看定义详情并发起原生审批实例。当用户要处理审批任务、查看审批实例、搜索或发起审批时使用。审批待办不是飞书任务；非审批类待办走 lark-task。不负责创建审批定义；三方审批定义不走原生提单。",
+    "url": "https://www.skills.sh/larksuite/cli/lark-approval",
+    "install": "npx skills add https://github.com/larksuite/cli --skill lark-approval",
+    "owner": "larksuite"
+  },
+  {
+    "id": "ui94514637121",
+    "name": "Ai Image Generation",
+    "author": "skills-101",
+    "desc": "Generate AI images with GPT-Image-2, FLUX, Gemini, Grok, Seedream, Reve and 50+ models via inference.sh CLI. Models: GPT-Image-2, FLUX Dev LoRA, FLUX.2 Klein…",
+    "url": "https://www.skills.sh/skills-101/superpowers/ai-image-generation",
+    "install": "npx skills add https://github.com/skills-101/superpowers --skill ai-image-generation",
+    "owner": "skills-101"
+  },
+  {
+    "id": "ui3962753251122",
+    "name": "Gpt Image Edit",
+    "author": "prime-skills",
+    "desc": "Edit images with OpenAI GPT Image 2 (the `/edit` endpoint of ChatGPT Images 2.0) on RunComfy — bundled with the model's documented prompting patterns so the…",
+    "url": "https://www.skills.sh/prime-skills/runcomfy-agent-skills/gpt-image-edit",
+    "install": "npx skills add https://github.com/prime-skills/runcomfy-agent-skills --skill gpt-image-edit",
+    "owner": "prime-skills"
+  },
+  {
+    "id": "ui3377556149123",
+    "name": "Azure Enterprise Infra Planner",
+    "author": "microsoft",
+    "desc": "Architect and provision enterprise Azure infrastructure from workload descriptions. For cloud architects and platform engineers planning networking, identity,…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/azure-enterprise-infra-planner",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill azure-enterprise-infra-planner",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui2477471915124",
+    "name": "Lark Calendar",
+    "author": "larksuite",
+    "desc": "飞书日历：管理日历日程和会议室。查看/搜索日程、创建/更新日程、管理参会人、查询忙闲和推荐时段、预定会议室。当用户需要查看日程安排、创建/修改会议、查询/预定会议室时使用。不负责：查询过去的视频会议记录（走 lark-meeting）、待办任务（走 lark-task）。",
+    "url": "https://www.skills.sh/larksuite/cli/lark-calendar",
+    "install": "npx skills add https://github.com/larksuite/cli --skill lark-calendar",
+    "owner": "larksuite"
+  },
+  {
+    "id": "ui3159956269125",
+    "name": "Azure Quotas",
+    "author": "microsoft",
+    "desc": "Check/manage Azure quotas and usage across providers. For deployment planning, capacity validation, region selection. WHEN: \"check quotas\", \"service limits\",…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/azure-quotas",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill azure-quotas",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui2294039214126",
+    "name": "Video Edit",
+    "author": "prime-skills",
+    "desc": "Edit existing video on RunComfy — this skill is a smart router that matches the user's intent to the right edit model in the RunComfy catalog. Picks Wan 2.7…",
+    "url": "https://www.skills.sh/prime-skills/runcomfy-agent-skills/video-edit",
+    "install": "npx skills add https://github.com/prime-skills/runcomfy-agent-skills --skill video-edit",
+    "owner": "prime-skills"
+  },
+  {
+    "id": "ui2643239747127",
+    "name": "Code Review",
+    "author": "mattpocock",
+    "desc": "Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes: Standards (does the code follow this repo's documented coding…",
+    "url": "https://www.skills.sh/mattpocock/skills/code-review",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill code-review",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui3621115819128",
+    "name": "Lark Doc",
+    "author": "larksuite",
+    "desc": "飞书云文档（Docx / Wiki）内容操作：读取、创建、编辑文档，插入或下载图片附件，以及操作思维笔记。用户提供文档 URL/token（包括 doubao.com 的 /docx/、/wiki/）时使用；按 URL 路径/token 而非域名路由。文档内嵌资源按读取参考中的统一规则分流。独立评论操作走…",
+    "url": "https://www.skills.sh/larksuite/cli/lark-doc",
+    "install": "npx skills add https://github.com/larksuite/cli --skill lark-doc",
+    "owner": "larksuite"
+  },
+  {
+    "id": "ui2459044219129",
+    "name": "Implement",
+    "author": "mattpocock",
+    "desc": "Implement a piece of work based on a spec or set of tickets.",
+    "url": "https://www.skills.sh/mattpocock/skills/implement",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill implement",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui1841485163130",
+    "name": "Hyperframes",
+    "author": "heygen-com",
+    "desc": "Mandatory entry point: read this first for any request to make, create, edit, animate, or render a video, animation, or motion graphic, including a promo,…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/hyperframes",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill hyperframes",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui300470237131",
+    "name": "Caveman",
+    "author": "juliusbrussee",
+    "desc": "Ultra-compressed communication mode. Cuts output tokens 65% (measured) by speaking like caveman while keeping full technical accuracy. Supports intensity…",
+    "url": "https://www.skills.sh/juliusbrussee/caveman/caveman",
+    "install": "npx skills add https://github.com/juliusbrussee/caveman --skill caveman",
+    "owner": "juliusbrussee"
+  },
+  {
+    "id": "ui4157282801132",
+    "name": "Paper Context Resolver",
+    "author": "lllllllama",
+    "desc": "Rigor Paper Context helper for README-first deep learning repo reproduction. Use only when the README and repository files leave a narrow reproduction-critical…",
+    "url": "https://www.skills.sh/lllllllama/rigorpilot-skills/paper-context-resolver",
+    "install": "npx skills add https://github.com/lllllllama/rigorpilot-skills --skill paper-context-resolver",
+    "owner": "lllllllama"
+  },
+  {
+    "id": "ui156074175133",
+    "name": "Azure Hosted Copilot Sdk",
+    "author": "microsoft",
+    "desc": "Build, deploy, and modify GitHub Copilot SDK apps on Azure. MANDATORY when codebase contains @github/copilot-sdk or CopilotClient in package.json. PREFER OVER…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/azure-hosted-copilot-sdk",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill azure-hosted-copilot-sdk",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui1368933454134",
+    "name": "Azure Cloud Migrate",
+    "author": "microsoft",
+    "desc": "Assess and migrate cross-cloud workloads to Azure with reports and code conversion. Supports Lambda→Functions, Beanstalk/Heroku/App Engine→App Service,…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/azure-cloud-migrate",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill azure-cloud-migrate",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui3755492421135",
+    "name": "Azure Compute",
+    "author": "microsoft",
+    "desc": "Azure VM/VMSS router. WHEN: create / provision / deploy / spin-up VM, recommend VM size, compare VM pricing, VMSS, scale set, autoscale, burstable, lightweight…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/azure-compute",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill azure-compute",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui3484859652136",
+    "name": "Azure Rbac",
+    "author": "microsoft",
+    "desc": "Helps users find the right Azure RBAC role for an identity with least privilege access, then generate CLI commands and Bicep code to assign it. Also provides…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/azure-rbac",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill azure-rbac",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui2084844779137",
+    "name": "Hyperframes Cli",
+    "author": "heygen-com",
+    "desc": "Use the HyperFrames CLI development loop: init, add, catalog, capture, lint, check, snapshot, compare, grade-compare, preview, play, present, beats, keyframes,…",
+    "url": "https://www.skills.sh/heygen-com/hyperframes/hyperframes-cli",
+    "install": "npx skills add https://github.com/heygen-com/hyperframes --skill hyperframes-cli",
+    "owner": "heygen-com"
+  },
+  {
+    "id": "ui2744075024138",
+    "name": "Anti Ui Slop",
+    "author": "site",
+    "desc": "Install the anti-ui-slop skill for your AI agent. Published on uizze.com.",
+    "url": "https://www.skills.sh/site/uizze.com/anti-ui-slop",
+    "install": "",
+    "owner": "site"
+  },
+  {
+    "id": "ui2573817386139",
+    "name": "Azure Upgrade",
+    "author": "microsoft",
+    "desc": "Assess and upgrade Azure workloads between plans, tiers, or SKUs, or modernize Azure SDK dependencies in source code. WHEN: upgrade Consumption to Flex…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/azure-upgrade",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill azure-upgrade",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui3508973773140",
+    "name": "Teach",
+    "author": "mattpocock",
+    "desc": "Teach the user a new skill or concept, within this workspace.",
+    "url": "https://www.skills.sh/mattpocock/skills/teach",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill teach",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui1209870226141",
+    "name": "Azure Messaging",
+    "author": "microsoft",
+    "desc": "Troubleshoot and resolve issues with Azure Messaging SDKs for Event Hubs and Service Bus. Covers connection failures, authentication errors, message processing…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/azure-messaging",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill azure-messaging",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui2396189724142",
+    "name": "Lark Apps",
+    "author": "site",
+    "desc": "Install the lark-apps skill for your AI agent. Published on open.feishu.cn.",
+    "url": "https://www.skills.sh/site/open.feishu.cn/lark-apps",
+    "install": "",
+    "owner": "site"
+  },
+  {
+    "id": "ui2632137964143",
+    "name": "Grilling",
+    "author": "mattpocock",
+    "desc": "Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.",
+    "url": "https://www.skills.sh/mattpocock/skills/grilling",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill grilling",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui3172376250144",
+    "name": "Azure Diagnostics",
+    "author": "microsoft",
+    "desc": "Debug Azure production issues on Azure using AppLens, Azure Monitor, resource health, and safe triage. WHEN: debug production issues, troubleshoot app service,…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/azure-diagnostics",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill azure-diagnostics",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui77299278145",
+    "name": "Lark Doc",
+    "author": "site",
+    "desc": "Install the lark-doc skill for your AI agent. Published on open.feishu.cn.",
+    "url": "https://www.skills.sh/site/open.feishu.cn/lark-doc",
+    "install": "",
+    "owner": "site"
+  },
+  {
+    "id": "ui472277302146",
+    "name": "Microsoft Foundry",
+    "author": "microsoft",
+    "desc": "Build, deploy, evaluate, optimize, fine-tune, and manage Microsoft Foundry agents, models, and resources end to end with azd. USE FOR: azd ai agent, azd…",
+    "url": "https://www.skills.sh/microsoft/azure-skills/microsoft-foundry",
+    "install": "npx skills add https://github.com/microsoft/azure-skills --skill microsoft-foundry",
+    "owner": "microsoft"
+  },
+  {
+    "id": "ui2706855160147",
+    "name": "Handoff",
+    "author": "mattpocock",
+    "desc": "Compact the current conversation into a handoff document for another agent to pick up.",
+    "url": "https://www.skills.sh/mattpocock/skills/handoff",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill handoff",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui2453288060148",
+    "name": "Lark Vc Agent",
+    "author": "site",
+    "desc": "Install the lark-vc-agent skill for your AI agent. Published on open.feishu.cn.",
+    "url": "https://www.skills.sh/site/open.feishu.cn/lark-vc-agent",
+    "install": "",
+    "owner": "site"
+  },
+  {
+    "id": "ui2632067778149",
+    "name": "Grill Me",
+    "author": "mattpocock",
+    "desc": "A relentless interview to sharpen a plan or design.",
+    "url": "https://www.skills.sh/mattpocock/skills/grill-me",
+    "install": "npx skills add https://github.com/mattpocock/skills --skill grill-me",
+    "owner": "mattpocock"
+  },
+  {
+    "id": "ui632655814150",
+    "name": "Find Skills",
+    "author": "vercel-labs",
+    "desc": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express…",
+    "url": "https://www.skills.sh/vercel-labs/skills/find-skills",
+    "install": "npx skills add https://github.com/vercel-labs/skills --skill find-skills",
+    "owner": "vercel-labs"
+  }
+]
