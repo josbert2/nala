@@ -8,6 +8,7 @@
   --ds-hover: #f1f0ee;
   --ds-active: #ecebe9;
   --ds-accent: #4c8bf5;
+  --ds-muted-strong: #5f5d57;   /* gris con mejor contraste para texto chico */
 
   position: fixed;
   inset: 0;
@@ -20,6 +21,12 @@
 }
 
 .ds-ico { flex: none; color: currentColor; }
+
+/* --- refinamientos tipográficos (baseline-ui): números tabulares, buen wrap --- */
+.ds-page-title, .sk-hero-title, .sk-card-title, .lg-title { text-wrap: balance; }
+.ds-page-sub, .sk-hero-sub, .sk-card-desc, .md-p, .sk-drawer-desc { text-wrap: pretty; }
+.ds-stat b, .sk-meta, .sk-section-n, .sk-pager-info, .sk-count, .ds-live-anim,
+.sk-install-box code, .dbg-grid b { font-variant-numeric: tabular-nums; }
 
 /* ---------------------------------------------------------------- sidebar */
 .ds-side {
@@ -470,3 +477,6 @@ a.sk-card-title:hover { color: var(--ds-accent); }
 .md-q { border-left: 3px solid var(--ds-border); padding: 2px 0 2px 14px; margin: 12px 0; color: var(--ds-muted); font-size: 14px; }
 .md-hr { border: 0; border-top: 1px solid var(--ds-border); margin: 20px 0; }
 .sk-drawer-body a { color: var(--ds-accent); }
+
+/* texto secundario con mejor contraste (va al final para ganar por orden) */
+.ds-page-sub, .sk-hero-sub, .sk-card-desc, .sk-author, .sk-meta, .sk-drawer-author { color: var(--ds-muted-strong); }
