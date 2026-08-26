@@ -1,5 +1,6 @@
 import { useEffect, useId, useMemo, useState } from 'react'
 import Markdown from './Markdown.jsx'
+import PACKS from './packs.json'
 import { seededScene } from './authorAvatar.js'
 
 const AV = ['#4361ee', '#2fbf71', '#f4a340', '#e0803a', '#a06cff', '#12a5b0', '#e05343', '#d94f8a', '#3aa76d', '#8a63d2']
@@ -98,6 +99,8 @@ export default function Skills () {
   const [cat, setCat] = useState({ total: 0, items: [], loading: true })
   const [saved, setSaved] = useState([])
   const [showSaved, setShowSaved] = useState(false)
+  const [packsOpen, setPacksOpen] = useState(false)
+  const [activePack, setActivePack] = useState(null)
   const [section, setSection] = useState('all')
   const [topic, setTopic] = useState('all')
   const [counts, setCounts] = useState({})
@@ -123,6 +126,15 @@ export default function Skills () {
     else persist([{ id: 'sv' + hashN(s.url), name: s.name, author: s.author, owner: s.owner, desc: s.desc, url: s.url, install: s.install, source: s.source, tags: [] }, ...saved])
   }
   const setTags = (url, tags) => persist(saved.map((s) => (s.url === url ? { ...s, tags } : s)))
+  const savePack = (pack) => {
+    const have = new Set(saved.map((s) => s.url))
+    const fresh = pack.skills.filter((s) => !have.has(s.url)).map((s) => ({
+      id: 'sv' + hashN(s.url), name: s.name, author: s.author, owner: s.owner,
+      desc: s.desc, url: s.url, install: s.install, source: s.source, tags: ['pack:' + pack.id]
+    }))
+    if (fresh.length) persist([...fresh, ...saved])
+  }
+  const packSavedCount = (pack) => pack.skills.filter((s) => savedUrls.has(s.url)).length
   const allTags = useMemo(() => {
     const t = new Set()
     saved.forEach((s) => (s.tags || []).forEach((x) => t.add(x)))
@@ -166,6 +178,18 @@ export default function Skills () {
         </p>
       </div>
 
+      <div className="sk-modes">
+        <button className={`sk-mode${!showSaved && !packsOpen ? ' on' : ''}`} onClick={() => { setShowSaved(false); setPacksOpen(false); setActivePack(null) }}>Catálogo</button>
+        <button className={`sk-mode${packsOpen ? ' on' : ''}`} onClick={() => { setPacksOpen(true); setShowSaved(false); setActivePack(null) }}>Packs <b>{PACKS.length}</b></button>
+        <button className={`sk-mode${showSaved ? ' on' : ''}`} onClick={() => { setShowSaved(true); setPacksOpen(false); setActivePack(null) }}>Guardadas <b>{saved.length}</b></button>
+      </div>
+
+      {packsOpen ? (
+        <PacksView packs={PACKS} activePack={activePack} setActivePack={setActivePack}
+          savedUrls={savedUrls} onToggleSave={toggleSave} onSavePack={savePack} packSavedCount={packSavedCount}
+          onOpen={setOpen} />
+      ) : (
+      <>
       <div className="sk-controls">
         <div className="sk-bar">
           <div className="sk-search-wrap">
@@ -174,9 +198,6 @@ export default function Skills () {
             {q && <button className="sk-search-x" aria-label="Limpiar" onClick={() => setQ('')}>×</button>}
           </div>
           <input className="sk-acct" placeholder="tu cuenta GitHub" value={account} onChange={(e) => setAccount(e.target.value)} title="Reescribe el owner del comando de install" />
-          <button className={`sk-toggle${showSaved ? ' on' : ''}`} onClick={() => setShowSaved((v) => !v)}>
-            {showSaved ? '★' : '☆'} Guardadas <b>{saved.length}</b>
-          </button>
         </div>
 
         {!showSaved && (
@@ -253,6 +274,8 @@ export default function Skills () {
           <button className="sk-ghost" disabled={page + 1 >= pages} onClick={() => setPage((p) => p + 1)}>Siguiente →</button>
         </div>
       )}
+      </>
+      )}
 
       {open && (
         <SkillDrawer
@@ -265,6 +288,60 @@ export default function Skills () {
           onClose={() => setOpen(null)}
         />
       )}
+    </div>
+  )
+}
+
+function PacksView ({ packs, activePack, setActivePack, savedUrls, onToggleSave, onSavePack, packSavedCount, onOpen }) {
+  if (activePack) {
+    const p = activePack
+    const savedN = packSavedCount(p)
+    const done = savedN === p.skills.length
+    return (
+      <div className="sk-pack-detail">
+        <button className="sk-ghost sk-pack-back" onClick={() => setActivePack(null)}>← Todos los packs</button>
+        <div className="sk-pack-head" style={{ '--pc': p.color }}>
+          <div className="sk-pack-head-txt">
+            <h3 className="sk-pack-title">{p.name}</h3>
+            <p className="sk-pack-desc">{p.desc}</p>
+          </div>
+          <button className="sk-pack-save" onClick={() => onSavePack(p)} disabled={done}>
+            {done ? '✓ Guardado' : `Guardar pack · ${p.skills.length}`}
+          </button>
+        </div>
+        <div className="sk-grid">
+          {p.skills.map((s) => (
+            <article key={s.url} className="sk-card" onClick={() => onOpen(s)} title="Ver contenido">
+              <button className={`sk-star${savedUrls.has(s.url) ? ' on' : ''}`} onClick={(e) => { e.stopPropagation(); onToggleSave(s) }}>{savedUrls.has(s.url) ? '★' : '☆'}</button>
+              <span className="sk-card-title">{s.name}</span>
+              {s.desc && <p className="sk-card-desc">{s.desc}</p>}
+              <div className="sk-card-foot">
+                <Avatar author={s.author} owner={s.owner} />
+                <span className="sk-author">{s.owner || s.author}</span>
+                {sourceOf(s) && <span className="sk-src" style={{ '--src': sourceOf(s).color }}>{sourceOf(s).label}</span>}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div className="sk-pack-grid">
+      {packs.map((p) => {
+        const savedN = packSavedCount(p)
+        return (
+          <button key={p.id} className="sk-pack-card" style={{ '--pc': p.color }} onClick={() => setActivePack(p)}>
+            <span className="sk-pack-cbar" />
+            <span className="sk-pack-ctitle">{p.name}</span>
+            <span className="sk-pack-cdesc">{p.desc}</span>
+            <span className="sk-pack-avs">
+              {p.skills.slice(0, 6).map((s, i) => <span key={i} className="sk-pack-av"><Avatar author={s.author} owner={s.owner} size={22} /></span>)}
+            </span>
+            <span className="sk-pack-cmeta">{p.skills.length} skills{savedN ? ` · ${savedN} guardadas` : ''}</span>
+          </button>
+        )
+      })}
     </div>
   )
 }
