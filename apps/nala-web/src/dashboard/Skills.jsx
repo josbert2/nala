@@ -166,49 +166,59 @@ export default function Skills () {
         </p>
       </div>
 
-      <div className="sk-bar">
-        <input className="sk-search" placeholder="Buscar en el catálogo…" value={q} onChange={(e) => setQ(e.target.value)} />
-        <input className="sk-acct" placeholder="tu cuenta GitHub" value={account} onChange={(e) => setAccount(e.target.value)} title="Reescribe el owner del comando de install" />
-        <button className={`sk-toggle${showSaved ? ' on' : ''}`} onClick={() => setShowSaved((v) => !v)}>
-          {showSaved ? `★ Guardadas (${saved.length})` : `☆ Guardadas (${saved.length})`}
-        </button>
+      <div className="sk-controls">
+        <div className="sk-bar">
+          <div className="sk-search-wrap">
+            <svg className="sk-search-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+            <input className="sk-search" placeholder="Buscar en el catálogo…" value={q} onChange={(e) => setQ(e.target.value)} />
+            {q && <button className="sk-search-x" aria-label="Limpiar" onClick={() => setQ('')}>×</button>}
+          </div>
+          <input className="sk-acct" placeholder="tu cuenta GitHub" value={account} onChange={(e) => setAccount(e.target.value)} title="Reescribe el owner del comando de install" />
+          <button className={`sk-toggle${showSaved ? ' on' : ''}`} onClick={() => setShowSaved((v) => !v)}>
+            {showSaved ? '★' : '☆'} Guardadas <b>{saved.length}</b>
+          </button>
+        </div>
+
+        {!showSaved && (
+          <div className="sk-sections">
+            {SECTIONS.map((s) => (
+              <button key={s.id} className={`sk-section${section === s.id ? ' on' : ''}`}
+                style={s.id !== 'all' ? { '--src': (SOURCES[s.id] || {}).color } : undefined}
+                onClick={() => setSection(s.id)}>
+                {s.label}{counts[s.id] != null && <span className="sk-section-n">{fmt(counts[s.id])}</span>}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {!showSaved && (
+          <div className="sk-pills">
+            {TOPICS.map((t) => (
+              <button key={t} className={`sk-pill${topic === t ? ' on' : ''}`} onClick={() => setTopic(t)}>{TOPIC_LABEL[t]}</button>
+            ))}
+          </div>
+        )}
+
+        {showSaved && allTags.length > 0 && (
+          <div className="sk-tagbar">
+            <button className={`sk-tag${!tagFilter ? ' on' : ''}`} onClick={() => setTagFilter(null)}>todas</button>
+            {allTags.map((t) => (
+              <button key={t} className={`sk-tag${tagFilter === t ? ' on' : ''}`} onClick={() => setTagFilter(tagFilter === t ? null : t)}>#{t}</button>
+            ))}
+          </div>
+        )}
+
+        <div className="sk-meta">
+          {showSaved ? `${total} guardadas` : cat.loading ? 'Buscando…' : `${total.toLocaleString('es')} resultados`}
+        </div>
       </div>
 
-      {!showSaved && (
-        <div className="sk-sections">
-          {SECTIONS.map((s) => (
-            <button key={s.id} className={`sk-section${section === s.id ? ' on' : ''}`}
-              style={s.id !== 'all' ? { '--src': (SOURCES[s.id] || {}).color } : undefined}
-              onClick={() => setSection(s.id)}>
-              {s.label}{counts[s.id] != null && <span className="sk-section-n">{fmt(counts[s.id])}</span>}
-            </button>
-          ))}
+      {cat.loading && !showSaved ? (
+        <div className="sk-grid">
+          {Array.from({ length: 9 }).map((_, i) => <div key={i} className="sk-skel" />)}
         </div>
-      )}
-
-      {!showSaved && (
-        <div className="sk-pills">
-          {TOPICS.map((t) => (
-            <button key={t} className={`sk-pill${topic === t ? ' on' : ''}`} onClick={() => setTopic(t)}>{TOPIC_LABEL[t]}</button>
-          ))}
-        </div>
-      )}
-
-      {showSaved && allTags.length > 0 && (
-        <div className="sk-tagbar">
-          <button className={`sk-tag${!tagFilter ? ' on' : ''}`} onClick={() => setTagFilter(null)}>todas</button>
-          {allTags.map((t) => (
-            <button key={t} className={`sk-tag${tagFilter === t ? ' on' : ''}`} onClick={() => setTagFilter(tagFilter === t ? null : t)}>#{t}</button>
-          ))}
-        </div>
-      )}
-
-      <div className="sk-meta">
-        {showSaved ? `${total} guardadas` : cat.loading ? 'Buscando…' : `${total.toLocaleString('es')} resultados`}
-      </div>
-
-      {items.length === 0 ? (
-        <div className="sk-empty">{cat.loading ? 'Cargando…' : 'Nada por acá. Probá otra búsqueda.'}</div>
+      ) : items.length === 0 ? (
+        <div className="sk-empty">Nada por acá. Probá otra búsqueda o cambiá de sección.</div>
       ) : (
         <div className="sk-grid">
           {items.map((s) => (
