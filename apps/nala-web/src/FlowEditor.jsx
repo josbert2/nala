@@ -9,7 +9,7 @@ import './flow.css'
 const PREV = 64
 const BAR = 72
 const BIG = 176
-const STORE = 'nala-flow-graph'
+const STORE = 'nala-flow-graph-v2'
 
 const FOLDER = {
   idle: 'normal', walk: 'caminar', sit: 'respirar-sentada', stretch: 'respirar-sentada-full',
@@ -80,7 +80,7 @@ function AnimNode ({ data }) {
 const nodeTypes = { anim: AnimNode }
 
 function defaultGraph () {
-  const seq = ['idle', 'walk', 'sit', 'groom', 'loaf', 'sleep']
+  const seq = ANIMS   // todas conectadas en cadena, en orden
   const nodes = ANIMS.map((anim, i) => ({
     id: anim, type: 'anim', data: { anim },
     position: { x: 40 + (i % 5) * 190, y: 40 + Math.floor(i / 5) * 150 }
