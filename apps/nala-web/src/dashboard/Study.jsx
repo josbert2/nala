@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import Roadmap from './Roadmap.jsx'
 
 const AREAS = ['Motion', 'Diseño', 'Frontend', 'Backend', '3D', 'IA', 'Otro']
 const AREA_COLOR = { Motion: '#a06cff', Diseño: '#d94f8a', Frontend: '#4361ee', Backend: '#2fbf71', '3D': '#e0803a', IA: '#e05343', Otro: '#8b8983' }
@@ -115,15 +116,17 @@ function TopicDetail ({ t, patch, onBack }) {
       <div className="st-progress st-progress-lg"><span className="st-progress-fill" style={{ width: p + '%' }} /></div>
       <div className="st-progress-num">{t.lessons.filter((l) => l.done).length}/{t.lessons.length} lecciones · {p}%</div>
 
-      {t.route && (
+      {t.roadmap ? (
         <div className="st-route">
-          <div className="st-route-head">
-            <span className="st-col-h" style={{ margin: 0 }}>Ruta de aprendizaje</span>
-            <a className="sk-ghost" href={t.route} target="_blank" rel="noreferrer">Abrir en pantalla completa ↗</a>
-          </div>
-          <iframe className="st-route-frame" src={t.route} title="Ruta de aprendizaje" loading="lazy" />
+          {t.route && (
+            <div className="st-route-head">
+              <span className="st-col-h" style={{ margin: 0 }}>Ruta de aprendizaje</span>
+              <a className="sk-ghost" href={t.route} target="_blank" rel="noreferrer">Ver versión pantalla completa ↗</a>
+            </div>
+          )}
+          <Roadmap id={t.roadmap} />
         </div>
-      )}
+      ) : null}
 
       <div className="st-cols">
         <section className="st-col">
