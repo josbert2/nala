@@ -115,6 +115,16 @@ function TopicDetail ({ t, patch, onBack }) {
       <div className="st-progress st-progress-lg"><span className="st-progress-fill" style={{ width: p + '%' }} /></div>
       <div className="st-progress-num">{t.lessons.filter((l) => l.done).length}/{t.lessons.length} lecciones · {p}%</div>
 
+      {t.route && (
+        <div className="st-route">
+          <div className="st-route-head">
+            <span className="st-col-h" style={{ margin: 0 }}>Ruta de aprendizaje</span>
+            <a className="sk-ghost" href={t.route} target="_blank" rel="noreferrer">Abrir en pantalla completa ↗</a>
+          </div>
+          <iframe className="st-route-frame" src={t.route} title="Ruta de aprendizaje" loading="lazy" />
+        </div>
+      )}
+
       <div className="st-cols">
         <section className="st-col">
           <div className="st-col-h">Lecciones</div>
