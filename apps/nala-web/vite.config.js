@@ -8,6 +8,7 @@ import { createHmac, scryptSync, randomBytes, timingSafeEqual } from 'node:crypt
 
 const ROOT = dirname(fileURLToPath(import.meta.url))
 const SKILLS_FILE = resolve(ROOT, 'data', 'skills.json')
+const STUDY_FILE = resolve(ROOT, 'data', 'study.json')
 const CONTENT_FILE = resolve(ROOT, 'data', 'ui-skills-content.json')
 const CATALOG_FILE = resolve(ROOT, 'data', 'skills-catalog.json')
 const REPO_ROOT = resolve(ROOT, '..', '..')   // raíz del repo nala
@@ -150,6 +151,30 @@ function skillsApi () {
               if (!Array.isArray(data)) throw new Error('se esperaba un array')
               mkdirSync(dirname(SKILLS_FILE), { recursive: true })
               writeFileSync(SKILLS_FILE, JSON.stringify(data, null, 2) + '\n')
+              res.statusCode = 204; res.end()
+            } catch (e) { res.statusCode = 400; res.end(JSON.stringify({ error: String(e && e.message || e) })) }
+          })
+          return
+        }
+        res.statusCode = 405; res.end('{"error":"método no soportado"}')
+      })
+
+      // -------- base de estudio (data/study.json) --------
+      server.middlewares.use('/api/study', (req, res) => {
+        res.setHeader('Content-Type', 'application/json')
+        if (req.method === 'GET') {
+          try { res.end(existsSync(STUDY_FILE) ? readFileSync(STUDY_FILE, 'utf8') : '[]') } catch { res.end('[]') }
+          return
+        }
+        if (req.method === 'PUT' || req.method === 'POST') {
+          let body = ''
+          req.on('data', (c) => { body += c })
+          req.on('end', () => {
+            try {
+              const data = JSON.parse(body || '[]')
+              if (!Array.isArray(data)) throw new Error('se esperaba un array')
+              mkdirSync(dirname(STUDY_FILE), { recursive: true })
+              writeFileSync(STUDY_FILE, JSON.stringify(data, null, 2) + '\n')
               res.statusCode = 204; res.end()
             } catch (e) { res.statusCode = 400; res.end(JSON.stringify({ error: String(e && e.message || e) })) }
           })

@@ -1,0 +1,54 @@
+[
+  {
+    "id": "ae",
+    "name": "After Effects",
+    "area": "Motion",
+    "color": "#a06cff",
+    "status": "activo",
+    "notes": "Objetivo: poder animar UI y hacer motion graphics prolijos para los proyectos.",
+    "lessons": [
+      {
+        "title": "Interfaz, composiciones y timeline",
+        "done": false
+      },
+      {
+        "title": "Keyframes y curvas de easing (graph editor)",
+        "done": false
+      },
+      {
+        "title": "Capas de forma (shape layers)",
+        "done": false
+      },
+      {
+        "title": "Máscaras y track mattes",
+        "done": false
+      },
+      {
+        "title": "Parenting y null objects",
+        "done": false
+      },
+      {
+        "title": "Expressions básicas (wiggle, loopOut, time)",
+        "done": false
+      },
+      {
+        "title": "Precomposiciones y organización",
+        "done": false
+      },
+      {
+        "title": "Render y export (Media Encoder, Lottie)",
+        "done": false
+      }
+    ],
+    "resources": [
+      {
+        "title": "After Effects — docs de Adobe",
+        "url": "https://helpx.adobe.com/after-effects/user-guide.html"
+      },
+      {
+        "title": "Bodymovin / Lottie (export a web)",
+        "url": "https://lottiefiles.com/"
+      }
+    ]
+  }
+]
