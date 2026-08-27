@@ -1,5 +1,44 @@
 [
   {
+    "id": "sv3979503439",
+    "name": "Apple Design",
+    "author": "emilkowalski",
+    "owner": "emilkowalski",
+    "desc": "Apple's approach to interface design and fluid, physical motion, translated for the web. Use when building or reviewing gesture-driven UI, spring animations, drag/swipe/sheet interactions, momentum an",
+    "url": "https://github.com/emilkowalski/skills/blob/main/skills/apple-design/SKILL.md",
+    "install": "npx skills add https://github.com/emilkowalski/skills --skill apple-design",
+    "source": "emilkowalski",
+    "tags": [
+      "pack:craft"
+    ]
+  },
+  {
+    "id": "sv715385929",
+    "name": "Impeccable",
+    "author": "pbakaus",
+    "owner": "pbakaus",
+    "desc": "Use when the user wants to design, redesign, shape, critique, audit, polish, clarify, distill, harden, optimize, adapt, animate, colorize, extract, or otherwise improve a frontend interface. Covers websites, landing page",
+    "url": "https://github.com/pbakaus/impeccable",
+    "install": "npx impeccable install",
+    "source": "impeccable",
+    "tags": [
+      "pack:craft"
+    ]
+  },
+  {
+    "id": "sv1760104056",
+    "name": "Pick Ui Library",
+    "author": "emilkowalski",
+    "owner": "emilkowalski",
+    "desc": "Pick the right library for a given frontend task from a curated, opinionated list — numbers, OTP inputs, charts, command menus, virtualization, drag and drop, toasts, state, styling, and more. Only ru",
+    "url": "https://github.com/emilkowalski/skills/blob/main/skills/pick-ui-library/SKILL.md",
+    "install": "npx skills add https://github.com/emilkowalski/skills --skill pick-ui-library",
+    "source": "emilkowalski",
+    "tags": [
+      "pack:craft"
+    ]
+  },
+  {
     "id": "sv1603866490",
     "name": "Transitions Dev",
     "author": "Jakubantalik",
