@@ -75,8 +75,8 @@ async function fetchContent (url) {
     }
     return best || null
   }
-  // skills.sh: convertir el div prose a markdown
-  const i = html.search(/<div class="prose prose-invert/)
+  // skills.sh / skillsllm: convertir el div prose a markdown
+  const i = html.search(/<div class="prose[ "]/)
   if (i < 0) return null
   let j = html.indexOf('>', i) + 1, depth = 1, start = j
   const re = /<\/?div\b[^>]*>/g; re.lastIndex = j; let m
@@ -239,7 +239,7 @@ function skillsApi () {
             if (!url) { res.statusCode = 400; res.end('{"error":"falta url"}'); return }
             if (!contentCache) contentCache = existsSync(CONTENT_FILE) ? JSON.parse(readFileSync(CONTENT_FILE, 'utf8')) : {}
             let content = contentCache[url]
-            if (!content && /^https:\/\/www\.(skills\.sh|ui-skills\.com)\//.test(url)) {
+            if (!content && /^https:\/\/(www\.)?(skills\.sh|ui-skills\.com|skillsllm\.com)\//.test(url)) {
               content = await fetchContent(url); if (content) contentCache[url] = content
             }
             if (!content) { res.statusCode = 404; res.end('{"error":"sin contenido para instalar"}'); return }
@@ -265,7 +265,7 @@ function skillsApi () {
           const url = new URL(req.url, 'http://x').searchParams.get('url')
           if (!url) { res.statusCode = 400; res.end('{"error":"falta url"}'); return }
           let content = contentCache[url]
-          if (!content && /^https:\/\/www\.(skills\.sh|ui-skills\.com)\//.test(url)) {
+          if (!content && /^https:\/\/(www\.)?(skills\.sh|ui-skills\.com|skillsllm\.com)\//.test(url)) {
             content = await fetchContent(url)
             if (content) { contentCache[url] = content }  // cachea en memoria
           }

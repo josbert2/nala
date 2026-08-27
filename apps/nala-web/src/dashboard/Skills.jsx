@@ -44,6 +44,7 @@ const SOURCES = {
   transitions: { label: 'transitions', color: '#12a5b0' },
   agentation: { label: 'agentation', color: '#e05343' },
   emilkowalski: { label: 'emilkowalski', color: '#f4a340' },
+  skillsllm: { label: 'skillsllm', color: '#5b6470' },
   github: { label: 'github', color: '#1c1c1c' }
 }
 const SECTIONS = [
@@ -55,7 +56,8 @@ const SECTIONS = [
   { id: 'impeccable', label: 'impeccable' },
   { id: 'transitions', label: 'transitions' },
   { id: 'agentation', label: 'agentation' },
-  { id: 'emilkowalski', label: 'emilkowalski' }
+  { id: 'emilkowalski', label: 'emilkowalski' },
+  { id: 'skillsllm', label: 'skillsllm' }
 ]
 function sourceOf (s) {
   const v = s.source || (/ui-skills\.com/.test(s.url) ? 'ui-skills' : /skills\.sh/.test(s.url) ? 'skills.sh' : /github\.com/.test(s.url) ? 'github' : '')
