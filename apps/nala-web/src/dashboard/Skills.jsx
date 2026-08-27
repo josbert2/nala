@@ -235,35 +235,16 @@ export default function Skills () {
       </div>
 
       {cat.loading && !showSaved ? (
-        <div className="sk-grid">
-          {Array.from({ length: 9 }).map((_, i) => <div key={i} className="sk-skel" />)}
+        <div className="ios-list">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div key={i} className="ios-row"><div className="sk-skel-av" /><div className="ios-row-main"><span className="sk-skel-line" /><span className="sk-skel-line short" /></div></div>
+          ))}
         </div>
       ) : items.length === 0 ? (
         <div className="sk-empty">Nada por acá. Probá otra búsqueda o cambiá de sección.</div>
       ) : (
-        <div className="sk-grid">
-          {items.map((s) => (
-            <article key={s.url} className="sk-card" onClick={() => setOpen(s)} title="Ver contenido">
-              <button className={`sk-star${savedUrls.has(s.url) ? ' on' : ''}`} title={savedUrls.has(s.url) ? 'Quitar' : 'Guardar'} onClick={(e) => { e.stopPropagation(); toggleSave(s) }}>{savedUrls.has(s.url) ? '★' : '☆'}</button>
-              <span className="sk-card-title">{s.name}</span>
-              {s.desc && <p className="sk-card-desc">{s.desc}</p>}
-              {(s.tags && s.tags.length > 0) && (
-                <div className="sk-card-tags">{s.tags.map((t) => <span key={t} className="sk-tagchip">#{t}</span>)}</div>
-              )}
-              <div className="sk-card-topics">
-                {topicsOf(s).map((t) => (
-                  <button key={t} className="sk-topicchip" style={{ '--tc': TOPIC_COLOR[t] }}
-                    onClick={(e) => { e.stopPropagation(); setShowSaved(false); setTopic(t) }}>{t}</button>
-                ))}
-              </div>
-              <div className="sk-card-foot">
-                <Avatar author={s.author} owner={s.owner} />
-                <span className="sk-author">{s.owner || s.author || '—'}</span>
-                {sourceOf(s) && <span className="sk-src" style={{ '--src': sourceOf(s).color }}>{sourceOf(s).label}</span>}
-                {s.url && <a className="sk-ext" href={s.url} target="_blank" rel="noreferrer" title="Ver en el sitio" onClick={(e) => e.stopPropagation()}>↗</a>}
-              </div>
-            </article>
-          ))}
+        <div className="ios-list">
+          {items.map((s) => <SkillRow key={s.url} s={s} saved={savedUrls.has(s.url)} onOpen={setOpen} onToggleSave={toggleSave} />)}
         </div>
       )}
 
@@ -292,6 +273,23 @@ export default function Skills () {
   )
 }
 
+// Fila de skill estilo iOS (inset grouped list).
+function SkillRow ({ s, saved, onOpen, onToggleSave }) {
+  return (
+    <div className="ios-row" onClick={() => onOpen(s)} role="button" tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter') onOpen(s) }}>
+      <Avatar author={s.author} owner={s.owner} size={30} />
+      <div className="ios-row-main">
+        <span className="ios-row-title">{s.name}</span>
+        <span className="ios-row-sub">{s.desc || s.owner || s.author}</span>
+      </div>
+      {sourceOf(s) && <span className="sk-src" style={{ '--src': sourceOf(s).color }}>{sourceOf(s).label}</span>}
+      <button className={`sk-star${saved ? ' on' : ''}`} title={saved ? 'Quitar' : 'Guardar'} onClick={(e) => { e.stopPropagation(); onToggleSave(s) }}>{saved ? '★' : '☆'}</button>
+      <span className="ios-chevron" aria-hidden="true">›</span>
+    </div>
+  )
+}
+
 function PacksView ({ packs, activePack, setActivePack, savedUrls, onToggleSave, onSavePack, packSavedCount, onOpen }) {
   if (activePack) {
     const p = activePack
@@ -309,19 +307,8 @@ function PacksView ({ packs, activePack, setActivePack, savedUrls, onToggleSave,
             {done ? '✓ Guardado' : `Guardar pack · ${p.skills.length}`}
           </button>
         </div>
-        <div className="sk-grid">
-          {p.skills.map((s) => (
-            <article key={s.url} className="sk-card" onClick={() => onOpen(s)} title="Ver contenido">
-              <button className={`sk-star${savedUrls.has(s.url) ? ' on' : ''}`} onClick={(e) => { e.stopPropagation(); onToggleSave(s) }}>{savedUrls.has(s.url) ? '★' : '☆'}</button>
-              <span className="sk-card-title">{s.name}</span>
-              {s.desc && <p className="sk-card-desc">{s.desc}</p>}
-              <div className="sk-card-foot">
-                <Avatar author={s.author} owner={s.owner} />
-                <span className="sk-author">{s.owner || s.author}</span>
-                {sourceOf(s) && <span className="sk-src" style={{ '--src': sourceOf(s).color }}>{sourceOf(s).label}</span>}
-              </div>
-            </article>
-          ))}
+        <div className="ios-list">
+          {p.skills.map((s) => <SkillRow key={s.url} s={s} saved={savedUrls.has(s.url)} onOpen={onOpen} onToggleSave={onToggleSave} />)}
         </div>
       </div>
     )

@@ -62,23 +62,20 @@ export default function Study () {
       {topics.length === 0 ? (
         <div className="sk-empty">Todavía no hay nada. Agregá el primer tema que estés estudiando.</div>
       ) : (
-        <div className="st-grid">
+        <div className="ios-list">
           {topics.map((t) => {
             const p = progress(t)
             return (
-              <article key={t.id} className="st-card" style={{ '--pc': colorOf(t) }} onClick={() => setActiveId(t.id)}>
+              <div key={t.id} className="ios-row" onClick={() => setActiveId(t.id)}>
+                <span className="st-row-icon" style={{ background: colorOf(t) }}>{t.name[0].toUpperCase()}</span>
+                <div className="ios-row-main">
+                  <span className="ios-row-title">{t.name}</span>
+                  <span className="ios-row-sub">{t.area} · {(t.lessons || []).filter((l) => l.done).length}/{(t.lessons || []).length} lecciones · {t.status}</span>
+                </div>
+                <span className="st-row-pct">{p}%</span>
                 <button className="sk-del" title="Borrar" onClick={(e) => { e.stopPropagation(); remove(t.id) }}>×</button>
-                <div className="st-card-top">
-                  <span className="st-area" style={{ '--pc': colorOf(t) }}>{t.area}</span>
-                  <span className={`st-status st-${t.status}`}>{t.status}</span>
-                </div>
-                <h3 className="st-card-title">{t.name}</h3>
-                <div className="st-progress"><span className="st-progress-fill" style={{ width: p + '%' }} /></div>
-                <div className="st-card-meta">
-                  <span>{(t.lessons || []).filter((l) => l.done).length}/{(t.lessons || []).length} lecciones</span>
-                  <b>{p}%</b>
-                </div>
-              </article>
+                <span className="ios-chevron" aria-hidden="true">›</span>
+              </div>
             )
           })}
         </div>

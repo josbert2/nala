@@ -789,3 +789,48 @@ a.sk-card-title:hover { color: var(--ds-accent); }
 /* páginas: título grande estilo iOS */
 .ds-page-title, .sk-hero-title { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
 .st-status.st-activo { color: var(--ios-green); background: rgba(52,199,89,.14); }
+
+/* ==================== lista iOS (inset grouped) ==================== */
+.ios-list {
+  background: var(--ds-bg); border: 1px solid var(--ds-border); border-radius: 12px;
+  overflow: hidden; max-width: 720px; box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+.ios-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; cursor: pointer; position: relative; background: var(--ds-bg);
+  transition: background .1s ease;
+}
+.ios-row:not(:last-child)::after {
+  content: ''; position: absolute; left: 56px; right: 0; bottom: 0; height: 1px; background: var(--ds-border);
+}
+.ios-row:hover { background: var(--ds-hover); }
+.ios-row:active { background: var(--ds-active); }
+.ios-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.ios-row-title { font-size: 15px; font-weight: 500; color: var(--ds-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ios-row-sub { font-size: 13px; color: var(--ds-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ios-chevron { flex: none; color: #c7c7cc; font-size: 20px; line-height: 1; margin-left: 2px; }
+.ios-row .sk-src { position: static; margin-left: 0; }
+.ios-row .sk-star { position: static; opacity: 1; top: auto; right: auto; }
+.ios-row .sk-av-svg, .ios-row .sk-av { flex: none; }
+
+/* skeleton en fila */
+.sk-skel-av { width: 30px; height: 30px; border-radius: 50%; background: var(--ds-active); flex: none; animation: sk-pulse 1.1s ease-in-out infinite; }
+.sk-skel-line { height: 11px; border-radius: 6px; background: var(--ds-active); width: 70%; animation: sk-pulse 1.1s ease-in-out infinite; }
+.sk-skel-line.short { width: 40%; height: 9px; margin-top: 5px; }
+@media (prefers-reduced-motion: reduce) { .sk-skel-av, .sk-skel-line { animation: none } }
+
+/* fila de estudio (iOS) */
+.st-row-icon {
+  flex: none; width: 30px; height: 30px; border-radius: 8px;
+  display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 14px;
+}
+.st-row-pct { flex: none; font-size: 13px; color: var(--ds-muted); font-variant-numeric: tabular-nums; }
+.ios-row .sk-del { position: static; opacity: 0; top: auto; right: auto; }
+.ios-row:hover .sk-del { opacity: 1; }
+
+/* Home / Analytics como grupos iOS */
+.ds-entries { gap: 0; border: 1px solid var(--ds-border); border-radius: 12px; overflow: hidden; background: var(--ds-bg); box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+.ds-entry { border: 0; border-left: 0; border-radius: 0; padding: 11px 14px; }
+.ds-entry:not(:last-child) { border-bottom: 1px solid var(--ds-border); }
+.ds-cards, .rm-grid, .st-grid { }  /* se mantienen como grillas donde corresponde */
+.ds-stat { box-shadow: 0 1px 3px rgba(0,0,0,.04); }
