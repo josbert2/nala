@@ -834,3 +834,79 @@ a.sk-card-title:hover { color: var(--ds-accent); }
 .ds-entry:not(:last-child) { border-bottom: 1px solid var(--ds-border); }
 .ds-cards, .rm-grid, .st-grid { }  /* se mantienen como grillas donde corresponde */
 .ds-stat { box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+
+/* ==================== pass 3: HIG (Apple design skill) ==================== */
+/* Escala tipográfica iOS: Large Title / Title / Headline / Body / Subhead */
+.ds-page-title, .sk-hero-title { font-size: 28px; font-weight: 700; letter-spacing: -0.022em; }
+.st-head-title, .sk-drawer-title, .rm-title { letter-spacing: -0.02em; }
+.ios-row-title { font-size: 16px; font-weight: 400; }   /* Body */
+.ios-row-sub { font-size: 13.5px; }                      /* Subhead/Footnote */
+
+/* Targets táctiles cómodos (HIG ≥44pt móvil / ≥24 desktop) */
+.ios-row { min-height: 48px; }
+.ds-nav-item { min-height: 34px; font-size: 15px; }
+.sk-mode, .sk-section, .sk-pill { min-height: 32px; }
+
+/* Sidebar: search field iOS (relleno translúcido, sin borde) */
+.ds-search { background: rgba(120,120,128,.12); border: 0; border-radius: 10px; padding: 8px 10px; }
+.ds-search:hover { background: rgba(120,120,128,.16); }
+/* Group headers iOS: gris, sentence case */
+.ds-group { text-transform: none; letter-spacing: 0; font-size: 12.5px; color: var(--ds-muted); }
+/* Íconos de nav en el color del sistema cuando activos ya lo hace; inactivos gris */
+.ds-nav-item.active { font-weight: 590; }
+
+/* Drawer como sheet iOS: esquinas redondeadas + grabber */
+.sk-drawer { border-radius: 16px 0 0 16px; border-left: 1px solid var(--ds-border); }
+.sk-drawer-head { position: relative; }
+.sk-drawer-head::before {
+  content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+  width: 36px; height: 5px; border-radius: 3px; background: rgba(60,60,67,.2);
+}
+.sk-drawer-body { padding-top: 20px; }
+
+/* Botón destructivo/primario: radios y peso iOS */
+.sk-add, .sk-pack-save:not(:disabled), .ds-upgrade, .sk-pack-back { font-weight: 590; }
+.ds-logout:hover { color: var(--ios-red); border-color: color-mix(in srgb, var(--ios-red) 40%, var(--ds-border)); }
+
+/* Chips de fuente/tema: legibilidad (no depender solo de color -> tienen texto) */
+.sk-src { font-weight: 590; }
+
+/* ==================== modo oscuro (HIG: soportar claro y oscuro) ==================== */
+@media (prefers-color-scheme: dark) {
+  .ds {
+    --ds-bg: #1c1c1e;            /* superficie / card */
+    --ios-grouped: #000000;      /* fondo agrupado */
+    --ds-side: #000000;
+    --ds-border: rgba(84,84,88,.55);
+    --ds-text: #ffffff;
+    --ds-muted: #98989f;
+    --ds-muted-strong: #b0b0b6;
+    --ds-hover: #2c2c2e;
+    --ds-active: #3a3a3c;
+    --ds-accent: #0a84ff;        /* systemBlue dark */
+    --ios-green: #30d158;
+    --ios-red: #ff453a;
+  }
+  .ds-crumb, .ds-main { background: var(--ds-bg); }
+  /* superficies hardcodeadas -> dark */
+  .sk-modes { background: #2c2c2e; }
+  .sk-mode.on { background: #636366; }
+  .sk-mode b { color: #ebebf5; }
+  .sk-search, .sk-acct, .sk-in, .sk-in-note, .st-add input, .st-notes, .sk-search-wrap .sk-search { background: #2c2c2e; color: var(--ds-text); }
+  .sk-search::placeholder, .sk-acct::placeholder, .sk-in::placeholder, .st-notes::placeholder { color: #8e8e93; }
+  .ds-search { background: rgba(120,120,128,.24); }
+  .ds-upgrade { background: var(--ds-accent); color: #fff; }
+  .sk-add, .sk-pack-save:not(:disabled) { color: #fff; }
+  .sk-pack-save:disabled { background: #2c2c2e; }
+  .ios-chevron { color: #48484a; }
+  .st-check { background: #1c1c1e; }
+  .st-row-icon { color: #fff; }
+  .sk-section.on, .sk-pill.on, .sk-tag.on { color: #fff; }
+  .ds-crumb-sep, .sk-src { }
+  .ds-side::-webkit-scrollbar-thumb { background: #3a3a3c; border-color: #000; }
+  .ds-heat-cell { background: #2c2c2e; }
+  .sk-card:hover, .rm-card:hover, .st-card:hover, .sk-pack-card:hover, .ios-row:hover { background: #2c2c2e; }
+  .ds-tag, .sk-tagchip.on { background: #2c2c2e; }
+  /* sombras más sutiles en dark */
+  .ios-list, .sk-card, .rm-card, .st-card, .sk-pack-card, .rm-brand, .ds-stat { box-shadow: none; }
+}
