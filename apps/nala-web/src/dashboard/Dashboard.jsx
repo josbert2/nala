@@ -3,6 +3,7 @@ import './dashboard.css'
 import { sampleData } from './sample.js'
 import Skills from './Skills.jsx'
 import Study from './Study.jsx'
+import Icons from './Icons.jsx'
 import NalaStage from '../NalaStage.jsx'
 import { currentUser, logout } from '../auth/auth.js'
 
@@ -22,7 +23,8 @@ const ICON = {
   pin: <><path d="M12 17v5" /><path d="M9 3h6l-1 6 3 3H7l3-3-1-6Z" /></>,
   cat: <><path d="M4 5l3 3M20 5l-3 3" /><path d="M5 8c0 6 3 11 7 11s7-5 7-11" /><circle cx="9.5" cy="12" r=".8" fill="currentColor" /><circle cx="14.5" cy="12" r=".8" fill="currentColor" /></>,
   skill: <><path d="m12 3 2.5 5.2 5.5.8-4 3.9.9 5.6L12 21l-4.9 2.5.9-5.6-4-3.9 5.5-.8Z" /></>,
-  book: <><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5Z" /><path d="M19 17H6a2 2 0 0 0-2 2" /></>
+  book: <><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5Z" /><path d="M19 17H6a2 2 0 0 0-2 2" /></>,
+  grid: <><circle cx="6" cy="6" r="2.4" /><circle cx="12" cy="6" r="2.4" /><circle cx="18" cy="6" r="2.4" /><circle cx="6" cy="12" r="2.4" /><circle cx="12" cy="12" r="2.4" /><circle cx="18" cy="12" r="2.4" /><circle cx="6" cy="18" r="2.4" /><circle cx="12" cy="18" r="2.4" /><circle cx="18" cy="18" r="2.4" /></>
 }
 
 const NAV = [
@@ -30,6 +32,7 @@ const NAV = [
   { id: 'reportes', label: 'Analytics', icon: ICON.chart },
   { id: 'skills', label: 'Skills', icon: ICON.skill },
   { id: 'estudio', label: 'Estudio', icon: ICON.book },
+  { id: 'iconos', label: 'Iconos', icon: ICON.grid },
   { id: 'proyectos', label: 'Apps', icon: ICON.apps }
 ]
 
@@ -81,7 +84,7 @@ const ACTIONS = [
 ]
 
 // Ruteo real del dashboard: cada vista tiene su slug bajo /dashboard.
-const VIEW_TO_SLUG = { diario: '', reportes: 'analytics', skills: 'skills', estudio: 'estudio', proyectos: 'apps', tablero: 'tablero', sprites: 'sprites', compartir: 'compartir' }
+const VIEW_TO_SLUG = { diario: '', reportes: 'analytics', skills: 'skills', estudio: 'estudio', iconos: 'iconos', proyectos: 'apps', tablero: 'tablero', sprites: 'sprites', compartir: 'compartir' }
 const SLUG_TO_VIEW = Object.fromEntries(Object.entries(VIEW_TO_SLUG).map(([v, s]) => [s, v]))
 const viewFromPath = () => {
   const seg = window.location.pathname.replace(/^\/dashboard\/?/, '').split('/')[0]
@@ -212,6 +215,8 @@ export default function Dashboard ({ onClose }) {
             <Skills />
           ) : view === 'estudio' ? (
             <Study />
+          ) : view === 'iconos' ? (
+            <Icons />
           ) : view === 'reportes' ? (
             <><NalaLive live={live} /><Reportes data={data} /></>
           ) : view === 'proyectos' ? (
@@ -236,6 +241,7 @@ const PAGE = {
   proyectos: ['Apps', 'Los proyectos que seguís'],
   skills: ['Skills', 'Tu stack, guardado en el proyecto'],
   estudio: ['Estudio', 'Tu base de lo que estás aprendiendo'],
+  iconos: ['Iconos', '6.030 iconos de HugeIcons — click para copiar el nombre'],
   tablero: ['Tablero', 'Próximamente'],
   sprites: ['Sprites', 'Próximamente'],
   compartir: ['Compartir', 'Próximamente']

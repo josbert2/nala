@@ -944,3 +944,22 @@ a.sk-card-title:hover { color: var(--ds-accent); }
 .ds-card { border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
 .ds-entry-msg { font-size: 15px; }
 .ds-entry-meta { font-size: 12px; }
+
+/* ==================== visor de iconos (HugeIcons) ==================== */
+.hi-cats { max-height: 88px; overflow-y: auto; }
+.hi-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; max-width: 100%;
+}
+.hi-cell {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 14px 8px 10px; border: 1px solid var(--ds-border); border-radius: 14px;
+  background: var(--ds-bg); cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  transition: border-color .12s ease, transform .12s ease, box-shadow .12s ease;
+}
+.hi-cell:hover { border-color: var(--ds-accent); transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+.hi-icon { width: 34px; height: 34px; display: grid; place-items: center; }
+.hi-icon img { width: 28px; height: 28px; display: block; }
+.hi-name { font-size: 10.5px; color: var(--ds-muted); text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hi-cell:hover .hi-name { color: var(--ds-text); }
+/* en dark los SVG del CDN son oscuros -> invertir para que se vean */
+@media (prefers-color-scheme: dark) { .hi-icon img { filter: invert(0.92) hue-rotate(180deg); } }
