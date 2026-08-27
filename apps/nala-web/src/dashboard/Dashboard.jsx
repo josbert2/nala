@@ -290,9 +290,9 @@ function Diario ({ data, cells, maxCount }) {
   return (
     <>
       <div className="ds-stats">
-        <Stat n={s.totalEntries} label="ENTRADAS" />
-        <Stat n={s.activeDays} label="DÍAS" />
-        <Stat n={`🔥 ${s.streak}`} label="RACHA" />
+        <Stat n={s.totalEntries} label="Entradas" />
+        <Stat n={s.activeDays} label="Días" />
+        <Stat n={`🔥 ${s.streak}`} label="Racha" />
       </div>
 
       <div className="ds-label">Actividad</div>

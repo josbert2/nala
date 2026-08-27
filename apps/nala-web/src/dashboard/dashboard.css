@@ -910,3 +910,37 @@ a.sk-card-title:hover { color: var(--ds-accent); }
   /* sombras más sutiles en dark */
   .ios-list, .sk-card, .rm-card, .st-card, .sk-pack-card, .rm-brand, .ds-stat { box-shadow: none; }
 }
+
+/* ==================== pass 4: Home / Analytics / Nala en iOS ==================== */
+/* Stats como cards iOS con número grande */
+.ds-stat { border-radius: 14px; padding: 12px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+.ds-stat b { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+.ds-stat span { font-size: 12px; letter-spacing: 0; text-transform: none; color: var(--ds-muted); }
+
+/* Bars (Analytics) en contenedor agrupado iOS */
+.ds-bars { background: var(--ds-bg); border: 1px solid var(--ds-border); border-radius: 14px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+.ds-bar-track { background: var(--ds-active); border-radius: 999px; }
+.ds-bar-fill { border-radius: 999px; }
+.ds-hour { border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+
+/* NalaLive como card iOS */
+.ds-live { border-radius: 16px; border: 1px solid var(--ds-border); background: var(--ds-bg); box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+.ds-live-state { color: var(--ds-accent); }
+.ds-live-need-fill { background: var(--ios-green); border-radius: 999px; }
+.ds-live-need-fill[data-low="1"] { background: #ff9f0a; }
+.ds-live-need-track { border-radius: 999px; background: var(--ds-active); }
+/* botones de acción de Nala -> tinted button iOS (azul suave) */
+.ds-act {
+  border: 0; border-radius: 999px; background: rgba(0,122,255,.12); color: var(--ds-accent);
+  font-weight: 590; padding: 7px 14px; min-height: 32px;
+}
+.ds-act:hover { background: rgba(0,122,255,.2); }
+.ds-act:active { background: rgba(0,122,255,.28); }
+
+/* heatmap con azul del sistema y celdas redondeadas */
+.ds-heat-cell { border-radius: 3px; }
+
+/* Proyectos (Apps) -> cards iOS */
+.ds-card { border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+.ds-entry-msg { font-size: 15px; }
+.ds-entry-meta { font-size: 12px; }
